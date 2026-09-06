@@ -1,5 +1,8 @@
 CONFIG += ltcg
-QMAKE_CXXFLAGS += -march=x86-64-v2
+
+x86_64 {
+    QMAKE_CXXFLAGS += -march=x86-64-v2
+}
 
 # VCS revision info
 REVFILE = src/VersionRev.h
