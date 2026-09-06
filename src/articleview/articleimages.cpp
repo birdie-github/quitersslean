@@ -20,6 +20,7 @@
 #include "mainapplication.h"
 #include <QNetworkReply>
 #include <QNetworkRequest>
+#include <QCoreApplication>
 #include <QNetworkCookieJar>
 #include <QBuffer>
 #include <QImageReader>
@@ -120,6 +121,11 @@ private:
     request.setAttribute(QNetworkRequest::CookieLoadControlAttribute, QNetworkRequest::Manual);
     request.setAttribute(QNetworkRequest::CookieSaveControlAttribute, QNetworkRequest::Manual);
     request.setAttribute(QNetworkRequest::AuthenticationReuseAttribute, QNetworkRequest::Manual);
+    // Some publishers reject Qt's generic default User-Agent. Identify the reader
+    // explicitly without impersonating a browser or sharing feed credentials.
+    const QByteArray userAgent = QByteArray("QuiteRSSLean/") + QCoreApplication::applicationVersion().toLatin1();
+    request.setRawHeader("User-Agent", userAgent);
+    ArticleImages::trace("User-Agent=" + QString::fromLatin1(userAgent));
     const QByteArray accept = imageAcceptHeader();
     request.setRawHeader("Accept", accept);
     ArticleImages::trace("Accept=" + QString::fromLatin1(accept));
