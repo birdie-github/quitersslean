@@ -28,6 +28,8 @@
 #include "updatefeeds.h"
 #include "VersionNo.h"
 
+#include <QScreen>
+
 MainApplication::MainApplication(int &argc, char **argv)
   : QtSingleApplication(argc, argv)
   , isPortableAppsCom_(false)
@@ -238,8 +240,11 @@ void MainApplication::showClosingWidget()
   layout->addWidget(new QLabel(tr("Saving data...")));
   closingWidget_->resize(150, 20);
   closingWidget_->show();
-  closingWidget_->move(QApplication::desktop()->availableGeometry().width() - closingWidget_->frameSize().width(),
-               QApplication::desktop()->availableGeometry().height() - closingWidget_->frameSize().height());
+  if (QScreen *screen = QGuiApplication::primaryScreen()) {
+    const QRect available = screen->availableGeometry();
+    closingWidget_->move(available.x() + available.width() - closingWidget_->frameSize().width(),
+                         available.y() + available.height() - closingWidget_->frameSize().height());
+  }
   closingWidget_->setFixedSize(closingWidget_->size());
   qApp->processEvents();
 }
@@ -492,9 +497,6 @@ void MainApplication::runUserFilter(int feedId, int filterId)
 void MainApplication::sqlQueryExec(const QString &query)
 {
   emit signalSqlQueryExec(query);
-}
-
-{
 }
 
 DownloadManager *MainApplication::downloadManager()

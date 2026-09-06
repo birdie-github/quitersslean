@@ -24,7 +24,7 @@ class SplashScreen : public QSplashScreen
 {
   Q_OBJECT
 public:
-  explicit SplashScreen(const QPixmap &pixmap = QPixmap(), Qt::WindowFlags flag = 0);
+  explicit SplashScreen(const QPixmap &pixmap = QPixmap(), Qt::WindowFlags flag = Qt::WindowFlags());
 
   void setProgress(int value);
 
