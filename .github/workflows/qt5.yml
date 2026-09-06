@@ -51,7 +51,7 @@ jobs:
           export QMAKEFEATURES="$dep_work/install/features"
           mkdir _build
           cd _build
-          qmake-qt5 ../QuiteRSS.pro CONFIG+=release CONFIG-=debug_and_release
+          qmake-qt5 ../QuiteRSS.pro CONFIG+=release CONFIG-=debug_and_release QMAKE_LRELEASE=lrelease-qt5
           mingw32-make -j2
 
   macos:
