@@ -488,15 +488,7 @@ void NewsTabWidget::retranslateStrings() {
       newsHeader_->retranslateStrings();
     }
 
-    if (mainWindow_->currentNewsTab == this) {
-      if (autoLoadImages_) {
-        mainWindow_->autoLoadImagesToggle_->setText(tr("Load Images"));
-        mainWindow_->autoLoadImagesToggle_->setToolTip(tr("Auto Load Images to News View"));
-      } else {
-        mainWindow_->autoLoadImagesToggle_->setText(tr("No Load Images"));
-        mainWindow_->autoLoadImagesToggle_->setToolTip(tr("No Load Images to News View"));
-      }
-    }
+    setAutoLoadImages(false);
   }
 
   closeButton_->setToolTip(tr("Close Tab"));
@@ -506,7 +498,9 @@ void NewsTabWidget::setAutoLoadImages(bool apply)
 {
   if (type_ == TabTypeDownloads || mainWindow_->currentNewsTab != this) return;
   if (apply) autoLoadImages_ = !autoLoadImages_;
-  mainWindow_->autoLoadImagesToggle_->setText(autoLoadImages_ ? tr("Load Images") : tr("Don't Load Images"));
+  mainWindow_->autoLoadImagesToggle_->setText(autoLoadImages_ ? tr("Hide Images") : tr("Load Images"));
+  mainWindow_->autoLoadImagesToggle_->setToolTip(autoLoadImages_ ?
+      tr("Hide images in this article pane") : tr("Load images in this article pane"));
   mainWindow_->autoLoadImagesToggle_->setIcon(QIcon(autoLoadImages_ ? ":/images/imagesOn" : ":/images/imagesOff"));
   if (apply) {
     if (mainWindow_->newsLayout_ == 1) loadNewspaper(RefreshWithPos);

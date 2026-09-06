@@ -26,6 +26,9 @@
 #include <QTimer>
 #include <QPointer>
 #include <cstring>
+#include <cstdio>
+#include <QSslSocket>
+#include <QStringList>
 
 namespace {
 class NoCookies : public QNetworkCookieJar {
@@ -57,6 +60,8 @@ public:
 protected:
   qint64 readData(char *data, qint64 maxSize) override {
     if (!done_) return 0;
+    if (!offset_) ArticleImages::trace("WebKit reads " + ArticleImages::describeUrl(url()) +
+                                      " bytes=" + QString::number(body_.size()));
     const qint64 size = qMin(maxSize, qint64(body_.size()) - offset_);
     if (size <= 0) return done_ ? -1 : 0;
     std::memcpy(data, body_.constData() + offset_, size);
@@ -66,6 +71,9 @@ protected:
 private:
   void finish(NetworkError error = NoError, const QString &message = QString()) {
     if (done_) return;
+    ArticleImages::trace("reply " + ArticleImages::describeUrl(url()) +
+                         " error=" + QString::number(int(error)) + " " + message +
+                         " bytes=" + QString::number(body_.size()));
     done_ = true;
     if (pending_) {
       pending_->disconnect(this);
@@ -81,6 +89,7 @@ private:
   }
   void fetch(const QUrl &target) {
     if (done_) return;
+    ArticleImages::trace("fetch " + ArticleImages::describeUrl(target));
     QNetworkRequest request(target);
     request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::ManualRedirectPolicy);
     request.setAttribute(QNetworkRequest::CookieLoadControlAttribute, QNetworkRequest::Manual);
@@ -96,6 +105,9 @@ private:
     });
     connect(pending_.data(), &QNetworkReply::finished, this, [this]() {
       if (!pending_ || done_) return;
+      ArticleImages::trace("response " + ArticleImages::describeUrl(pending_->url()) +
+                           " status=" + pending_->attribute(QNetworkRequest::HttpStatusCodeAttribute).toString() +
+                           " error=" + QString::number(int(pending_->error())));
       if (pending_->error() != NoError) { finish(pending_->error(), pending_->errorString()); return; }
       const QUrl redirect = pending_->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
       if (!redirect.isEmpty()) {
@@ -113,6 +125,10 @@ private:
       QImageReader reader(&buffer);
       const QByteArray format = reader.format().toLower();
       const QSize size = reader.size();
+      ArticleImages::trace("image " + ArticleImages::describeUrl(pending_->url()) +
+                           " format=" + QString::fromLatin1(format) +
+                           " size=" + QString::number(size.width()) + "x" + QString::number(size.height()) +
+                           " bytes=" + QString::number(body_.size()) + " decoder=" + reader.errorString());
       if (!(format == "png" || format == "jpeg" || format == "gif" || format == "webp" || format == "bmp") ||
           !size.isValid() || qint64(size.width()) * size.height() > 64 * 1024 * 1024) {
         finish(QNetworkReply::ContentAccessDenied, "Unsupported article image"); return;
@@ -133,10 +149,19 @@ private:
 };
 }
 ArticleImages::ArticleImages(QObject *parent) : QNetworkAccessManager(parent), fetcher_(new QNetworkAccessManager(this)) {
+  if (tracingEnabled()) {
+    QStringList formats;
+    for (const QByteArray &format : QImageReader::supportedImageFormats())
+      formats.append(QString::fromLatin1(format));
+    trace(QString("Qt=%1 SSL=%2 SSL-library=%3 image-formats=%4")
+          .arg(QString::fromLatin1(qVersion())).arg(QSslSocket::supportsSsl())
+          .arg(QSslSocket::sslLibraryVersionString(), formats.join(",")));
+  }
   fetcher_->setCookieJar(new NoCookies(fetcher_));
   fetcher_->setProxy(mainApp->networkProxy());
 }
 void ArticleImages::reset() {
+  trace("reset image allowlist and cancel pending image replies");
   allowed_.clear();
   const auto replies = findChildren<QNetworkReply *>(QString(), Qt::FindDirectChildrenOnly);
   for (QNetworkReply *reply : replies) reply->abort();
@@ -148,5 +173,23 @@ QNetworkReply *ArticleImages::createRequest(Operation operation, const QNetworkR
     (trustedIcon || ArticleContent::isInlineImage(url) ||
      (allowed_.contains(url) && ArticleContent::isRemoteImage(url)));
   fetcher_->setProxy(mainApp->networkProxy());
+  trace("request " + describeUrl(url) + " operation=" + QString::number(int(operation)) +
+        " listed=" + QString::number(allowed_.contains(url)) + " permitted=" + QString::number(allowed));
   return new ImageReply(request, fetcher_, allowed, this);
+}
+
+bool ArticleImages::tracingEnabled() {
+  static const bool enabled = qEnvironmentVariableIsSet("QUITERS_IMAGE_DEBUG");
+  return enabled;
+}
+void ArticleImages::trace(const QString &message) {
+  if (!tracingEnabled()) return;
+  // The application redirects Qt messages to its own log. Keep this opt-in trace
+  // on stderr so it can be captured independently, including release builds.
+  const QByteArray line = message.simplified().toUtf8();
+  std::fprintf(stderr, "[article-images] %s\n", line.constData());
+}
+QString ArticleImages::describeUrl(const QUrl &url) {
+  if (url.scheme() == "data") return QStringLiteral("data:[inline image]");
+  return url.adjusted(QUrl::RemoveUserInfo | QUrl::RemoveQuery | QUrl::RemoveFragment).toDisplayString();
 }

@@ -46,6 +46,9 @@ QString WebPage::prepareArticle(const QString &html, const QUrl &base, const QSt
   QSet<QUrl> urls;
   const QString result = ArticleContent::sanitize(html, base, prefix, images, &urls);
   images_->allow(urls);
+  ArticleImages::trace(QString("article %1 images-enabled=%2 allowed-images=%3 WebKit-auto-images=%4")
+                       .arg(prefix).arg(images).arg(urls.size())
+                       .arg(settings()->testAttribute(QWebSettings::AutoLoadImages)));
   return result;
 }
 bool WebPage::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &request, NavigationType type) {
@@ -59,3 +62,8 @@ bool WebPage::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &r
     request.url() == QUrl("https://quiterss.invalid/"));
 }
 QWebPage *WebPage::createWindow(WebWindowType) { return nullptr; }
+
+void WebPage::javaScriptConsoleMessage(const QString &message, int lineNumber, const QString &sourceID) {
+  ArticleImages::trace(QString("WebKit console line=%1 source=%2: %3")
+                       .arg(lineNumber).arg(ArticleImages::describeUrl(QUrl(sourceID)), message));
+}

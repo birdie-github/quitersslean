@@ -29,6 +29,7 @@ public:
   QString prepareArticle(const QString &html, const QUrl &base, const QString &prefix, bool images);
 protected:
   bool acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &request, NavigationType type) override;
+  void javaScriptConsoleMessage(const QString &message, int lineNumber, const QString &sourceID) override;
   QWebPage *createWindow(WebWindowType) override;
 private:
   ArticleImages *images_;

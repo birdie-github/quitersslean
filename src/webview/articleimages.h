@@ -25,6 +25,9 @@ public:
   explicit ArticleImages(QObject *parent = nullptr);
   void allow(const QSet<QUrl> &urls) { allowed_ += urls; }
   void reset();
+  static bool tracingEnabled();
+  static void trace(const QString &message);
+  static QString describeUrl(const QUrl &url);
 protected:
   QNetworkReply *createRequest(Operation operation, const QNetworkRequest &request, QIODevice *data) override;
 private:
