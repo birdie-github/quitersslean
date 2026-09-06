@@ -19,7 +19,6 @@
 
 #include "mainapplication.h"
 #include "networkmanagerproxy.h"
-#include "webpluginfactory.h"
 #include "adblockicon.h"
 #include "adblockmanager.h"
 
@@ -36,7 +35,8 @@ WebPage::WebPage(QObject *parent)
   networkManagerProxy_ = new NetworkManagerProxy(this, this);
   setNetworkAccessManager(networkManagerProxy_);
 
-  setPluginFactory(new WebPluginFactory(this));
+  // Disable NPAPI even when an existing profile enabled browser plug-ins.
+  settings()->setAttribute(QWebSettings::PluginsEnabled, false);
   setForwardUnsupportedContent(true);
 
   action(QWebPage::OpenFrameInNewWindow)->setVisible(false);
@@ -51,10 +51,8 @@ WebPage::WebPage(QObject *parent)
           this, SLOT(downloadRequested(QNetworkRequest)));
   connect(this, SIGNAL(printRequested(QWebFrame*)),
           mainApp->mainWindow(), SLOT(slotPrint(QWebFrame*)));
-#if QT_VERSION >= 0x050905
   connect(this, SIGNAL(fullScreenRequested(QWebFullScreenRequest)),
           this, SLOT(slotFullScreenRequested(QWebFullScreenRequest)));
-#endif
   livingPages_.append(this);
 }
 
@@ -159,18 +157,6 @@ void WebPage::handleUnsupportedContent(QNetworkReply* reply)
   switch (reply->error()) {
   case QNetworkReply::NoError:
     if (reply->header(QNetworkRequest::ContentTypeHeader).isValid()) {
-      QString requestUrl = reply->request().url().toString(QUrl::RemoveFragment | QUrl::RemoveQuery);
-      if (requestUrl.endsWith(QLatin1String(".swf"))) {
-        const QWebElement &docElement = mainFrame()->documentElement();
-        const QWebElement &object = docElement.findFirst(QString("object[src=\"%1\"]").arg(requestUrl));
-        const QWebElement &embed = docElement.findFirst(QString("embed[src=\"%1\"]").arg(requestUrl));
-
-        if (!object.isNull() || !embed.isNull()) {
-          qDebug() << "WebPage::UnsupportedContent" << url << "Attempt to download flash object on site!";
-          reply->deleteLater();
-          return;
-        }
-      }
       mainApp->downloadManager()->handleUnsupportedContent(reply, mainApp->mainWindow()->askDownloadLocation_);
       return;
     } // fall through
@@ -287,10 +273,8 @@ void WebPage::cleanBlockedObjects()
   }
 }
 
-#if QT_VERSION >= 0x050905
 void WebPage::slotFullScreenRequested(QWebFullScreenRequest fullScreenRequest)
 {
   fullScreenRequest.accept();
   mainApp->mainWindow()->webViewFullScreen(fullScreenRequest.toggleOn());
 }
-#endif

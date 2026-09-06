@@ -544,24 +544,6 @@ Ancient news could reappear</source>
     </message>
 </context>
 <context>
-    <name>ClickToFlash</name>
-    <message>
-        <location filename="../src/plugins/clicktoflash.cpp" line="130"/>
-        <source>Object blocked by ClickToFlash</source>
-        <translation>شی توسط کلیک در فلش مسدود شده است</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/clicktoflash.cpp" line="132"/>
-        <source>Hide object</source>
-        <translation>مخفی کردن شی</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/clicktoflash.cpp" line="133"/>
-        <source>Add &apos;%1&apos; to whitelist</source>
-        <translation>افزودن &apos;%1&apos; به لیست سفید</translation>
-    </message>
-</context>
-<context>
     <name>CustomizeToolbarDialog</name>
     <message>
         <location filename="../src/customizetoolbardialog.cpp" line="34"/>
@@ -3046,11 +3028,6 @@ Ancient news could reappear</source>
         <translation>بررسی خودکار برای بروزرسانی</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="301"/>
-        <source>Help improve QuiteRSS by sending usage information</source>
-        <translation>کمک به بهترسازی برنامه با ارسال اطلاعات مصرف</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="302"/>
         <source>Store a DB in memory (requires program restart)</source>
         <translation>(ذخیره پایگاه داده در حافظه (برنامه باید ریستارت شود</translation>
@@ -3228,11 +3205,6 @@ Ancient news could reappear</source>
         <translation>فعالسازی جاوا اسکریپت</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="515"/>
-        <source>Enable plug-ins</source>
-        <translation>فعالسازی افزونه</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="521"/>
         <source>Open links in embedded browser in background</source>
         <translation>بازکردن لینک ها در مرورگر جاسازی شده در پس زمینه</translation>
@@ -3318,16 +3290,6 @@ Ancient news could reappear</source>
         <translation>کوکی:</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="664"/>
-        <source>Click To Flash is a plugin which blocks auto loading of Flash content at page. You can always load it manually by clicking on the Flash play icon.</source>
-        <translation>کلیک روی فلش یک پلاگین هست که بارگیری محتوای فلش موجود در صفحه را خودکار مسدود میکند</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="669"/>
-        <source>Use Click to Flash</source>
-        <translation>استفاده از کلیک روی فلش</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="681"/>
         <source>Add...</source>
         <translation>افزودن...</translation>
@@ -3351,11 +3313,6 @@ Ancient news could reappear</source>
         <location filename="../src/optionsdialog.cpp" line="743"/>
         <source>History</source>
         <translation>تاریخچه</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="745"/>
-        <source>Click to Flash</source>
-        <translation>کلیک روی فلش</translation>
     </message>
     <message>
         <location filename="../src/optionsdialog.cpp" line="747"/>
@@ -4139,11 +4096,6 @@ Ancient news could reappear</source>
         <location filename="../src/optionsdialog.cpp" line="2880"/>
         <source>Open Directory...</source>
         <translation>بازکردن دایرکتوی...</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="2861"/>
-        <source>Add site to whitelist</source>
-        <translation>افزودن سایت به لیست سفید</translation>
     </message>
     <message>
         <location filename="../src/optionsdialog.cpp" line="2862"/>

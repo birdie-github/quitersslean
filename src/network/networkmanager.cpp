@@ -24,10 +24,9 @@
 #include "adblockmanager.h"
 #include "webpage.h"
 #include "sslerrordialog.h"
-#include "cabundleupdater.h"
 
 #include <QNetworkReply>
-#include <QSslSocket>
+#include <QSslConfiguration>
 #include <QDebug>
 
 static QString fileNameForCert(const QSslCertificate &cert)
@@ -85,29 +84,7 @@ NetworkManager::~NetworkManager()
 
 void NetworkManager::loadSettings()
 {
-#if defined(Q_OS_WIN) || defined(Q_OS_OS2)
-  QString certDir = mainApp->dataDir() + "/certificates";
-  QString bundlePath = certDir + "/ca-bundle.crt";
-  QString bundleVersionPath = certDir + "/bundle_version";
-
-  if (!QDir(certDir).exists()) {
-    QDir dir;
-    dir.mkdir(certDir);
-  }
-
-  if (!QFile::exists(bundlePath)) {
-    QFile(":data/ca-bundle.crt").copy(bundlePath);
-    QFile(bundlePath).setPermissions(QFile::ReadUser | QFile::WriteUser);
-
-    QFile(":data/bundle_version").copy(bundleVersionPath);
-    QFile(bundleVersionPath).setPermissions(QFile::ReadUser | QFile::WriteUser);
-  }
-
-  QSslSocket::setDefaultCaCertificates(QSslCertificate::fromPath(bundlePath));
-#else
-  QSslSocket::setDefaultCaCertificates(QSslSocket::systemCaCertificates());
-#endif
-
+  // Load roots from Qt's platform trust store, not the retired bundled file.
   loadCertificates();
 }
 
@@ -119,13 +96,12 @@ void NetworkManager::loadCertificates()
   ignoreAllWarnings_ = settings.value("IgnoreAllSSLWarnings", false).toBool();
   settings.endGroup();
 
+  localCerts_.clear();
+
   // CA Certificates
-  caCerts_ = QSslSocket::defaultCaCertificates();
+  caCerts_ = QSslConfiguration::systemCaCertificates();
 
   foreach (const QString &path, certPaths_) {
-#ifdef Q_OS_WIN
-    // Used from Qt 4.7.4 qsslcertificate.cpp and modified because QSslCertificate::fromPath
-    // is kind of a bugged on Windows, it does work only with full path to cert file
     QDirIterator it(path, QDir::Files, QDirIterator::FollowSymlinks | QDirIterator::Subdirectories);
     while (it.hasNext()) {
       QString filePath = it.next();
@@ -138,16 +114,14 @@ void NetworkManager::loadCertificates()
         caCerts_ += QSslCertificate::fromData(file.readAll(), QSsl::Pem);
       }
     }
-#else
-    caCerts_ += QSslCertificate::fromPath(path + "/*.crt", QSsl::Pem, QRegExp::Wildcard);
-#endif
   }
   // Local Certificates
-#ifdef Q_OS_WIN
   QDirIterator it_(mainApp->dataDir() + "/certificates", QDir::Files, QDirIterator::FollowSymlinks | QDirIterator::Subdirectories);
   while (it_.hasNext()) {
     QString filePath = it_.next();
-    if (!filePath.endsWith(QLatin1String(".crt"))) {
+    // Do not re-import the obsolete bundled roots from an existing profile.
+    if (!filePath.endsWith(QLatin1String(".crt")) ||
+        QFileInfo(filePath).fileName() == QLatin1String("ca-bundle.crt")) {
       continue;
     }
 
@@ -156,15 +130,11 @@ void NetworkManager::loadCertificates()
       localCerts_ += QSslCertificate::fromData(file.readAll(), QSsl::Pem);
     }
   }
-#else
-  localCerts_ = QSslCertificate::fromPath(mainApp->dataDir() + "/certificates/*.crt", QSsl::Pem, QRegExp::Wildcard);
-#endif
 
-  QSslSocket::setDefaultCaCertificates(caCerts_ + localCerts_);
+  QSslConfiguration ssl = QSslConfiguration::defaultConfiguration();
+  ssl.setCaCertificates(caCerts_ + localCerts_);
+  QSslConfiguration::setDefaultConfiguration(ssl);
 
-#if defined(Q_OS_WIN) || defined(Q_OS_OS2)
-  new CaBundleUpdater(this, this);
-#endif
 }
 
 /** @brief Request authentification
@@ -346,7 +316,9 @@ bool NetworkManager::containsRejectedCerts(const QList<QSslCertificate> &certs)
 void NetworkManager::addLocalCertificate(const QSslCertificate &cert)
 {
   localCerts_.append(cert);
-  QSslSocket::addDefaultCaCertificate(cert);
+  QSslConfiguration ssl = QSslConfiguration::defaultConfiguration();
+  ssl.addCaCertificate(cert);
+  QSslConfiguration::setDefaultConfiguration(ssl);
 
   QDir dir(mainApp->dataDir());
   if (!dir.exists("certificates")) {
@@ -370,9 +342,9 @@ void NetworkManager::removeLocalCertificate(const QSslCertificate &cert)
 {
   localCerts_.removeOne(cert);
 
-  QList<QSslCertificate> certs = QSslSocket::defaultCaCertificates();
-  certs.removeOne(cert);
-  QSslSocket::setDefaultCaCertificates(certs);
+  QSslConfiguration ssl = QSslConfiguration::defaultConfiguration();
+  ssl.setCaCertificates(caCerts_ + localCerts_);
+  QSslConfiguration::setDefaultConfiguration(ssl);
 
   // Delete cert file from profile
   bool deleted = false;

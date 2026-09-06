@@ -257,15 +257,9 @@ void RequestFeed::finished(QNetworkReply *reply)
             if (redirectionTarget.host().isEmpty()) {
               if (redirectionTarget.path() == ".") {
                 if (redirectionTarget.hasQuery()) {
-#if QT_VERSION >= 0x050000
                   QString query = redirectionTarget.query();
                   redirectionTarget.setUrl(replyUrl.scheme() + "://" + host + replyUrl.path());
                   redirectionTarget.setQuery(query);
-#else
-                  QByteArray query = redirectionTarget.encodedQuery();
-                  redirectionTarget.setUrl(replyUrl.scheme() + "://" + host + replyUrl.path());
-                  redirectionTarget.setEncodedQuery(query);
-#endif
                 }
               } else {
                 redirectionTarget.setUrl(replyUrl.scheme() + "://" + host + redirectionTarget.toString());

@@ -173,122 +173,22 @@ void Common::sleep(int ms)
 
 QString Common::operatingSystem()
 {
-#ifdef Q_OS_MAC
-  QString str = "Mac OS X";
-  return str;
-#endif
-#ifdef Q_OS_LINUX
-  return "Linux";
-#endif
-#ifdef Q_OS_BSD4
-  return "BSD 4.4";
-#endif
-#ifdef Q_OS_BSDI
-  return "BSD/OS";
-#endif
-#ifdef Q_OS_FREEBSD
-  return "FreeBSD";
-#endif
-#ifdef Q_OS_HPUX
-  return "HP-UX";
-#endif
-#ifdef Q_OS_HURD
-  return "GNU Hurd";
-#endif
-#ifdef Q_OS_LYNX
-  return "LynxOS";
-#endif
-#ifdef Q_OS_NETBSD
-  return "NetBSD";
-#endif
-#ifdef Q_OS_OS2
-  return "OS/2";
-#endif
-#ifdef Q_OS_OPENBSD
-  return "OpenBSD";
-#endif
-#ifdef Q_OS_OSF
-  return "HP Tru64 UNIX";
-#endif
-#ifdef Q_OS_SOLARIS
-  return "Sun Solaris";
-#endif
-#ifdef Q_OS_UNIXWARE
-  return "UnixWare 7 / Open UNIX 8";
-#endif
-#ifdef Q_OS_UNIX
-  return "Unix";
-#endif
-#ifdef Q_OS_HAIKU
-  return "Haiku";
-#endif
-#ifdef Q_OS_WIN32
-  QString str = "Windows NT";
-
-  switch (QSysInfo::windowsVersion()) {
-  case QSysInfo::WV_NT:
-    str.append(" 4.0");
-    break;
-
-  case QSysInfo::WV_2000:
-    str.append(" 5.0");
-    break;
-
-  case QSysInfo::WV_XP:
-    str.append(" 5.1");
-    break;
-  case QSysInfo::WV_2003:
-    str.append(" 5.2");
-    break;
-
-  case QSysInfo::WV_VISTA:
-    str.append(" 6.0");
-    break;
-
-  case QSysInfo::WV_WINDOWS7:
-    str.append(" 6.1");
-    break;
-
-  case QSysInfo::WV_WINDOWS8:
-    str.append(" 6.2");
-    break;
-#if QT_VERSION >= 0x050400
-  case QSysInfo::WV_WINDOWS8_1:
-    str.append(" 6.3");
-    break;
-#endif
-#if QT_VERSION >= 0x050600
-  case QSysInfo::WV_WINDOWS10:
-    str.append(" 10.0");
-    break;
-#endif
-  default:
-    break;
-  }
-
-  return str;
-#endif
+  return QSysInfo::prettyProductName();
 }
 
 QString Common::cpuArchitecture()
 {
-#if QT_VERSION >= 0x050400
   return QSysInfo::currentCpuArchitecture();
-#else
-  return "";
-#endif
 }
 
 QString Common::operatingSystemLong()
 {
   QString os = Common::operatingSystem();
-#if QT_VERSION >= 0x050400
 #ifdef Q_OS_UNIX
     if (QGuiApplication::platformName() == QL1S("xcb"))
         os.prepend(QL1S("X11; "));
     else if (QGuiApplication::platformName().startsWith(QL1S("wayland")))
         os.prepend(QL1S("Wayland; "));
-#endif
 #endif
 
   const QString arch = cpuArchitecture();

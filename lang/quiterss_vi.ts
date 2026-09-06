@@ -544,24 +544,6 @@ Các tin tức cũ có thể xuất hiện trở lại</translation>
     </message>
 </context>
 <context>
-    <name>ClickToFlash</name>
-    <message>
-        <location filename="../src/plugins/clicktoflash.cpp" line="130"/>
-        <source>Object blocked by ClickToFlash</source>
-        <translation>Đối tượng bị khóa bởi ClickToFlash</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/clicktoflash.cpp" line="132"/>
-        <source>Hide object</source>
-        <translation>Ẩn đối tượng</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/clicktoflash.cpp" line="133"/>
-        <source>Add &apos;%1&apos; to whitelist</source>
-        <translation>Thêm &apos;%1&apos; vào danh sách cho phép</translation>
-    </message>
-</context>
-<context>
     <name>CustomizeToolbarDialog</name>
     <message>
         <location filename="../src/customizetoolbardialog.cpp" line="34"/>
@@ -3046,11 +3028,6 @@ không được tìm thấy!</translation>
         <translation>Tự động kiểm tra cập nhật phiên bản mới</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="301"/>
-        <source>Help improve QuiteRSS by sending usage information</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="302"/>
         <source>Store a DB in memory (requires program restart)</source>
         <translation>Lưu trữ một hệ cơ sở dữ liệu trong bộ nhớ (cần khởi động lại chương trình)</translation>
@@ -3228,11 +3205,6 @@ không được tìm thấy!</translation>
         <translation>Bật JavaScript</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="515"/>
-        <source>Enable plug-ins</source>
-        <translation>Cho phép tiện ích</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="521"/>
         <source>Open links in embedded browser in background</source>
         <translation>Mở liên kết trong trình duyệt được nhúng vào cửa sổ nền</translation>
@@ -3318,16 +3290,6 @@ không được tìm thấy!</translation>
         <translation>Cookies:</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="664"/>
-        <source>Click To Flash is a plugin which blocks auto loading of Flash content at page. You can always load it manually by clicking on the Flash play icon.</source>
-        <translation>Click To Flash là một tiện ích chặn việc tự động tải lại nội dung của các trang web có chứa Flash. Bạn có thể luôn luôn tự mình tải lại nội dung bằng cách click vào biểu tượng phát nội dung của Flash</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="669"/>
-        <source>Use Click to Flash</source>
-        <translation>Sử dụng Click to Flash</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="681"/>
         <source>Add...</source>
         <translation>Thêm...</translation>
@@ -3351,11 +3313,6 @@ không được tìm thấy!</translation>
         <location filename="../src/optionsdialog.cpp" line="743"/>
         <source>History</source>
         <translation>Lịch sử</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="745"/>
-        <source>Click to Flash</source>
-        <translation>Click to Flash</translation>
     </message>
     <message>
         <location filename="../src/optionsdialog.cpp" line="747"/>
@@ -4139,11 +4096,6 @@ không được tìm thấy!</translation>
         <location filename="../src/optionsdialog.cpp" line="2880"/>
         <source>Open Directory...</source>
         <translation>Mở thư mục...</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="2861"/>
-        <source>Add site to whitelist</source>
-        <translation>Thêm trang vào danh sách an toàn</translation>
     </message>
     <message>
         <location filename="../src/optionsdialog.cpp" line="2862"/>

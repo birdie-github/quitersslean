@@ -55,11 +55,7 @@ OptionsDialog::OptionsDialog(QWidget *parent)
   categoriesTree_->setColumnHidden(0, true);
   categoriesTree_->header()->setStretchLastSection(false);
   categoriesTree_->header()->resizeSection(2, 5);
-#ifdef HAVE_QT5
   categoriesTree_->header()->setSectionResizeMode(1, QHeaderView::Stretch);
-#else
-  categoriesTree_->header()->setResizeMode(1, QHeaderView::Stretch);
-#endif
   categoriesTree_->setMinimumWidth(150);
   QStringList treeItem;
   treeItem << "0" << tr("General");
@@ -203,7 +199,6 @@ void OptionsDialog::acceptDialog()
 #endif
 
   applyProxy();
-  applyWhitelist();
   applyLabels();
   applyNotifier();
   applyPass();
@@ -298,7 +293,6 @@ void OptionsDialog::createGeneralWidget()
   showCloseButtonTab_ = new QCheckBox(tr("Show close button on tab"));
 
   updateCheckEnabled_ = new QCheckBox(tr("Automatically check for updates"));
-  statisticsEnabled_ = new QCheckBox(tr("Help improve QuiteRSS by sending usage information"));
   storeDBMemory_ = new QCheckBox(tr("Store a DB in memory (requires program restart)"));
   storeDBMemory_->setChecked(false);
   saveDBMemFileInterval_ = new QSpinBox();
@@ -344,7 +338,6 @@ void OptionsDialog::createGeneralWidget()
 #endif
 
   generalLayout->addWidget(updateCheckEnabled_);
-  generalLayout->addWidget(statisticsEnabled_);
   generalLayout->addWidget(storeDBMemory_);
   generalLayout->addWidget(saveDBMemFileWidget);
   generalLayout->addStretch(1);
@@ -512,7 +505,6 @@ void OptionsDialog::createBrowserWidget()
 
   autoLoadImages_ = new QCheckBox(tr("Load images"));
   javaScriptEnable_ = new QCheckBox(tr("Enable JavaScript"));
-  pluginsEnable_ = new QCheckBox(tr("Enable plug-ins"));
   defaultZoomPages_ = new QSpinBox();
   defaultZoomPages_->setMaximum(300);
   defaultZoomPages_->setMinimum(30);
@@ -553,7 +545,6 @@ void OptionsDialog::createBrowserWidget()
   contentBrowserLayout->setContentsMargins(15, 0, 5, 10);
   contentBrowserLayout->addWidget(autoLoadImages_);
   contentBrowserLayout->addWidget(javaScriptEnable_);
-  contentBrowserLayout->addWidget(pluginsEnable_);
   contentBrowserLayout->addLayout(zoomLayout);
 
   QGridLayout *userStyleBrowserLayout = new QGridLayout();
@@ -659,62 +650,6 @@ void OptionsDialog::createBrowserWidget()
   QWidget *historyBrowserWidget_ = new QWidget();
   historyBrowserWidget_->setLayout(historyMainLayout);
 
-
-  //! tab "Click to Flash"
-  QLabel *c2fInfo = new QLabel(tr("Click To Flash is a plugin which blocks auto loading of "
-                                 "Flash content at page. You can always load it manually "
-                                 "by clicking on the Flash play icon."));
-  c2fInfo->setWordWrap(true);
-
-  c2fEnabled_ = new QCheckBox(tr("Use Click to Flash"));
-  c2fEnabled_->setChecked(false);
-
-  c2fWhitelist_ = new QTreeWidget(this);
-  c2fWhitelist_->setObjectName("c2fWhiteList_");
-  c2fWhitelist_->setRootIsDecorated(false);
-  c2fWhitelist_->setColumnCount(1);
-
-  QStringList treeItem;
-  treeItem << "Whitelist";
-  c2fWhitelist_->setHeaderLabels(treeItem);
-
-  QPushButton *addButton = new QPushButton(tr("Add..."), this);
-  connect(addButton, SIGNAL(clicked()), this, SLOT(addWhitelist()));
-  QPushButton *removeButton = new QPushButton(tr("Remove..."), this);
-  connect(removeButton, SIGNAL(clicked()), this, SLOT(removeWhitelist()));
-
-  QVBoxLayout *click2FlashLayout1 = new QVBoxLayout();
-  click2FlashLayout1->addWidget(addButton);
-  click2FlashLayout1->addWidget(removeButton);
-  click2FlashLayout1->addStretch(1);
-
-  QHBoxLayout *click2FlashLayout2 = new QHBoxLayout();
-  click2FlashLayout2->setMargin(0);
-  click2FlashLayout2->addWidget(c2fWhitelist_, 1);
-  click2FlashLayout2->addLayout(click2FlashLayout1);
-
-  QWidget *c2fWhitelistWidget = new QWidget(this);
-  c2fWhitelistWidget->setLayout(click2FlashLayout2);
-  c2fWhitelistWidget->setEnabled(false);
-
-  connect(c2fEnabled_, SIGNAL(toggled(bool)),
-          c2fWhitelistWidget, SLOT(setEnabled(bool)));
-
-  QVBoxLayout *click2FlashLayout = new QVBoxLayout();
-  click2FlashLayout->setMargin(10);
-  click2FlashLayout->addWidget(c2fInfo);
-  click2FlashLayout->addWidget(c2fEnabled_);
-  click2FlashLayout->addWidget(c2fWhitelistWidget, 1);
-
-  QWidget *click2FlashWidget_ = new QWidget(this);
-  click2FlashWidget_->setLayout(click2FlashLayout);
-
-  c2fEnabled_->setChecked(mainApp->c2fIsEnabled());
-  foreach(const QString & site, mainApp->c2fGetWhitelist()) {
-    QTreeWidgetItem* item = new QTreeWidgetItem(c2fWhitelist_);
-    item->setText(0, site);
-  }
-
   //! tab "Downloads"
   downloadLocationEdit_ = new LineEdit();
   QPushButton *downloadLocationButton = new QPushButton(tr("Browse..."));
@@ -741,9 +676,6 @@ void OptionsDialog::createBrowserWidget()
   browserWidget_ = new QTabWidget();
   browserWidget_->addTab(generalBrowserWidget, tr("General"));
   browserWidget_->addTab(historyBrowserWidget_, tr("History"));
-#if QT_VERSION < 0x050900
-  browserWidget_->addTab(click2FlashWidget_, tr("Click to Flash"));
-#endif
   browserWidget_->addTab(downloadsWidget, tr("Downloads"));
 }
 
@@ -822,7 +754,6 @@ void OptionsDialog::createFeedsWidget()
 
   QWidget *generalFeedsWidget = new QWidget();
   generalFeedsWidget->setLayout(generalFeedsLayout);
-
 
   //! tab "Display"
   QStringList itemList;
@@ -911,7 +842,6 @@ void OptionsDialog::createFeedsWidget()
   QWidget *displayFeedsWidget = new QWidget();
   displayFeedsWidget->setLayout(displayFeedsLayout);
 
-
   //! tab "Reading"
   QVBoxLayout* readingMainLayout = new QVBoxLayout();
 
@@ -977,7 +907,6 @@ void OptionsDialog::createFeedsWidget()
 
   QWidget* readingFeedsWidget = new QWidget();
   readingFeedsWidget->setLayout(readingMainLayout);
-
 
 //! tab "Clean Up"
   QWidget *cleanUpFeedsWidget = new QWidget();
@@ -1157,7 +1086,6 @@ void OptionsDialog::createNotifierWidget()
   notifierLayout2->addWidget(timeShowNewsNotify_, 3, 1);
   notifierLayout2->addWidget(new QLabel(tr("seconds")), 3, 2);
 
-
   showTitlesFeedsNotify_ = new QCheckBox(tr("Show titles feeds"));
   showIconFeedNotify_ = new QCheckBox(tr("Show icon feed"));
   showButtonMarkAllNotify_ = new QCheckBox(tr("Show button 'Mark All News Read'"));
@@ -1209,7 +1137,6 @@ void OptionsDialog::createNotifierWidget()
   QVBoxLayout *notificationLayout = new QVBoxLayout(notificationWidget);
   notificationLayout->addWidget(showNotifyOn_);
 
-
   soundNotifyBox_ = new QGroupBox(tr("Play sound for incoming new news"));
   soundNotifyBox_->setCheckable(true);
   soundNotifyBox_->setChecked(false);
@@ -1236,7 +1163,6 @@ void OptionsDialog::createNotifierWidget()
   QWidget *soundNotifyWidget = new QWidget();
   QVBoxLayout *boxCleanUpFeedsLayout = new QVBoxLayout(soundNotifyWidget);
   boxCleanUpFeedsLayout->addWidget(soundNotifyBox_);
-
 
   notifierWidget_ = new QTabWidget();
   notifierWidget_->addTab(notificationWidget, tr("Notification"));
@@ -1831,7 +1757,6 @@ void OptionsDialog::createFontsColorsWidget()
   QWidget *fontsBrowserWidget_ = new QWidget(this);
   fontsBrowserWidget_->setLayout(fontsBrowserLayout);
 
-
   fontsColorsWidget_ = new QTabWidget();
   fontsColorsWidget_->addTab(fontsWidget, tr("Fonts"));
   fontsColorsWidget_->addTab(fontsBrowserWidget_, tr("Fonts Browser"));
@@ -2311,16 +2236,6 @@ void OptionsDialog::selectionBrowser()
                                                   path);
   if (!fileName.isEmpty())
     otherExternalBrowserEdit_->setText(fileName);
-}
-//----------------------------------------------------------------------------
-void OptionsDialog::applyWhitelist()
-{
-  mainApp->c2fSetEnabled(c2fEnabled_->isChecked());
-  QStringList whitelist;
-  for (int i = 0; i < c2fWhitelist_->topLevelItemCount(); i++) {
-    whitelist.append(c2fWhitelist_->topLevelItem(i)->text(0));
-  }
-  mainApp->c2fSetWhitelist(whitelist);
 }
 //----------------------------------------------------------------------------
 void OptionsDialog::selectionUserStyleNews()
@@ -2854,25 +2769,6 @@ void OptionsDialog::selectionDirDiskCache()
                                                        | QFileDialog::DontResolveSymlinks);
   if (!dirStr.isEmpty())
     dirDiskCacheEdit_->setText(dirStr);
-}
-//----------------------------------------------------------------------------
-void OptionsDialog::addWhitelist()
-{
-  QString site = QInputDialog::getText(this, tr("Add site to whitelist"),
-                                       tr("Site without 'http://' (ex. youtube.com)"));
-  if (site.isEmpty())
-    return;
-
-  c2fWhitelist_->insertTopLevelItem(0, new QTreeWidgetItem(QStringList(site)));
-}
-//----------------------------------------------------------------------------
-void OptionsDialog::removeWhitelist()
-{
-  QTreeWidgetItem* item = c2fWhitelist_->currentItem();
-  if (!item)
-    return;
-
-  delete item;
 }
 //----------------------------------------------------------------------------
 void OptionsDialog::selectionDownloadLocation()

@@ -544,24 +544,6 @@ Erittäin vanhoja uutisia saattaa ilmestyä uudelleen.</translation>
     </message>
 </context>
 <context>
-    <name>ClickToFlash</name>
-    <message>
-        <location filename="../src/plugins/clicktoflash.cpp" line="130"/>
-        <source>Object blocked by ClickToFlash</source>
-        <translation>ClickToFlash esti objektin</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/clicktoflash.cpp" line="132"/>
-        <source>Hide object</source>
-        <translation>Piilota objekti</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/clicktoflash.cpp" line="133"/>
-        <source>Add &apos;%1&apos; to whitelist</source>
-        <translation>Lisää &apos;%1&apos; sallittujen listalle</translation>
-    </message>
-</context>
-<context>
     <name>CustomizeToolbarDialog</name>
     <message>
         <location filename="../src/customizetoolbardialog.cpp" line="34"/>
@@ -3046,11 +3028,6 @@ ei löydetty!</translation>
         <translation>Tarkista päivitykset automaattisesti</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="301"/>
-        <source>Help improve QuiteRSS by sending usage information</source>
-        <translation>Auta parantamaan QuiteRSS ohjelmaa lähettämällä käyttötietoja.</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="302"/>
         <source>Store a DB in memory (requires program restart)</source>
         <translation>Säilytä tietokanta muistissa (vaatii uudelleenkäynnistyksen)</translation>
@@ -3228,11 +3205,6 @@ ei löydetty!</translation>
         <translation>Salli JavaScript</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="515"/>
-        <source>Enable plug-ins</source>
-        <translation>Salli liitännäiset</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="521"/>
         <source>Open links in embedded browser in background</source>
         <translation>Avaa linkit sisäisessä selaimessa taustalla</translation>
@@ -3318,16 +3290,6 @@ ei löydetty!</translation>
         <translation>Keksit:</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="664"/>
-        <source>Click To Flash is a plugin which blocks auto loading of Flash content at page. You can always load it manually by clicking on the Flash play icon.</source>
-        <translation>Click To Flash on liitännäinen joka estää Flash-sisällön automaattisen lataamisen. Voit ladata sisällön manuaalisesti painamalla kuvaketta.</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="669"/>
-        <source>Use Click to Flash</source>
-        <translation>Käytä Click To Flash -liitännäistä</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="681"/>
         <source>Add...</source>
         <translation>Lisää...</translation>
@@ -3351,11 +3313,6 @@ ei löydetty!</translation>
         <location filename="../src/optionsdialog.cpp" line="743"/>
         <source>History</source>
         <translation>Historia</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="745"/>
-        <source>Click to Flash</source>
-        <translation>Click to Flash</translation>
     </message>
     <message>
         <location filename="../src/optionsdialog.cpp" line="747"/>
@@ -4139,11 +4096,6 @@ ei löydetty!</translation>
         <location filename="../src/optionsdialog.cpp" line="2880"/>
         <source>Open Directory...</source>
         <translation>Avaa kansio...</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="2861"/>
-        <source>Add site to whitelist</source>
-        <translation>Lisää sivu sallittujen listalle</translation>
     </message>
     <message>
         <location filename="../src/optionsdialog.cpp" line="2862"/>

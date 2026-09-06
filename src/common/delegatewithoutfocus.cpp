@@ -26,11 +26,7 @@ void DelegateWithoutFocus::paint(QPainter *painter,
                                  const QStyleOptionViewItem &option,
                                  const QModelIndex &index) const
 {
-#if QT_VERSION >= 0x050000
   QStyleOptionViewItem opt = option;
-#else  
-  QStyleOptionViewItemV4 opt = option;
-#endif
   opt.state &= ~QStyle::State_HasFocus;
   QStyledItemDelegate::paint(painter,opt,index);
 }

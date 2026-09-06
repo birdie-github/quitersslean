@@ -18,11 +18,7 @@
 #ifndef NOTIFICATIONSWIDGET_H
 #define NOTIFICATIONSWIDGET_H
 
-#ifdef HAVE_QT5
 #include <QtWidgets>
-#else
-#include <QtGui>
-#endif
 #include <QtSql>
 
 #include "toolbutton.h"

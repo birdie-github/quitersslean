@@ -1,5 +1,5 @@
 /**************************************************************************
-* Extensible SQLite driver for Qt4/Qt5
+* Extensible SQLite driver for Qt5
 * Copyright (C) 2011-2012 Michał Męciński
 * Copyright (C) 2011-2020 QuiteRSS Team <quiterssteam@gmail.com>
 *
@@ -42,10 +42,8 @@
 
 #include <sqlite3.h>
 
-#ifdef HAVE_QT5
 Q_DECLARE_OPAQUE_POINTER(sqlite3*)
 Q_DECLARE_OPAQUE_POINTER(sqlite3_stmt*)
-#endif
 Q_DECLARE_METATYPE(sqlite3*)
 Q_DECLARE_METATYPE(sqlite3_stmt*)
 
@@ -317,22 +315,6 @@ SQLiteResult::~SQLiteResult()
   delete d;
 }
 
-void SQLiteResult::virtual_hook(int id, void *data)
-{
-#ifdef HAVE_QT5
-  SqlCachedResult::virtual_hook(id, data);
-#else
-  switch (id) {
-  case QSqlResult::DetachFromResultSet:
-    if (d->stmt)
-      sqlite3_reset(d->stmt);
-    break;
-  default:
-    SqlCachedResult::virtual_hook(id, data);
-  }
-#endif
-}
-
 
 
 bool SQLiteResult::reset(const QString &query)
@@ -489,13 +471,11 @@ QSqlRecord SQLiteResult::record() const
   return d->rInf;
 }
 
-#ifdef HAVE_QT5
 void SQLiteResult::detachFromResultSet()
 {
   if (d->stmt)
     sqlite3_reset(d->stmt);
 }
-#endif
 
 QVariant SQLiteResult::handle() const
 {
@@ -552,9 +532,7 @@ bool SQLiteDriver::hasFeature(DriverFeature f) const
   case BatchOperations:
   case EventNotifications:
   case MultipleResultSets:
-#ifdef HAVE_QT5
   case CancelQuery:
-#endif
     return false;
   }
   return false;

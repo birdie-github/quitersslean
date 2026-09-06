@@ -544,24 +544,6 @@ Les anciens articles pourraient réapparaître</translation>
     </message>
 </context>
 <context>
-    <name>ClickToFlash</name>
-    <message>
-        <location filename="../src/plugins/clicktoflash.cpp" line="130"/>
-        <source>Object blocked by ClickToFlash</source>
-        <translation>Objet bloqué par ClickToFlash</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/clicktoflash.cpp" line="132"/>
-        <source>Hide object</source>
-        <translation>Cacher l&apos;objet</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/clicktoflash.cpp" line="133"/>
-        <source>Add &apos;%1&apos; to whitelist</source>
-        <translation>Ajouter « %1 » à la liste blanche</translation>
-    </message>
-</context>
-<context>
     <name>CustomizeToolbarDialog</name>
     <message>
         <location filename="../src/customizetoolbardialog.cpp" line="34"/>
@@ -3046,11 +3028,6 @@ Les anciens articles pourraient réapparaître</translation>
         <translation>Vérifier automatiquement les mises à jour</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="301"/>
-        <source>Help improve QuiteRSS by sending usage information</source>
-        <translation>Aidez à améliorer QuiteRSS en envoyant des informations d&apos;utilisation</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="302"/>
         <source>Store a DB in memory (requires program restart)</source>
         <translation>Stocker une base de données dans la mémoire (nécessite le redémarrage du programme)</translation>
@@ -3228,11 +3205,6 @@ Les anciens articles pourraient réapparaître</translation>
         <translation>Activer JavaScript</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="515"/>
-        <source>Enable plug-ins</source>
-        <translation>Activer les modules externes</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="521"/>
         <source>Open links in embedded browser in background</source>
         <translation>Ouvrir les liens dans le navigateur intégré en arrière-plan</translation>
@@ -3318,16 +3290,6 @@ Les anciens articles pourraient réapparaître</translation>
         <translation>Cookies :</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="664"/>
-        <source>Click To Flash is a plugin which blocks auto loading of Flash content at page. You can always load it manually by clicking on the Flash play icon.</source>
-        <translation>« Cliquez pour Flasher » est un plugin qui bloque le chargement automatique des contenus Flash de la page. Vous pouvez toujours les charger manuellement en cliquant sur l&apos;icône « Jouer Flash ».</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="669"/>
-        <source>Use Click to Flash</source>
-        <translation>Utiliser « Cliquez pour Flasher »</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="681"/>
         <source>Add...</source>
         <translation>Ajouter...</translation>
@@ -3351,11 +3313,6 @@ Les anciens articles pourraient réapparaître</translation>
         <location filename="../src/optionsdialog.cpp" line="743"/>
         <source>History</source>
         <translation>Historique</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="745"/>
-        <source>Click to Flash</source>
-        <translation>Cliquez pour Flasher</translation>
     </message>
     <message>
         <location filename="../src/optionsdialog.cpp" line="747"/>
@@ -4139,11 +4096,6 @@ Les anciens articles pourraient réapparaître</translation>
         <location filename="../src/optionsdialog.cpp" line="2880"/>
         <source>Open Directory...</source>
         <translation>Ouvrir le répertoire...</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="2861"/>
-        <source>Add site to whitelist</source>
-        <translation>Ajouter le site à la liste blanche</translation>
     </message>
     <message>
         <location filename="../src/optionsdialog.cpp" line="2862"/>

@@ -17,7 +17,6 @@
 * ============================================================ */
 #include "qzregexp.h"
 
-#if (QT_VERSION >= 0x050000)
 QzRegExp::QzRegExp()
     : QRegularExpression(QString(), QRegularExpression::DotMatchesEverythingOption)
     , m_matchedLength(-1)
@@ -82,5 +81,4 @@ QString QzRegExp::cap(int nth) const
 
     return m_capturedTexts.at(nth);
 }
-#endif // (QT_VERSION >= 0x050000)
 

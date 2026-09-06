@@ -544,24 +544,6 @@ Ancient news could reappear</source>
     </message>
 </context>
 <context>
-    <name>ClickToFlash</name>
-    <message>
-        <location filename="../src/plugins/clicktoflash.cpp" line="130"/>
-        <source>Object blocked by ClickToFlash</source>
-        <translation>ClickToFlash에서 차단 된 개체</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/clicktoflash.cpp" line="132"/>
-        <source>Hide object</source>
-        <translation>개체 숨기기</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/clicktoflash.cpp" line="133"/>
-        <source>Add &apos;%1&apos; to whitelist</source>
-        <translation>&apos;%1&apos;을 허용목록에 추가</translation>
-    </message>
-</context>
-<context>
     <name>CustomizeToolbarDialog</name>
     <message>
         <location filename="../src/customizetoolbardialog.cpp" line="34"/>
@@ -3046,11 +3028,6 @@ Ancient news could reappear</source>
         <translation>자동 업데이트 검사</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="301"/>
-        <source>Help improve QuiteRSS by sending usage information</source>
-        <translation>사용 정보를 전송하여 QuiteRSS을 개선에 도움을 줍니다.</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="302"/>
         <source>Store a DB in memory (requires program restart)</source>
         <translation>DB를 메모리에 불러옴 (프로그램 재시작 필요)</translation>
@@ -3228,11 +3205,6 @@ Ancient news could reappear</source>
         <translation>javaScript 사용</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="515"/>
-        <source>Enable plug-ins</source>
-        <translation>플러그인 사용</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="521"/>
         <source>Open links in embedded browser in background</source>
         <translation>링크를 내장브라우저 백그라운드로 열기</translation>
@@ -3318,16 +3290,6 @@ Ancient news could reappear</source>
         <translation>쿠키:</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="664"/>
-        <source>Click To Flash is a plugin which blocks auto loading of Flash content at page. You can always load it manually by clicking on the Flash play icon.</source>
-        <translation>Click To Flash는 페이지의 플래쉬 컨텐츠 자동 로딩을 차단하는 플러그인입니다. 플래쉬 재생 아이콘을 클릭하면 재생합니다.</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="669"/>
-        <source>Use Click to Flash</source>
-        <translation>Click To Flash 사용</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="681"/>
         <source>Add...</source>
         <translation>추가...</translation>
@@ -3351,11 +3313,6 @@ Ancient news could reappear</source>
         <location filename="../src/optionsdialog.cpp" line="743"/>
         <source>History</source>
         <translation>이력</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="745"/>
-        <source>Click to Flash</source>
-        <translation>Click to Flash</translation>
     </message>
     <message>
         <location filename="../src/optionsdialog.cpp" line="747"/>
@@ -4139,11 +4096,6 @@ Ancient news could reappear</source>
         <location filename="../src/optionsdialog.cpp" line="2880"/>
         <source>Open Directory...</source>
         <translation>폴더 열기...</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="2861"/>
-        <source>Add site to whitelist</source>
-        <translation>허용목록 사이트 추가</translation>
     </message>
     <message>
         <location filename="../src/optionsdialog.cpp" line="2862"/>

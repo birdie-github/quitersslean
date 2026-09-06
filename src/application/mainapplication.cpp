@@ -40,7 +40,6 @@ MainApplication::MainApplication(int &argc, char **argv)
   , cookieJar_(0)
   , diskCache_(0)
   , downloadManager_(0)
-  , analytics_(0)
 {
   setApplicationName("QuiteRss");
   setOrganizationName("QuiteRss");
@@ -75,8 +74,6 @@ MainApplication::MainApplication(int &argc, char **argv)
   setStyleApplication();
   setTranslateApplication();
   showSplashScreen();
-
-  createGoogleAnalytics();
 
   connectDatabase();
   setProgressSplashScreen(30);
@@ -191,22 +188,6 @@ void MainApplication::createSettings()
   proxyLoadSettings();
 }
 
-void MainApplication::createGoogleAnalytics()
-{
-  Settings settings;
-  bool statisticsEnabled = settings.value("Settings/statisticsEnabled2", true).toBool();
-  if (statisticsEnabled) {
-    QString clientID;
-    if (!settings.contains("GAnalytics-cid")) {
-      settings.setValue("GAnalytics-cid", QUuid::createUuid().toString());
-    }
-    clientID = settings.value("GAnalytics-cid").toString();
-    analytics_ = new GAnalytics(this, TRACKING_ID, clientID);
-    analytics_->generateUserAgentEtc();
-    analytics_->startSession();
-  }
-}
-
 void MainApplication::connectDatabase()
 {
   QString fileName(dbFileName() % ".bak");
@@ -223,13 +204,6 @@ void MainApplication::connectDatabase()
     }
   }
 
-#if defined(HAVE_QT5) && defined(HAVE_X11)
-  fileName = "~/.local/share/data/QuiteRss/QuiteRss/feeds.db";
-  if (!QFile(dbFileName()).exists() && QFile(fileName).exists()) {
-    QFile::copy(fileName, dbFileName());
-  }
-#endif
-
   if (QFile(dbFileName()).exists()) {
     dbFileExists_ = true;
   }
@@ -239,7 +213,6 @@ void MainApplication::connectDatabase()
 
 void MainApplication::loadSettings()
 {
-  c2fLoadSettings();
   reloadUserStyleBrowser();
 }
 
@@ -251,12 +224,6 @@ void MainApplication::quitApplication()
   delete networkManager_;
   delete cookieJar_;
   delete closingWidget_;
-
-  if (analytics_) {
-    analytics_->endSession();
-    analytics_->waitForIdle();
-    delete analytics_;
-  }
 
   qWarning() << "Quit application";
 
@@ -527,52 +494,7 @@ void MainApplication::sqlQueryExec(const QString &query)
   emit signalSqlQueryExec(query);
 }
 
-/** @brief Click to Flash
- *---------------------------------------------------------------------------*/
-void MainApplication::c2fLoadSettings()
 {
-  Settings settings;
-  settings.beginGroup("ClickToFlash");
-  c2fWhitelist_ = settings.value("whitelist", QStringList()).toStringList();
-  c2fEnabled_ = settings.value("enabled", true).toBool();
-#if QT_VERSION >= 0x050900
-  c2fEnabled_ = false;
-#endif
-  settings.endGroup();
-}
-
-void MainApplication::c2fSaveSettings()
-{
-  Settings settings;
-  settings.beginGroup("ClickToFlash");
-  settings.setValue("whitelist", c2fWhitelist_);
-  settings.setValue("enabled", c2fEnabled_);
-  settings.endGroup();
-}
-
-bool MainApplication::c2fIsEnabled() const
-{
-  return c2fEnabled_;
-}
-
-void MainApplication::c2fSetEnabled(bool enabled)
-{
-  c2fEnabled_ = enabled;
-}
-
-QStringList MainApplication::c2fGetWhitelist()
-{
-  return c2fWhitelist_;
-}
-
-void MainApplication::c2fSetWhitelist(QStringList whitelist)
-{
-  c2fWhitelist_ = whitelist;
-}
-
-void MainApplication::c2fAddWhitelist(const QString &site)
-{
-  c2fWhitelist_.append(site);
 }
 
 DownloadManager *MainApplication::downloadManager()

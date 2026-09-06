@@ -18,11 +18,7 @@
 #ifndef NOTIFICATIONSFEEDITEM_H
 #define NOTIFICATIONSFEEDITEM_H
 
-#ifdef HAVE_QT5
 #include <QtWidgets>
-#else
-#include <QtGui>
-#endif
 
 class FeedItem : public QWidget
 {

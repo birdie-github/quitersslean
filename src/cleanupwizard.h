@@ -18,11 +18,7 @@
 #ifndef CLEANUPWIZARD_H
 #define CLEANUPWIZARD_H
 
-#ifdef HAVE_QT5
 #include <QtWidgets>
-#else
-#include <QtGui>
-#endif
 
 class CleanUpWizard : public QWizard
 {

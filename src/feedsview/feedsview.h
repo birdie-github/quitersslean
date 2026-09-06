@@ -18,11 +18,7 @@
 #ifndef FEEDSVIEW_H
 #define FEEDSVIEW_H
 
-#ifdef HAVE_QT5
 #include <QtWidgets>
-#else
-#include <QtGui>
-#endif
 #include <feedsmodel.h>
 
 class FeedsView : public QTreeView

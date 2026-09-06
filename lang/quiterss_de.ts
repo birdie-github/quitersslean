@@ -544,24 +544,6 @@ Ancient news could reappear</source>
     </message>
 </context>
 <context>
-    <name>ClickToFlash</name>
-    <message>
-        <location filename="../src/plugins/clicktoflash.cpp" line="130"/>
-        <source>Object blocked by ClickToFlash</source>
-        <translation>Objekt durch ClickToFlash geblockt</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/clicktoflash.cpp" line="132"/>
-        <source>Hide object</source>
-        <translation>Objekt verbergen</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/clicktoflash.cpp" line="133"/>
-        <source>Add &apos;%1&apos; to whitelist</source>
-        <translation>&apos;%1 zur Positivliste hinzufügen</translation>
-    </message>
-</context>
-<context>
     <name>CustomizeToolbarDialog</name>
     <message>
         <location filename="../src/customizetoolbardialog.cpp" line="34"/>
@@ -3044,11 +3026,6 @@ Ancient news could reappear</source>
         <translation>Automatisch nach Programmaktualisierung suchen</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="301"/>
-        <source>Help improve QuiteRSS by sending usage information</source>
-        <translation>QuiteRSS durch Senden von Nutzungsdaten verbessern helfen</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="302"/>
         <source>Store a DB in memory (requires program restart)</source>
         <translation>Eine DB im Speicher behalten (erfordert Neustart des Programms)</translation>
@@ -3226,11 +3203,6 @@ Ancient news could reappear</source>
         <translation>JavaScript aktivieren</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="515"/>
-        <source>Enable plug-ins</source>
-        <translation>Erweiterungen aktivieren</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="521"/>
         <source>Open links in embedded browser in background</source>
         <translation>Zieladresse im internen Browser im Hintergrund öffnen</translation>
@@ -3316,16 +3288,6 @@ Ancient news could reappear</source>
         <translation>Cookies:</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="664"/>
-        <source>Click To Flash is a plugin which blocks auto loading of Flash content at page. You can always load it manually by clicking on the Flash play icon.</source>
-        <translation>Die Click To Flash-Erweiterung unterbindet das automatische Laden von Flash-Inhalten einer Seite. Durch Klick auf das Abspielsymbol können Flash-Inhalte aktiviert werden.</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="669"/>
-        <source>Use Click to Flash</source>
-        <translation>Click to Flash verwenden</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="681"/>
         <source>Add...</source>
         <translation>Hinzufügen...</translation>
@@ -3349,11 +3311,6 @@ Ancient news could reappear</source>
         <location filename="../src/optionsdialog.cpp" line="743"/>
         <source>History</source>
         <translation>Verlauf</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="745"/>
-        <source>Click to Flash</source>
-        <translation>Click to Flash</translation>
     </message>
     <message>
         <location filename="../src/optionsdialog.cpp" line="747"/>
@@ -4137,11 +4094,6 @@ Ancient news could reappear</source>
         <location filename="../src/optionsdialog.cpp" line="2880"/>
         <source>Open Directory...</source>
         <translation>Verzeichnis öffnen...</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="2861"/>
-        <source>Add site to whitelist</source>
-        <translation>Webseite zur Positivliste hinzufügen</translation>
     </message>
     <message>
         <location filename="../src/optionsdialog.cpp" line="2862"/>

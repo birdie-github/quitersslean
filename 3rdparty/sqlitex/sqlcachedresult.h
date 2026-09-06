@@ -1,5 +1,5 @@
 /**************************************************************************
-* Extensible SQLite driver for Qt4/Qt5
+* Extensible SQLite driver for Qt5
 * Copyright (C) 2011-2012 Michał Męciński
 * Copyright (C) 2011-2020 QuiteRSS Team <quiterssteam@gmail.com>
 *
@@ -56,11 +56,8 @@ protected:
   int colCount() const;
   ValueCache &cache();
 
-#ifdef HAVE_QT5
   void detachFromResultSet();
   void setNumericalPrecisionPolicy(QSql::NumericalPrecisionPolicy policy);
-#endif
-  void virtual_hook(int id, void *data);
 
 private:
   bool cacheNext();

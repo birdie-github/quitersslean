@@ -18,11 +18,7 @@
 #ifndef NOTIFICATIONSNEWSITEM_H
 #define NOTIFICATIONSNEWSITEM_H
 
-#ifdef HAVE_QT5
 #include <QtWidgets>
-#else
-#include <QtGui>
-#endif
 #include <QtSql>
 
 #include "toolbutton.h"

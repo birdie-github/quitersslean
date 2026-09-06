@@ -29,11 +29,7 @@ const size_t maxLogFileSize = 1 * 1024 * 1024; //1 MB
 class LogFile
 {
 public:
-#ifdef HAVE_QT5
   static void msgHandler(QtMsgType type, const QMessageLogContext &, const QString &msg);
-#else
-  static void msgHandler(QtMsgType type, const char *msg);
-#endif
 
 private:
   explicit LogFile();

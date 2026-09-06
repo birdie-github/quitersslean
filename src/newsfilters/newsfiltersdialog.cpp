@@ -36,11 +36,7 @@ NewsFiltersDialog::NewsFiltersDialog(QWidget *parent)
   filtersTree_->setColumnHidden(3, true);
   filtersTree_->setSortingEnabled(false);
   filtersTree_->header()->resizeSection(1, 150);
-#ifdef HAVE_QT5
   filtersTree_->header()->setSectionsMovable(false);
-#else
-  filtersTree_->header()->setMovable(false);
-#endif
 
   QStringList treeItem;
   treeItem << "Id" << tr("Filter Name") << tr("Feeds") << "Num";

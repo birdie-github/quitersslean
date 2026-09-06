@@ -45,10 +45,7 @@
 #include <QTime>
 
 #if defined(Q_OS_WIN)
-#include <QLibrary>
 #include <qt_windows.h>
-typedef BOOL(WINAPI*PProcessIdToSessionId)(DWORD,DWORD*);
-static PProcessIdToSessionId pProcessIdToSessionId = 0;
 #endif
 #if defined(Q_OS_UNIX) || defined(Q_OS_OS2)
 #include <sys/types.h>
@@ -87,13 +84,8 @@ QtLocalPeer::QtLocalPeer(QObject* parent, const QString &appId)
                  + QLatin1Char('-') + QString::number(idNum, 16);
 
 #if defined(Q_OS_WIN)
-    if (!pProcessIdToSessionId) {
-        QLibrary lib("kernel32");
-        pProcessIdToSessionId = (PProcessIdToSessionId)lib.resolve("ProcessIdToSessionId");
-    }
-    if (pProcessIdToSessionId) {
-        DWORD sessionId = 0;
-        pProcessIdToSessionId(GetCurrentProcessId(), &sessionId);
+    DWORD sessionId = 0;
+    if (ProcessIdToSessionId(GetCurrentProcessId(), &sessionId)) {
         socketName += QLatin1Char('-') + QString::number(sessionId, 16);
     }
 #else
@@ -119,8 +111,8 @@ bool QtLocalPeer::isClient()
         return true;
 
     bool res = server->listen(socketName);
-#if defined(Q_OS_UNIX) && (QT_VERSION >= QT_VERSION_CHECK(4,5,0))
-    // ### Workaround
+#ifdef Q_OS_UNIX
+    // Recover a stale Unix-domain socket after the previous process exited.
     if (!res && server->serverError() == QAbstractSocket::AddressInUseError) {
         QFile::remove(QDir::cleanPath(QDir::tempPath())+QLatin1Char('/')+socketName);
         res = server->listen(socketName);

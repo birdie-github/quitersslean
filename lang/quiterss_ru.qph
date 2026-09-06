@@ -746,10 +746,6 @@
     <target>Включить JavaScript</target>
 </phrase>
 <phrase>
-    <source>Enable plug-ins</source>
-    <target>Включить плагины</target>
-</phrase>
-<phrase>
     <source>Notifications</source>
     <target>Уведомления</target>
 </phrase>
@@ -1854,10 +1850,6 @@
     <target>Добавить &apos;%1&apos; в белый список</target>
 </phrase>
 <phrase>
-    <source>Object blocked by ClickToFlash</source>
-    <target>Объект заблокирован ClickToFlash</target>
-</phrase>
-<phrase>
     <source>Find in News</source>
     <target>Найти в новостях</target>
 </phrase>
@@ -1926,18 +1918,6 @@
     <target>Использовать дисковый кэш</target>
 </phrase>
 <phrase>
-    <source>Click To Flash is a plugin which blocks auto loading of Flash content at page. You can always load it manually by clicking on the Flash play icon.</source>
-    <target>Click To Flash - плагин, блокирующий автоматическую загрузку Flash содержимого. Вы всегда можете просмотреть заблокированное содержимое, кликнув по значку &apos;Play&apos;.</target>
-</phrase>
-<phrase>
-    <source>Use Click to Flash</source>
-    <target>Использовать Click to Flash</target>
-</phrase>
-<phrase>
-    <source>Click to Flash</source>
-    <target>Click to Flash</target>
-</phrase>
-<phrase>
     <source>Simplified representation of date and time</source>
     <target>Упрощённое представление даты и времени</target>
 </phrase>
@@ -1960,10 +1940,6 @@
 <phrase>
     <source>Open Directory...</source>
     <target>Открыть каталог...</target>
-</phrase>
-<phrase>
-    <source>Add site to whitelist</source>
-    <target>Добавить сайт в белый список</target>
 </phrase>
 <phrase>
     <source>Site without &apos;http://&apos; (ex. youtube.com)</source>

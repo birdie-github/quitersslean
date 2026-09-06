@@ -544,24 +544,6 @@ Ancient news could reappear</source>
     </message>
 </context>
 <context>
-    <name>ClickToFlash</name>
-    <message>
-        <location filename="../src/plugins/clicktoflash.cpp" line="130"/>
-        <source>Object blocked by ClickToFlash</source>
-        <translation>Nesne ClickToFlash taradından engellendi</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/clicktoflash.cpp" line="132"/>
-        <source>Hide object</source>
-        <translation>Nesneyi gizle</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/clicktoflash.cpp" line="133"/>
-        <source>Add &apos;%1&apos; to whitelist</source>
-        <translation>&apos;%1&apos; i aklanmışlar listesine ekle </translation>
-    </message>
-</context>
-<context>
     <name>CustomizeToolbarDialog</name>
     <message>
         <location filename="../src/customizetoolbardialog.cpp" line="34"/>
@@ -3046,11 +3028,6 @@ adlı dosya bulunamadı!</translation>
         <translation>Güncellemeleri otomatik kontrol et</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="301"/>
-        <source>Help improve QuiteRSS by sending usage information</source>
-        <translation>Kullanım bilgilerini göndererek QuiteRSS&apos;i geliştirmeye yardımcı olun</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="302"/>
         <source>Store a DB in memory (requires program restart)</source>
         <translation>Ram&apos;deki bilgiyi veritabanına kaydet ( programın yeniden başlamasını gerektirir )</translation>
@@ -3228,11 +3205,6 @@ adlı dosya bulunamadı!</translation>
         <translation>JavaSciript aktif</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="515"/>
-        <source>Enable plug-ins</source>
-        <translation>Eklentiler aktif</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="521"/>
         <source>Open links in embedded browser in background</source>
         <translation>Arka planda gömülü tarayıcıda linkleri aç</translation>
@@ -3318,16 +3290,6 @@ adlı dosya bulunamadı!</translation>
         <translation>Çerezler:</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="664"/>
-        <source>Click To Flash is a plugin which blocks auto loading of Flash content at page. You can always load it manually by clicking on the Flash play icon.</source>
-        <translation>Sayfadaki flash uygulamasının otoyüklemesi engellendi.Flash simgesine tıklayarak elle bu uygulamayı başlatabilirsiniz.</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="669"/>
-        <source>Use Click to Flash</source>
-        <translation>ClicktoFlash&apos;ı kullan</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="681"/>
         <source>Add...</source>
         <translation>Ekle...</translation>
@@ -3351,11 +3313,6 @@ adlı dosya bulunamadı!</translation>
         <location filename="../src/optionsdialog.cpp" line="743"/>
         <source>History</source>
         <translation>Geçmiş</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="745"/>
-        <source>Click to Flash</source>
-        <translation>Flash&apos;a tıkla</translation>
     </message>
     <message>
         <location filename="../src/optionsdialog.cpp" line="747"/>
@@ -4139,11 +4096,6 @@ adlı dosya bulunamadı!</translation>
         <location filename="../src/optionsdialog.cpp" line="2880"/>
         <source>Open Directory...</source>
         <translation>Rehberi Aç...</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="2861"/>
-        <source>Add site to whitelist</source>
-        <translation>Aklanmışlar listesine site ekle</translation>
     </message>
     <message>
         <location filename="../src/optionsdialog.cpp" line="2862"/>

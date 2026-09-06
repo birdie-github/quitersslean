@@ -18,11 +18,7 @@
 #ifndef FINDTEXT_H
 #define FINDTEXT_H
 
-#ifdef HAVE_QT5
 #include <QtWidgets>
-#else
-#include <QtGui>
-#endif
 
 class FindTextContent : public QLineEdit
 {

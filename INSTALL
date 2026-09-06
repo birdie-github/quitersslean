@@ -1,16 +1,20 @@
 Build depends:
   GCC or Clang compiler
   SQLite version 3.30.1 or newer
-  Qt version 4.7.* or 4.8.* or 5.4.*
+  Qt 5.15.x with QtWebKit 5.212 (development headers required)
   Required Qt development tools:
     qmake
     lrelease
   Required Qt libraries:
     QtCore
     QtGui
+    QtWidgets
+    QtPrintSupport
+    QtMultimedia
     QtNetwork
     QtSql compiled with sqlite support
     QtWebKit
+    QtWebKitWidgets
     QtXml
 
 
@@ -26,21 +30,18 @@ By default qmake uses gcc, for using clang you need to alter qmake command:
   qmake QMAKE_CC=clang QMAKE_CXX=clang++ QMAKE_LINK=clang++ QMAKE_LINK_C=clang CONFIG+=release PREFIX=/usr ../QuiteRSS.pro
 
 For building with system qtsingleapplication add SYSTEMQTSA=1 to qmake command.
-For building without phonon add DISABLE_PHONON=1 to qmake command.
 
-Instruction for Windows:
-  Visual Studio:
-    qmake CONFIG-=debug_and_release CONFIG-=debug -tp vc -platform win32-msvc2013
-
-    Due to a qmake bug, you will need to manually edit the generated .vcxproj and .filters file, to fix error messages on opening VS2013.
-
-    To do this, identify the duplicate set of items based on the error message (all within the same item group),
-    and delete from the starting <ItemGroup> tag, to the closing </ItemGroup> tag.
+Instructions for Windows:
+  Use a Qt 5.15 toolchain with matching QtWebKit 5.212 libraries.
+  From the compiler environment, run:
+    qmake CONFIG+=release CONFIG-=debug_and_release QuiteRSS.pro
+    nmake
+  For MinGW, use mingw32-make instead of nmake.
 
 
 Instructions for Mac OS:
   cd /path/to/build
-  qmake -recursive -spec macx-g++ CONFIG+=release CONFIG+=x86_64 /path/to/quiterss/QuiteRSS.pro
+  qmake CONFIG+=release /path/to/quiterss/QuiteRSS.pro
   make -j3
   make install
   cd /path/to/build/release/target

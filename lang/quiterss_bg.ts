@@ -544,24 +544,6 @@ Ancient news could reappear</source>
     </message>
 </context>
 <context>
-    <name>ClickToFlash</name>
-    <message>
-        <location filename="../src/plugins/clicktoflash.cpp" line="130"/>
-        <source>Object blocked by ClickToFlash</source>
-        <translation>Обект, блокиран от ClickToFlash</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/clicktoflash.cpp" line="132"/>
-        <source>Hide object</source>
-        <translation>Скрий обекта</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/clicktoflash.cpp" line="133"/>
-        <source>Add &apos;%1&apos; to whitelist</source>
-        <translation>Добави &apos;%1&apos; към белия списък</translation>
-    </message>
-</context>
-<context>
     <name>CustomizeToolbarDialog</name>
     <message>
         <location filename="../src/customizetoolbardialog.cpp" line="34"/>
@@ -3046,11 +3028,6 @@ Ancient news could reappear</source>
         <translation>Проверявай автоматично за обновления</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="301"/>
-        <source>Help improve QuiteRSS by sending usage information</source>
-        <translation>Помогнете за  подобряването на QuiteRSS чрез изпращане на статистики</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="302"/>
         <source>Store a DB in memory (requires program restart)</source>
         <translation>Запазвайте DB в паметта (изисква рестарт на програмата)</translation>
@@ -3228,11 +3205,6 @@ Ancient news could reappear</source>
         <translation>Разреши JavaScript</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="515"/>
-        <source>Enable plug-ins</source>
-        <translation>Разреши добавки</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="521"/>
         <source>Open links in embedded browser in background</source>
         <translation>Отваряй връзките във вградения браузър във фонов режим</translation>
@@ -3318,16 +3290,6 @@ Ancient news could reappear</source>
         <translation>Бисквитки:</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="664"/>
-        <source>Click To Flash is a plugin which blocks auto loading of Flash content at page. You can always load it manually by clicking on the Flash play icon.</source>
-        <translation>Click To Flash е добавка, която блокира автоматичното зареждане на Flash в страницата. Винаги може да бъде зареден ръчно, като кликнете на иконата Flash play.</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="669"/>
-        <source>Use Click to Flash</source>
-        <translation>Използвай Click to Flash</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="681"/>
         <source>Add...</source>
         <translation>Добави...</translation>
@@ -3351,11 +3313,6 @@ Ancient news could reappear</source>
         <location filename="../src/optionsdialog.cpp" line="743"/>
         <source>History</source>
         <translation>История</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="745"/>
-        <source>Click to Flash</source>
-        <translation>Click to Flash</translation>
     </message>
     <message>
         <location filename="../src/optionsdialog.cpp" line="747"/>
@@ -4139,11 +4096,6 @@ Ancient news could reappear</source>
         <location filename="../src/optionsdialog.cpp" line="2880"/>
         <source>Open Directory...</source>
         <translation>Отвори папка...</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="2861"/>
-        <source>Add site to whitelist</source>
-        <translation>Добави сайта в белия списък</translation>
     </message>
     <message>
         <location filename="../src/optionsdialog.cpp" line="2862"/>

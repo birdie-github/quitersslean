@@ -21,20 +21,11 @@
 #include <QString>
 #include <QDir>
 
-#define TRACKING_ID "UA-99877778-1"
 
 #define ADBLOCK_EASYLIST_URL "https://easylist-downloads.adblockplus.org/easylist.txt"
 
-#ifndef Q_UNLIKELY
-#define Q_UNLIKELY(x) x
-#endif
-
 #ifndef QSL
-#if QT_VERSION >= 0x050000
 #define QSL(x) QStringLiteral(x)
-#else
-#define QSL(x) QLatin1String(x)
-#endif
 #endif
 
 #ifndef QL1S
@@ -47,9 +38,6 @@
 
 namespace Common
 {
-#if defined(Q_OS_WIN) || defined(Q_OS_OS2)
-  static const QString Qz_RAWVCS = "https://raw.githubusercontent.com/QupZilla/qupzilla/v1.8";
-#endif
 
   bool removePath(const QString &path);
   bool matchDomain(const QString &pattern, const QString &domain);

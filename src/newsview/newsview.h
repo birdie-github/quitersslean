@@ -18,11 +18,7 @@
 #ifndef NEWSVIEW_H
 #define NEWSVIEW_H
 
-#ifdef HAVE_QT5
 #include <QtWidgets>
-#else
-#include <QtGui>
-#endif
 
 #include "newsmodel.h"
 

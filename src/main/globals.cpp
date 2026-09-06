@@ -17,13 +17,8 @@
 * ============================================================ */
 #include "globals.h"
 
-#ifdef HAVE_QT5
 #include <QStandardPaths>
 #include <QWebPage>
-#else
-#include <QDesktopServices>
-#include <qwebkitversion.h>
-#endif
 #include <QCoreApplication>
 #include <QDir>
 #include <QStringBuilder>
@@ -72,13 +67,8 @@ void Globals::init()
     cacheDir_ = "cache";
     soundNotifyDir_ = "sound";
   } else {
-#ifdef HAVE_QT5
     dataDir_ = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
     cacheDir_ = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
-#else
-    dataDir_ = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
-    cacheDir_ = QDesktopServices::storageLocation(QDesktopServices::CacheLocation);
-#endif
     soundNotifyDir_ = resourcesDir_ % "/sound";
 
     QDir dir(dataDir_);

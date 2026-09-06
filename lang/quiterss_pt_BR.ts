@@ -544,24 +544,6 @@ Notícias antigas podem reaparecer</translation>
     </message>
 </context>
 <context>
-    <name>ClickToFlash</name>
-    <message>
-        <location filename="../src/plugins/clicktoflash.cpp" line="130"/>
-        <source>Object blocked by ClickToFlash</source>
-        <translation>Objeto bloqueado por ClickToFlash</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/clicktoflash.cpp" line="132"/>
-        <source>Hide object</source>
-        <translation>Ocultar o objeto</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/clicktoflash.cpp" line="133"/>
-        <source>Add &apos;%1&apos; to whitelist</source>
-        <translation>Adicionar &apos;%1&apos; à lista branca</translation>
-    </message>
-</context>
-<context>
     <name>CustomizeToolbarDialog</name>
     <message>
         <location filename="../src/customizetoolbardialog.cpp" line="34"/>
@@ -3046,11 +3028,6 @@ não foi encontrado!</translation>
         <translation>Verificar automaticamente as atualizações</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="301"/>
-        <source>Help improve QuiteRSS by sending usage information</source>
-        <translation>Ajude a melhorar o QuiteRSS, enviando as informações de uso</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="302"/>
         <source>Store a DB in memory (requires program restart)</source>
         <translation>Armazenar um Banco de Dados na memória (requer reinicialização do programa)</translation>
@@ -3228,11 +3205,6 @@ não foi encontrado!</translation>
         <translation>Ativar o JavaScript</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="515"/>
-        <source>Enable plug-ins</source>
-        <translation>Ativar os plug-ins</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="521"/>
         <source>Open links in embedded browser in background</source>
         <translation>Abrir os links no navegador embutido no plano de fundo</translation>
@@ -3318,16 +3290,6 @@ não foi encontrado!</translation>
         <translation>Cookies:</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="664"/>
-        <source>Click To Flash is a plugin which blocks auto loading of Flash content at page. You can always load it manually by clicking on the Flash play icon.</source>
-        <translation>O Click To Flash é um plugin que bloqueia o carregamento automático de conteúdo em Flash na página. Você sempre pode carregá-lo manualmente clicando no ícone de reprodução Flash.</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="669"/>
-        <source>Use Click to Flash</source>
-        <translation>Usar o Click to Flash</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="681"/>
         <source>Add...</source>
         <translation>Adicionar</translation>
@@ -3351,11 +3313,6 @@ não foi encontrado!</translation>
         <location filename="../src/optionsdialog.cpp" line="743"/>
         <source>History</source>
         <translation>Histórico</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="745"/>
-        <source>Click to Flash</source>
-        <translation>Click to Flash</translation>
     </message>
     <message>
         <location filename="../src/optionsdialog.cpp" line="747"/>
@@ -4139,11 +4096,6 @@ não foi encontrado!</translation>
         <location filename="../src/optionsdialog.cpp" line="2880"/>
         <source>Open Directory...</source>
         <translation>Abrir Pasta...</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="2861"/>
-        <source>Add site to whitelist</source>
-        <translation>Adicionar um site à lista branca</translation>
     </message>
     <message>
         <location filename="../src/optionsdialog.cpp" line="2862"/>

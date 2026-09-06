@@ -17,11 +17,7 @@
 * ============================================================ */
 #include "logfile.h"
 
-#ifdef HAVE_QT5
 #include <QStandardPaths>
-#else
-#include <QDesktopServices>
-#endif
 #include <QDir>
 
 #include "globals.h"
@@ -31,7 +27,6 @@ LogFile::LogFile()
 {
 }
 
-#ifdef HAVE_QT5
 void LogFile::msgHandler(QtMsgType type, const QMessageLogContext &, const QString &msg)
 {
   if (!globals.isInit_)
@@ -82,55 +77,3 @@ void LogFile::msgHandler(QtMsgType type, const QMessageLogContext &, const QStri
     file.close();
   }
 }
-#else
-void LogFile::msgHandler(QtMsgType type, const char *msg)
-{
-  if (!globals.isInit_)
-    return;
-  if (QString::fromUtf8(msg) == "QFont::setPixelSize: Pixel size <= 0 (0)")
-    return;
-
-  if (type == QtDebugMsg) {
-    if (globals.noDebugOutput_)
-      return;
-  }
-
-  QFile file;
-  file.setFileName(globals.dataDir_ + "/debug.log");
-  QIODevice::OpenMode openMode = QIODevice::WriteOnly | QIODevice::Text;
-
-  if (file.exists() && (file.size() < (qint64)maxLogFileSize)) {
-    openMode |= QIODevice::Append;
-  }
-
-  file.open(openMode);
-
-  QTextStream stream;
-  stream.setDevice(&file);
-  stream.setCodec("UTF-8");
-
-  if (file.isOpen()) {
-    QString currentDateTime = QDateTime::currentDateTime().toString("dd.MM.yyyy hh:mm:ss.zzz");
-    switch (type) {
-    case QtDebugMsg:
-      stream << currentDateTime << " DEBUG: " << QString::fromUtf8(msg) << "\n";
-      break;
-    case QtWarningMsg:
-      stream << currentDateTime << " WARNING: " << QString::fromUtf8(msg) << "\n";
-      break;
-    case QtCriticalMsg:
-      stream << currentDateTime << " CRITICAL: " << QString::fromUtf8(msg) << "\n";
-      break;
-    case QtFatalMsg:
-      stream << currentDateTime << " FATAL: " << QString::fromUtf8(msg) << "\n";
-      qApp->exit(EXIT_FAILURE);
-    default:
-      break;
-    }
-
-    stream.flush();
-    file.flush();
-    file.close();
-  }
-}
-#endif

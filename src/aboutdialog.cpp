@@ -21,11 +21,7 @@
 #include "VersionNo.h"
 
 #include <sqlite3.h>
-#ifdef HAVE_QT5
 #include <QWebPage>
-#else
-#include <qwebkitversion.h>
-#endif
 
 AboutDialog::AboutDialog(const QString &lang, QWidget *parent) :
   Dialog(parent, Qt::MSWindowsFixedSizeDialogHint)

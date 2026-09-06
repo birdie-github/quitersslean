@@ -2312,9 +2312,7 @@ void NewsTabWidget::showContextWebPage(const QPoint &p)
     webView_->page()->action(QWebPage::Stop)->setText(tr("Stop"));
     webView_->page()->action(QWebPage::Reload)->setText(tr("Reload"));
     webView_->page()->action(QWebPage::CopyImageToClipboard)->setText(tr("Copy Image"));
-#if QT_VERSION >= 0x040800
     webView_->page()->action(QWebPage::CopyImageUrlToClipboard)->setText(tr("Copy Image Address"));
-#endif
 
     const QWebHitTestResult &hitTest = webView_->page()->mainFrame()->hitTestContent(p);
     if (!hitTest.linkUrl().isEmpty() && hitTest.linkUrl().scheme() != "javascript") {
@@ -2619,7 +2617,6 @@ void NewsTabWidget::slotShareNews(QAction *action)
     QUrl url;
     if (action->objectName() == "emailShareAct") {
       url.setUrl("mailto:");
-#ifdef HAVE_QT5
       QUrlQuery urlQuery;
       urlQuery.addQueryItem("subject", title);
       urlQuery.addQueryItem("body", linkString);
@@ -2629,170 +2626,86 @@ void NewsTabWidget::slotShareNews(QAction *action)
       //      urlQuery.addQueryItem("body", linkString + "\n\n" + content);
       //#endif
       url.setQuery(urlQuery);
-#else
-      url.addQueryItem("subject", title);
-#if defined(Q_OS_WIN) || defined(Q_OS_OS2) || defined(Q_OS_MAC)
-      url.addQueryItem("body", linkString + "%0A%0A" + content);
-#else
-      url.addQueryItem("body", linkString + "\n\n" + content);
-#endif
-#endif
       externalApp = true;
     } else if (action->objectName() == "evernoteShareAct") {
       url.setUrl("https://www.evernote.com/clip.action");
-#ifdef HAVE_QT5
       QUrlQuery urlQuery;
       urlQuery.addQueryItem("url", linkString);
       urlQuery.addQueryItem("title", title);
       url.setQuery(urlQuery);
-#else
-      url.addQueryItem("url", linkString);
-      url.addQueryItem("title", title);
-#endif
     } else if (action->objectName() == "facebookShareAct") {
       url.setUrl("https://www.facebook.com/sharer.php");
-#ifdef HAVE_QT5
       QUrlQuery urlQuery;
       urlQuery.addQueryItem("u", linkString);
       urlQuery.addQueryItem("t", title);
       url.setQuery(urlQuery);
-#else
-      url.addQueryItem("u", linkString);
-      url.addQueryItem("t", title);
-#endif
     } else if (action->objectName() == "livejournalShareAct") {
       url.setUrl("http://www.livejournal.com/update.bml");
-#ifdef HAVE_QT5
       QUrlQuery urlQuery;
       urlQuery.addQueryItem("event", linkString);
       urlQuery.addQueryItem("subject", title);
       url.setQuery(urlQuery);
-#else
-      url.addQueryItem("event", linkString);
-      url.addQueryItem("subject", title);
-#endif
-    } else if (action->objectName() == "pocketShareAct") {
-      url.setUrl("https://getpocket.com/save");
-#ifdef HAVE_QT5
-      QUrlQuery urlQuery;
-      urlQuery.addQueryItem("url", linkString);
-      urlQuery.addQueryItem("title", title);
-      url.setQuery(urlQuery);
-#else
-      url.addQueryItem("url", linkString);
-      url.addQueryItem("title", title);
-#endif
     } else if (action->objectName() == "twitterShareAct") {
       url.setUrl("https://twitter.com/share");
-#ifdef HAVE_QT5
       QUrlQuery urlQuery;
       urlQuery.addQueryItem("url", linkString);
       urlQuery.addQueryItem("text", title);
       url.setQuery(urlQuery);
-#else
-      url.addQueryItem("url", linkString);
-      url.addQueryItem("text", title);
-#endif
     } else if (action->objectName() == "vkShareAct") {
       url.setUrl("https://vk.com/share.php");
-#ifdef HAVE_QT5
       QUrlQuery urlQuery;
       urlQuery.addQueryItem("url", linkString);
       urlQuery.addQueryItem("title", title);
       urlQuery.addQueryItem("description", "");
       urlQuery.addQueryItem("image", "");
       url.setQuery(urlQuery);
-#else
-      url.addQueryItem("url", linkString);
-      url.addQueryItem("title", title);
-      url.addQueryItem("description", "");
-      url.addQueryItem("image", "");
-#endif
     } else if (action->objectName() == "linkedinShareAct") {
       url.setUrl("https://www.linkedin.com/shareArticle?mini=true");
-#ifdef HAVE_QT5
       QUrlQuery urlQuery;
       urlQuery.addQueryItem("url", linkString);
       urlQuery.addQueryItem("title", title);
       url.setQuery(urlQuery);
-#else
-      url.addQueryItem("url", linkString);
-      url.addQueryItem("title", title);
-#endif
     } else if (action->objectName() == "bloggerShareAct") {
       url.setUrl("https://www.blogger.com/blog_this.pyra?t");
-#ifdef HAVE_QT5
       QUrlQuery urlQuery;
       urlQuery.addQueryItem("u", linkString);
       urlQuery.addQueryItem("n", title);
       url.setQuery(urlQuery);
-#else
-      url.addQueryItem("u", linkString);
-      url.addQueryItem("n", title);
-#endif
     } else if (action->objectName() == "printfriendlyShareAct") {
       url.setUrl("https://www.printfriendly.com/print");
-#ifdef HAVE_QT5
       QUrlQuery urlQuery;
       urlQuery.addQueryItem("url", linkString);
       url.setQuery(urlQuery);
-#else
-      url.addQueryItem("url", linkString);
-#endif
     } else if (action->objectName() == "instapaperShareAct") {
       url.setUrl("https://www.instapaper.com/hello2");
-#ifdef HAVE_QT5
       QUrlQuery urlQuery;
       urlQuery.addQueryItem("url", linkString);
       urlQuery.addQueryItem("title", title);
       url.setQuery(urlQuery);
-#else
-      url.addQueryItem("url", linkString);
-      url.addQueryItem("title", title);
-#endif
     } else if (action->objectName() == "redditShareAct") {
       url.setUrl("https://reddit.com/submit");
-#ifdef HAVE_QT5
       QUrlQuery urlQuery;
       urlQuery.addQueryItem("url", linkString);
       urlQuery.addQueryItem("title", title);
       url.setQuery(urlQuery);
-#else
-      url.addQueryItem("url", linkString);
-      url.addQueryItem("title", title);
-#endif
     } else if (action->objectName() == "hackerNewsShareAct") {
       url.setUrl("http://news.ycombinator.com/submitlink");
-#ifdef HAVE_QT5
       QUrlQuery urlQuery;
       urlQuery.addQueryItem("u", linkString);
       urlQuery.addQueryItem("t", title);
       url.setQuery(urlQuery);
-#else
-      url.addQueryItem("u", linkString);
-      url.addQueryItem("t", title);
-#endif
     } else if (action->objectName() == "telegramShareAct") {
       url.setUrl("tg://msg_url");
-#ifdef HAVE_QT5
       QUrlQuery urlQuery;
       urlQuery.addQueryItem("url", linkString);
       urlQuery.addQueryItem("text", title);
       url.setQuery(urlQuery);
-#else
-      url.addQueryItem("url", linkString);
-      url.addQueryItem("text", title);
-#endif
       externalApp = true;
     } else if (action->objectName() == "viberShareAct") {
       url.setUrl("viber://forward");
-#ifdef HAVE_QT5
       QUrlQuery urlQuery;
       urlQuery.addQueryItem("text", title + "%20" + linkString);
       url.setQuery(urlQuery);
-#else
-      url.addQueryItem("text", title + "%20" + linkString);
-#endif
       externalApp = true;
     }
 

@@ -18,11 +18,7 @@
 #ifndef OPTIONSDIALOG_H
 #define OPTIONSDIALOG_H
 
-#ifdef HAVE_QT5
 #include <QtWidgets>
-#else
-#include <QtGui>
-#endif
 #include <QtSql>
 #include <QNetworkProxy>
 
@@ -53,7 +49,6 @@ public:
   QCheckBox *defaultIconFeeds_;
   QCheckBox *autocollapseFolder_;
   QCheckBox *updateCheckEnabled_;
-  QCheckBox *statisticsEnabled_;
   QCheckBox *storeDBMemory_;
   QSpinBox *saveDBMemFileInterval_;
 
@@ -85,7 +80,6 @@ public:
   QPushButton *otherExternalBrowserButton_;
   QCheckBox *autoLoadImages_;
   QCheckBox *javaScriptEnable_;
-  QCheckBox *pluginsEnable_;
   QSpinBox *defaultZoomPages_;
   QCheckBox *openLinkInBackground_;
   QCheckBox *openLinkInBackgroundEmbedded_;
@@ -258,8 +252,6 @@ private slots:
   void slotShowPass();
   void selectionUserStyleBrowser();
   void selectionDirDiskCache();
-  void addWhitelist();
-  void removeWhitelist();
   void selectionDownloadLocation();
 
 private:
@@ -313,10 +305,6 @@ private:
 
   // browser
   void createBrowserWidget();
-  void applyWhitelist();
-
-  QCheckBox *c2fEnabled_;
-  QTreeWidget *c2fWhitelist_;
 
   // feeds
   void createFeedsWidget();

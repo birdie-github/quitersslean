@@ -35,13 +35,8 @@
 #ifndef DOWNLOADITEM_H
 #define DOWNLOADITEM_H
 
-#ifdef HAVE_QT5
 #include <QtWidgets>
 #include "qftp.h"
-#else
-#include <QtGui>
-#include <QFtp>
-#endif
 #include <QTimer>
 #include <QNetworkReply>
 #include <QAuthenticator>

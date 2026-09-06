@@ -15,12 +15,8 @@ FeedsProxyModel::~FeedsProxyModel()
 
 void FeedsProxyModel::reset()
 {
-#ifdef HAVE_QT5
   QSortFilterProxyModel::beginResetModel();
   QSortFilterProxyModel::endResetModel();
-#else
-  QSortFilterProxyModel::reset();
-#endif
 }
 
 void FeedsProxyModel::setFilter(const QString &filterAct, const QList<int> &idList,

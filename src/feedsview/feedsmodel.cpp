@@ -49,14 +49,9 @@ void FeedsModel::clear()
 
 void FeedsModel::refresh()
 {
-#ifdef HAVE_QT5
   beginResetModel();
   clear();
   endResetModel();
-#else
-  reset();
-  clear();
-#endif
 
   queryModel_.setQuery("SELECT * FROM feeds ORDER BY parentId, rowToParent");
   while (queryModel_.canFetchMore())

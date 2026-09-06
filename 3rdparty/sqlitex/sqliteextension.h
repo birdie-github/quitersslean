@@ -1,5 +1,5 @@
 /**************************************************************************
-* Extensible SQLite driver for Qt4/Qt5
+* Extensible SQLite driver for Qt5
 * Copyright (C) 2011-2012 Michał Męciński
 * Copyright (C) 2011-2020 QuiteRSS Team <quiterssteam@gmail.com>
 *

@@ -18,11 +18,7 @@
 #ifndef ITEMCONDITION_H
 #define ITEMCONDITION_H
 
-#ifdef HAVE_QT5
 #include <QtWidgets>
-#else
-#include <QtGui>
-#endif
 
 #include "lineedit.h"
 #include "toolbutton.h"

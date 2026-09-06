@@ -544,24 +544,6 @@ Gali pasirodyti senos naujienos</translation>
     </message>
 </context>
 <context>
-    <name>ClickToFlash</name>
-    <message>
-        <location filename="../src/plugins/clicktoflash.cpp" line="130"/>
-        <source>Object blocked by ClickToFlash</source>
-        <translation>Objektas blokuojamas ClickToFlash</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/clicktoflash.cpp" line="132"/>
-        <source>Hide object</source>
-        <translation>Paslėpti objektą</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/clicktoflash.cpp" line="133"/>
-        <source>Add &apos;%1&apos; to whitelist</source>
-        <translation>Pridėti &apos;%1&apos; į Baltą sąrašą</translation>
-    </message>
-</context>
-<context>
     <name>CustomizeToolbarDialog</name>
     <message>
         <location filename="../src/customizetoolbardialog.cpp" line="34"/>
@@ -3046,11 +3028,6 @@ nerastas!</translation>
         <translation>Automatiškai tikrinti ar yra naujinimų</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="301"/>
-        <source>Help improve QuiteRSS by sending usage information</source>
-        <translation>Padėkite mums pagerinti QuiteRSS, siunčiant naudojimo informaciją</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="302"/>
         <source>Store a DB in memory (requires program restart)</source>
         <translation>Išsaugoti DB atmintyje (reikės perkrauti programą)</translation>
@@ -3228,11 +3205,6 @@ nerastas!</translation>
         <translation>Įjungti JavaScript</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="515"/>
-        <source>Enable plug-ins</source>
-        <translation>Įjungti papildinius</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="521"/>
         <source>Open links in embedded browser in background</source>
         <translation>Atidaryti nuorodas vidinėje naršyklėje</translation>
@@ -3318,16 +3290,6 @@ nerastas!</translation>
         <translation>Kukiai:</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="664"/>
-        <source>Click To Flash is a plugin which blocks auto loading of Flash content at page. You can always load it manually by clicking on the Flash play icon.</source>
-        <translation>&quot;Įjungti Flash&quot; yra papildinys, kuris neleidžia Flash turiniui užsikrauti puslapyje. Visada galima pačiam paleisti aplikaciją paspaudus ant &quot;Flash play&quot; ikonos.</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="669"/>
-        <source>Use Click to Flash</source>
-        <translation>Naudokite &quot;Įjungti Flash&quot;</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="681"/>
         <source>Add...</source>
         <translation>Pridėti...</translation>
@@ -3351,11 +3313,6 @@ nerastas!</translation>
         <location filename="../src/optionsdialog.cpp" line="743"/>
         <source>History</source>
         <translation>Istorija</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="745"/>
-        <source>Click to Flash</source>
-        <translation>Įjungti Flash</translation>
     </message>
     <message>
         <location filename="../src/optionsdialog.cpp" line="747"/>
@@ -4139,11 +4096,6 @@ nerastas!</translation>
         <location filename="../src/optionsdialog.cpp" line="2880"/>
         <source>Open Directory...</source>
         <translation>Atidaryti katalogą...</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="2861"/>
-        <source>Add site to whitelist</source>
-        <translation>Pridėti svetainę į Baltąjį sąrašą</translation>
     </message>
     <message>
         <location filename="../src/optionsdialog.cpp" line="2862"/>

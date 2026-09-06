@@ -20,11 +20,7 @@
 
 #define mainApp MainApplication::getInstance()
 
-#ifdef HAVE_QT5
 #include <QtWidgets>
-#else
-#include <QtGui>
-#endif
 #include <qtsingleapplication.h>
 #include <QNetworkDiskCache>
 #include <QLocale>
@@ -34,7 +30,6 @@
 #include "cookiejar.h"
 #include "downloadmanager.h"
 #include "mainwindow.h"
-#include "ganalytics.h"
 
 class NetworkManager;
 class SplashScreen;
@@ -78,19 +73,9 @@ public:
   void runUserFilter(int feedId, int filterId);
   DownloadManager *downloadManager();
 
-  void c2fLoadSettings();
-  void c2fSaveSettings();
-  bool c2fIsEnabled() const;
-  void c2fSetEnabled(bool enabled);
-  QStringList c2fGetWhitelist();
-  void c2fSetWhitelist(QStringList whitelist);
-  void c2fAddWhitelist(const QString &site);
-
   void setTranslateApplication();
   QString language() const { return langFileName_; }
   void setLanguage(const QString &lang) { langFileName_ = lang; }
-
-  GAnalytics *analytics() const { return analytics_; }
 
   QNetworkProxy networkProxy() const { return networkProxy_; }
   void proxyLoadSettings();
@@ -110,7 +95,6 @@ private slots:
 
 private:
   void createSettings();
-  void createGoogleAnalytics();
   void connectDatabase();
   void loadSettings();
   void setStyleApplication();
@@ -144,11 +128,7 @@ private:
   DownloadManager *downloadManager_;
   QWidget *closingWidget_;
 
-  QStringList c2fWhitelist_;
-  bool c2fEnabled_;
-
   QNetworkProxy networkProxy_;
-  GAnalytics *analytics_;
 
 };
 

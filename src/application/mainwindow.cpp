@@ -52,9 +52,7 @@ MainWindow::MainWindow(QWidget *parent)
   , newsFilterAction_(NULL)
   , newsView_(NULL)
   , updateTimeCount_(0)
-#if defined(HAVE_QT5) || defined(HAVE_PHONON)
   , mediaPlayer_(NULL)
-#endif
   , updateAppDialog_(NULL)
   , notificationWidget(NULL)
   , feedIdOld_(-2)
@@ -65,9 +63,6 @@ MainWindow::MainWindow(QWidget *parent)
   setObjectName("mainWindow");
   setWindowTitle("QuiteRSS");
   setContextMenuPolicy(Qt::CustomContextMenu);
-
-  if (mainApp->analytics())
-    mainApp->analytics()->sendScreenview("MainWindow");
 
   db_ = QSqlDatabase::database();
 
@@ -425,17 +420,10 @@ void MainWindow::createFeedsWidget()
   for (int i = 0; i < feedsView_->model()->columnCount(); ++i)
     feedsView_->hideColumn(i);
   feedsView_->showColumn(feedsView_->columnIndex("text"));
-#ifdef HAVE_QT5
   feedsView_->header()->setSectionResizeMode(feedsView_->columnIndex("text"), QHeaderView::Stretch);
   feedsView_->header()->setSectionResizeMode(feedsView_->columnIndex("unread"), QHeaderView::ResizeToContents);
   feedsView_->header()->setSectionResizeMode(feedsView_->columnIndex("undeleteCount"), QHeaderView::ResizeToContents);
   feedsView_->header()->setSectionResizeMode(feedsView_->columnIndex("updated"), QHeaderView::ResizeToContents);
-#else
-  feedsView_->header()->setResizeMode(feedsView_->columnIndex("text"), QHeaderView::Stretch);
-  feedsView_->header()->setResizeMode(feedsView_->columnIndex("unread"), QHeaderView::ResizeToContents);
-  feedsView_->header()->setResizeMode(feedsView_->columnIndex("undeleteCount"), QHeaderView::ResizeToContents);
-  feedsView_->header()->setResizeMode(feedsView_->columnIndex("updated"), QHeaderView::ResizeToContents);
-#endif
 
   feedsToolBar_ = new QToolBar(this);
   feedsToolBar_->setObjectName("feedsToolBar");
@@ -610,7 +598,6 @@ void MainWindow::createStatusBar()
         );
   stopUpdateButton_->move(progressBar_->rect().right() - stopUpdateButton_->sizeHint().width(),
                           progressBar_->rect().top());
-
 
   adblockIcon_ = new AdBlockIcon(this);
 
@@ -1397,12 +1384,6 @@ void MainWindow::createActions()
   livejournalShareAct_->setIcon(QIcon(":/share/images/share/livejournal.png"));
   shareGroup_->addAction(livejournalShareAct_);
 
-  pocketShareAct_ = new QAction(this);
-  pocketShareAct_->setObjectName("pocketShareAct");
-  pocketShareAct_->setText("Pocket");
-  pocketShareAct_->setIcon(QIcon(":/share/images/share/pocket.png"));
-  shareGroup_->addAction(pocketShareAct_);
-
   twitterShareAct_ = new QAction(this);
   twitterShareAct_->setObjectName("twitterShareAct");
   twitterShareAct_->setText("Twitter");
@@ -1466,7 +1447,6 @@ void MainWindow::createActions()
   this->addActions(shareGroup_->actions());
   connect(shareGroup_, SIGNAL(triggered(QAction*)),
           this, SLOT(slotShareNews(QAction*)));
-
 
   connect(markNewsRead_, SIGNAL(triggered()),
           this, SLOT(markNewsRead()));
@@ -2084,7 +2064,6 @@ void MainWindow::loadSettings()
   externalBrowserOn_ = settings.value("externalBrowserOn", 0).toInt();
   externalBrowser_ = settings.value("externalBrowser", "").toString();
   javaScriptEnable_ = settings.value("javaScriptEnable", true).toBool();
-  pluginsEnable_ = settings.value("pluginsEnable", true).toBool();
   maxPagesInCache_ = settings.value("maxPagesInCache", 3).toInt();
   downloadLocation_ = settings.value("downloadLocation", "").toString();
   askDownloadLocation_ = settings.value("askDownloadLocation", true).toBool();
@@ -2093,13 +2072,9 @@ void MainWindow::loadSettings()
 
   QWebSettings::globalSettings()->setAttribute(
         QWebSettings::JavascriptEnabled, javaScriptEnable_);
-  QWebSettings::globalSettings()->setAttribute(
-        QWebSettings::PluginsEnabled, pluginsEnable_);
   QWebSettings::globalSettings()->setMaximumPagesInCache(maxPagesInCache_);
-#if QT_VERSION >= 0x050e00
   QWebSettings::globalSettings()->setAttribute(
         QWebSettings::ErrorPageEnabled, false);
-#endif
   QWebSettings::globalSettings()->setOfflineStorageDefaultQuota(0);
   QWebSettings::globalSettings()->setOfflineStoragePath(mainApp->dataDir());
 
@@ -2400,7 +2375,6 @@ void MainWindow::saveSettings()
   settings.setValue("externalBrowserOn", externalBrowserOn_);
   settings.setValue("externalBrowser", externalBrowser_);
   settings.setValue("javaScriptEnable", javaScriptEnable_);
-  settings.setValue("pluginsEnable", pluginsEnable_);
   settings.setValue("maxPagesInCache", maxPagesInCache_);
   settings.setValue("downloadLocation", downloadLocation_);
   settings.setValue("askDownloadLocation", askDownloadLocation_);
@@ -2526,7 +2500,6 @@ void MainWindow::saveSettings()
                     newsFilterGroup_->checkedAction()->objectName());
 
   mainApp->cookieJar()->saveCookies();
-  mainApp->c2fSaveSettings();
   AdBlockManager::instance()->save();
 }
 
@@ -2844,15 +2817,9 @@ void MainWindow::slotExportFeeds()
 void MainWindow::slotFeedsViewportUpdate()
 {
   feedsView_->viewport()->update();
-#ifdef HAVE_QT5
   feedsView_->header()->setSectionResizeMode(feedsView_->columnIndex("unread"), QHeaderView::ResizeToContents);
   feedsView_->header()->setSectionResizeMode(feedsView_->columnIndex("undeleteCount"), QHeaderView::ResizeToContents);
   feedsView_->header()->setSectionResizeMode(feedsView_->columnIndex("updated"), QHeaderView::ResizeToContents);
-#else
-  feedsView_->header()->setResizeMode(feedsView_->columnIndex("unread"), QHeaderView::ResizeToContents);
-  feedsView_->header()->setResizeMode(feedsView_->columnIndex("undeleteCount"), QHeaderView::ResizeToContents);
-  feedsView_->header()->setResizeMode(feedsView_->columnIndex("updated"), QHeaderView::ResizeToContents);
-#endif
 }
 // ----------------------------------------------------------------------------
 void MainWindow::slotFeedCountsUpdate(FeedCountStruct counts)
@@ -3342,8 +3309,6 @@ void MainWindow::showOptionDlg(int index)
 
   bool updateCheckEnabled = settings.value("Settings/updateCheckEnabled", true).toBool();
   optionsDialog_->updateCheckEnabled_->setChecked(updateCheckEnabled);
-  bool statisticsEnabled = settings.value("Settings/statisticsEnabled2", true).toBool();
-  optionsDialog_->statisticsEnabled_->setChecked(statisticsEnabled);
 
   bool storeDBMemory_ = settings.value("Settings/storeDBMemory", true).toBool();
   optionsDialog_->storeDBMemory_->setChecked(storeDBMemory_);
@@ -3377,7 +3342,6 @@ void MainWindow::showOptionDlg(int index)
   optionsDialog_->otherExternalBrowserEdit_->setText(externalBrowser_);
   optionsDialog_->autoLoadImages_->setChecked(autoLoadImages_);
   optionsDialog_->javaScriptEnable_->setChecked(javaScriptEnable_);
-  optionsDialog_->pluginsEnable_->setChecked(pluginsEnable_);
   optionsDialog_->defaultZoomPages_->setValue(defaultZoomPages_);
   optionsDialog_->openLinkInBackground_->setChecked(openLinkInBackground_);
   optionsDialog_->openLinkInBackgroundEmbedded_->setChecked(openLinkInBackgroundEmbedded_);
@@ -3752,8 +3716,6 @@ void MainWindow::showOptionDlg(int index)
 
   updateCheckEnabled = optionsDialog_->updateCheckEnabled_->isChecked();
   settings.setValue("Settings/updateCheckEnabled", updateCheckEnabled);
-  statisticsEnabled = optionsDialog_->statisticsEnabled_->isChecked();
-  settings.setValue("Settings/statisticsEnabled2", statisticsEnabled);
 
   storeDBMemory_ = optionsDialog_->storeDBMemory_->isChecked();
   settings.setValue("Settings/storeDBMemory", storeDBMemory_);
@@ -3803,7 +3765,6 @@ void MainWindow::showOptionDlg(int index)
   externalBrowser_ = optionsDialog_->otherExternalBrowserEdit_->text();
   autoLoadImages_ = optionsDialog_->autoLoadImages_->isChecked();
   javaScriptEnable_ = optionsDialog_->javaScriptEnable_->isChecked();
-  pluginsEnable_ = optionsDialog_->pluginsEnable_->isChecked();
   openLinkInBackground_ = optionsDialog_->openLinkInBackground_->isChecked();
   openLinkInBackgroundEmbedded_ = optionsDialog_->openLinkInBackgroundEmbedded_->isChecked();
   maxPagesInCache_ = optionsDialog_->maxPagesInCache_->value();
@@ -3811,8 +3772,6 @@ void MainWindow::showOptionDlg(int index)
 
   QWebSettings::globalSettings()->setAttribute(
         QWebSettings::JavascriptEnabled, javaScriptEnable_);
-  QWebSettings::globalSettings()->setAttribute(
-        QWebSettings::PluginsEnabled, pluginsEnable_);
   QWebSettings::globalSettings()->setMaximumPagesInCache(maxPagesInCache_);
 
   settings.beginGroup("Settings");
@@ -5163,7 +5122,6 @@ void MainWindow::retranslateStrings()
   adblockIcon_->retranslateStrings();
   QApplication::translate("AdBlockCustomList", "Custom Rules");
 
-
   if ((mainApp->language() == "ar") || (mainApp->language() == "fa")) {
     QApplication::setLayoutDirection(Qt::RightToLeft);
     mainMenuButton_->setStyleSheet("#mainMenuButton { border: none; padding: 0px 5px 0px 0px; }");
@@ -5466,7 +5424,6 @@ void MainWindow::showFeedPropertiesDlg()
   q.addBindValue(feedId);
   q.exec();
 
-
   indexColumnsStr = "";
   if ((properties.column.columns != properties.columnDefault.columns) ||
       (properties.column.sortBy != properties.columnDefault.sortBy) ||
@@ -5534,7 +5491,6 @@ void MainWindow::showFeedPropertiesDlg()
 
   if (currentNewsTab->feedId_ == feedId)
     currentNewsTab->newsHeader_->setColumns(index);
-
 
   if (!(!feedsModel_->dataField(index, "authentication").toInt() && !properties.authentication.on)) {
     q.prepare("SELECT * FROM passwords WHERE server=?");
@@ -5906,7 +5862,6 @@ void MainWindow::slotPlaySound(const QString &path)
   bool useMediaPlayer = settings.value("Settings/useMediaPlayer", true).toBool();
 
   if (useMediaPlayer) {
-#ifdef HAVE_QT5
     if (mediaPlayer_ == NULL) {
       playlist_ = new QMediaPlaylist(this);
       mediaPlayer_ = new QMediaPlayer(this);
@@ -5924,31 +5879,6 @@ void MainWindow::slotPlaySound(const QString &path)
     }
 
     playing = true;
-#else
-#ifdef HAVE_PHONON
-    if (mediaPlayer_ == NULL) {
-      mediaPlayer_ = new Phonon::MediaObject(this);
-      audioOutput_ = new Phonon::AudioOutput(Phonon::MusicCategory, this);
-      Phonon::createPath(mediaPlayer_, audioOutput_);
-      connect(mediaPlayer_, SIGNAL(stateChanged(Phonon::State,Phonon::State)),
-              this, SLOT(mediaStateChanged(Phonon::State,Phonon::State)));
-    }
-
-    if (mediaPlayer_->state() == Phonon::ErrorState)
-      mediaPlayer_->clear();
-
-    if ((mediaPlayer_->state() != Phonon::PausedState) &&
-        (mediaPlayer_->state() != Phonon::StoppedState)) {
-      mediaPlayer_->enqueue(soundPath);
-    }
-    else {
-      mediaPlayer_->setCurrentSource(soundPath);
-    }
-    mediaPlayer_->play();
-
-    playing = true;
-#endif
-#endif
   }
 
   if (!playing) {
@@ -5960,7 +5890,6 @@ void MainWindow::slotPlaySound(const QString &path)
   }
 }
 
-#ifdef HAVE_QT5
 void MainWindow::mediaStatusChanged(QMediaPlayer::MediaStatus status)
 {
   if (status == QMediaPlayer::EndOfMedia) {
@@ -5975,19 +5904,6 @@ void MainWindow::mediaError(QMediaPlayer::Error error)
                  arg(error).
                  arg(codec->toUnicode(mediaPlayer_->errorString().toUtf8()));
 }
-#endif
-
-#ifdef HAVE_PHONON
-void MainWindow::mediaStateChanged(Phonon::State newstate, Phonon::State)
-{
-  if (newstate == Phonon::ErrorState) {
-    QTextCodec *codec = QTextCodec::codecForLocale();
-    qCritical() << QString("Error Phonon: %1 - %2").
-                   arg(mediaPlayer_->errorType()).
-                   arg(codec->toUnicode(mediaPlayer_->errorString().toUtf8()));
-  }
-}
-#endif
 
 void MainWindow::slotPlaySoundNewNews()
 {
@@ -6819,9 +6735,7 @@ void MainWindow::showNotification(bool bShowRecentNews/*=false*/)
     GetWindowRect(GetDesktopWindow(), &rc);
 
     if ((hWnd != GetDesktopWindow())
-   #ifdef HAVE_QT5
        && (hWnd != GetShellWindow())
-   #endif
        ) {
       GetWindowRect(hWnd, &appBounds);
       if ((rc.top == appBounds.top) && (rc.bottom == appBounds.bottom) &&
@@ -6833,7 +6747,6 @@ void MainWindow::showNotification(bool bShowRecentNews/*=false*/)
   }
 
   timerTrayOpenNotify.stop();
-
 
   if (notificationWidget != NULL)
   {

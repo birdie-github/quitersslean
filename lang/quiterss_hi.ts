@@ -544,24 +544,6 @@ Ancient news could reappear</source>
     </message>
 </context>
 <context>
-    <name>ClickToFlash</name>
-    <message>
-        <location filename="../src/plugins/clicktoflash.cpp" line="130"/>
-        <source>Object blocked by ClickToFlash</source>
-        <translation>ClickToFlash द्वारा अवरुद्ध ऑब्जेक्ट</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/clicktoflash.cpp" line="132"/>
-        <source>Hide object</source>
-        <translation>छुपाएं ऑब्जेक्ट</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/clicktoflash.cpp" line="133"/>
-        <source>Add &apos;%1&apos; to whitelist</source>
-        <translation>श्वेत सूची में जोड़ें %1</translation>
-    </message>
-</context>
-<context>
     <name>CustomizeToolbarDialog</name>
     <message>
         <location filename="../src/customizetoolbardialog.cpp" line="34"/>
@@ -3046,11 +3028,6 @@ Ancient news could reappear</source>
         <translation>स्वचालित रूप से अद्यतन करें</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="301"/>
-        <source>Help improve QuiteRSS by sending usage information</source>
-        <translation>उपयोग की जानकारी भेजकर QuiteRSS सुधार करने में मदद दे</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="302"/>
         <source>Store a DB in memory (requires program restart)</source>
         <translation>DB को मेमोरी में संग्रहीत करे ( प्रोग्राम को पुनः आरंभ की आवश्यकता है)</translation>
@@ -3228,11 +3205,6 @@ Ancient news could reappear</source>
         <translation>जावास्क्रिप्ट सक्षम करें</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="515"/>
-        <source>Enable plug-ins</source>
-        <translation>प्लग-इन सक्षम करें </translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="521"/>
         <source>Open links in embedded browser in background</source>
         <translation>पृष्ठभूमि में एम्बेडेड ब्राउज़र में लिंक खोलें</translation>
@@ -3318,16 +3290,6 @@ Ancient news could reappear</source>
         <translation>कुकीज़:</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="664"/>
-        <source>Click To Flash is a plugin which blocks auto loading of Flash content at page. You can always load it manually by clicking on the Flash play icon.</source>
-        <translation>फ्लैश सामग्री को ऑटो लोड  होने से रोकने के लिए &quot;क्लिक टू फ्लैश&quot; प्लगइन पर क्लिक करें। आप हमेशा फ्लैश आइकन पर क्लिक करके इसे लोड कर सकते हैं।</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="669"/>
-        <source>Use Click to Flash</source>
-        <translation> &quot;क्लिक टू फ्लैश&quot; का उपयोग करें </translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="681"/>
         <source>Add...</source>
         <translation>जोड़ें ...</translation>
@@ -3351,11 +3313,6 @@ Ancient news could reappear</source>
         <location filename="../src/optionsdialog.cpp" line="743"/>
         <source>History</source>
         <translation>इतिहास</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="745"/>
-        <source>Click to Flash</source>
-        <translation> &quot;क्लिक टू फ्लैश&quot; </translation>
     </message>
     <message>
         <location filename="../src/optionsdialog.cpp" line="747"/>
@@ -4139,11 +4096,6 @@ Ancient news could reappear</source>
         <location filename="../src/optionsdialog.cpp" line="2880"/>
         <source>Open Directory...</source>
         <translation>डायरेक्टरी खोलें...</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="2861"/>
-        <source>Add site to whitelist</source>
-        <translation>साइट को जोड़ें श्वेतसूची</translation>
     </message>
     <message>
         <location filename="../src/optionsdialog.cpp" line="2862"/>

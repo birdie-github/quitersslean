@@ -18,11 +18,7 @@
 #ifndef DIALOG_H
 #define DIALOG_H
 
-#ifdef HAVE_QT5
 #include <QtWidgets>
-#else
-#include <QtGui>
-#endif
 
 class Dialog : public QDialog
 {

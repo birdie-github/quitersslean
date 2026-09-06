@@ -31,19 +31,10 @@ exists(.git) {
   }
 }
 
-isEqual(QT_MAJOR_VERSION, 5) {
-  QT += widgets webkitwidgets network xml printsupport sql multimedia
-  DEFINES += HAVE_QT5
-} else {
-  QT += core gui network xml webkit sql
-  os2 {
-    DISABLE_PHONON = 1
-  }
-  isEmpty(DISABLE_PHONON) {
-    QT += phonon
-    DEFINES += HAVE_PHONON
-  }
-}
+!equals(QT_MAJOR_VERSION, 5): error("QuiteRSS requires Qt 5.15.x and QtWebKit")
+lessThan(QT_MINOR_VERSION, 15): error("QuiteRSS requires Qt 5.15 or newer within Qt 5")
+QT += widgets webkitwidgets network xml printsupport sql multimedia
+CONFIG += c++11
 
 unix:!mac:DEFINES += HAVE_X11
 
@@ -70,8 +61,6 @@ HEADERS += \
     src/labeldialog.h \
     src/faviconobject.h \
     src/customizetoolbardialog.h \
-    src/plugins/webpluginfactory.h \
-    src/plugins/clicktoflash.h \
     src/downloads/downloadmanager.h \
     src/downloads/downloaditem.h \
     src/tabbar.h \
@@ -139,8 +128,6 @@ SOURCES += \
     src/labeldialog.cpp \
     src/faviconobject.cpp \
     src/customizetoolbardialog.cpp \
-    src/plugins/webpluginfactory.cpp \
-    src/plugins/clicktoflash.cpp \
     src/downloads/downloadmanager.cpp \
     src/downloads/downloaditem.cpp \
     src/tabbar.cpp \
@@ -200,7 +187,6 @@ INCLUDEPATH +=  $$PWD/src \
                 $$PWD/src/newsfilters \
                 $$PWD/src/newsview \
                 $$PWD/src/notifications \
-                $$PWD/src/plugins \
                 $$PWD/src/adblock \
                 $$PWD/src/network \
                 $$PWD/src/webview \
@@ -223,13 +209,10 @@ isEmpty(SYSTEMQTSA) {
 } else {
   CONFIG += qtsingleapplication
 }
-isEqual(QT_MAJOR_VERSION, 5) {
-  include(3rdparty/qftp/qftp.pri)
-}
+include(3rdparty/qftp/qftp.pri)
 include(3rdparty/sqlite.pri)
 include(lang/lang.pri)
 include(3rdparty/qupzilla/qupzilla.pri)
-include(3rdparty/ganalytics/ganalytics.pri)
 
 os2|win32|mac {
   TARGET = QuiteRSS
@@ -257,11 +240,6 @@ os2 {
   RC_FILE = quiterss_os2.rc
 }
 
-os2|win32 {
-  SOURCES += src/network/cabundleupdater.cpp
-  HEADERS += src/network/cabundleupdater.h
-  RESOURCES += data/ca-bundle.qrc
-}
 
 DISTFILES += \
     HISTORY_RU \
@@ -318,7 +296,6 @@ unix:!mac {
 
 mac {
   CONFIG += app_bundle
-  QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.6
 
   QMAKE_INFO_PLIST = Info.plist
   ICON = quiterss.icns
@@ -342,8 +319,6 @@ mac {
 RESOURCES += \
     QuiteRSS.qrc
 
-CODECFORTR  = UTF-8
-CODECFORSRC = UTF-8
 
 OTHER_FILES += \
     HISTORY_RU \

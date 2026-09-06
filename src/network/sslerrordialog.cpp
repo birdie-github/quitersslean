@@ -74,13 +74,8 @@ void SslErrorDialog::buttonClicked(QAbstractButton* button)
 
 QString SslErrorDialog::certificateItemText(const QSslCertificate &cert)
 {
-#if QT_VERSION >= 0x050000
     QString commonName = cert.subjectInfo(QSslCertificate::CommonName).isEmpty() ? QString() : cert.subjectInfo(QSslCertificate::CommonName).at(0);
     QString organization = cert.subjectInfo(QSslCertificate::Organization).isEmpty() ? QString() : cert.subjectInfo(QSslCertificate::Organization).at(0);
-#else
-    QString commonName = cert.subjectInfo(QSslCertificate::CommonName);
-    QString organization = cert.subjectInfo(QSslCertificate::Organization);
-#endif
 
     if (commonName.isEmpty()) {
         return clearCertSpecialSymbols(organization);
@@ -91,11 +86,7 @@ QString SslErrorDialog::certificateItemText(const QSslCertificate &cert)
 
 QString SslErrorDialog::clearCertSpecialSymbols(const QString &string)
 {
-#if QT_VERSION >= 0x050000
   QString n = string.toHtmlEscaped();
-#else
-  QString n = Qt::escape(string);
-#endif
 
   if (!n.contains(QLatin1String("\\"))) {
     return n;
