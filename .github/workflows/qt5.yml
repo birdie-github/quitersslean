@@ -30,6 +30,7 @@ jobs:
         with:
           msystem: UCRT64
           update: true
+          pacman-args: --noconfirm --needed
           install: >-
             git
             mingw-w64-ucrt-x86_64-gcc
@@ -47,7 +48,7 @@ jobs:
         run: |
           export PKG_CONFIG_PATH="$(cygpath -m /ucrt64/lib/pkgconfig)"
           dep_work="$(cygpath -m "$RUNNER_TEMP/quitersslean-deps")"
-          /ucrt64/bin/python scripts/prepare-qtsingleapplication.py --work-dir "$dep_work" --qmake qmake --make mingw32-make
+          python3 scripts/prepare-qtsingleapplication.py --work-dir "$dep_work" --qmake qmake --make mingw32-make
           export QMAKEFEATURES="$dep_work/install/features"
           mkdir _build
           cd _build
