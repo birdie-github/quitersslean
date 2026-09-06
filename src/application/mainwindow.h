@@ -59,8 +59,6 @@ enum FeedReedType {
   FeedReadSwitchingTab
 };
 
-class AdBlockIcon;
-
 class MainWindow : public QMainWindow
 {
   Q_OBJECT
@@ -108,15 +106,11 @@ public:
   NewsTabWidget *currentNewsTab;
 
   QAction *newsToolbarToggle_;
-  QAction *browserToolbarToggle_;
   QAction *categoriesPanelToggle_;
   QAction *statusBarToggle_;
   QAction *newsFilter_;
   QAction *openDescriptionNewsAct_;
-  QAction *openInBrowserAct_;
   QAction *openInExternalBrowserAct_;
-  QAction *openNewsNewTabAct_;
-  QAction *openNewsBackgroundTabAct_;
   QAction *markNewsRead_;
   QAction *markAllNewsRead_;
   QAction *markStarAct_;
@@ -133,7 +127,6 @@ public:
   QAction *printAct_;
   QAction *printPreviewAct_;
   QAction *savePageAsAct_;
-  QAction *savePageAsDescriptAct_;
   QAction *restoreNewsAct_;
   QAction *restoreLastNewsAct_;
   QAction *newsLabelAction_;
@@ -166,9 +159,6 @@ public:
   QAction *closeOtherTabsAct_;
   QAction *closeAllTabsAct_;
   QAction *settingPageLabelsAct_;
-  QAction *backWebPageAct_;
-  QAction *forwardWebPageAct_;
-  QAction *reloadWebPageAct_;
 
   QActionGroup *newsFilterGroup_;
   QActionGroup *newsLabelGroup_;
@@ -212,7 +202,6 @@ public:
   bool markReadSwitchingFeed_;
   bool markReadClosingTab_;
   bool markReadMinimize_;
-  bool showDescriptionNews_;
   bool alternatingRowColorsNews_;
   bool simplifiedDateTime_;
   bool notDeleteStarred_;
@@ -224,12 +213,7 @@ public:
   bool autoLoadImages_;
   bool openLinkInBackground_;
   bool isOpeningLink_;  //!< Flag - link is being opened
-  bool openLinkInBackgroundEmbedded_;
 
-  int externalBrowserOn_;
-  QString externalBrowser_;
-  bool javaScriptEnable_;
-  int maxPagesInCache_;
   QString downloadLocation_;
   bool askDownloadLocation_;
   int defaultZoomPages_;
@@ -245,8 +229,6 @@ public:
   bool showToggleFeedsTree_;
   bool defaultIconFeeds_;
 
-  int openNewsTab_;
-
   int screenNotify_;
   int positionNotify_;
   int transparencyNotify_;
@@ -261,10 +243,6 @@ public:
   bool showButtonDeleteNotify_;
   bool closeNotify_;
   QList<int> idFeedsNotifyList_;
-
-  AdBlockIcon *adBlockIcon() { return adblockIcon_; }
-
-  void webViewFullScreen(bool on);
 
 public slots:
   void restoreFeedsOnStartUp();
@@ -298,7 +276,6 @@ public slots:
   void slotUpdateStatus(int feedId, bool changed = true);
   void setNewsFilter(QAction*, bool clicked = true);
   void slotCloseTab(int index);
-  QWebPage *createWebTab(QUrl url = QUrl());
   void feedsModelReload(bool checkFilter = false);
   void setStatusFeed(int feedId, QString status);
   void slotPrint(QWebFrame *frame = 0);
@@ -398,10 +375,7 @@ private slots:
   void deleteNews();
   void deleteAllNewsList();
   void restoreNews();
-  void openInBrowserNews();
   void openInExternalBrowserNews();
-  void slotOpenNewsNewTab();
-  void slotOpenNewsBackgroundTab();
   void slotCopyLinkNews();
   void slotShowLabelsMenu();
   void slotPageUpWebView();
@@ -426,7 +400,6 @@ private slots:
   void slotReportProblem();
 
   void slotSavePageAs();
-  void slotSavePageAsDescript();
 
   void setFullScreen();
   void setStayOnTop();
@@ -760,9 +733,6 @@ private:
 
   OptionsDialog *optionsDialog_;
 
-  AdBlockIcon* adblockIcon_;
-
 };
 
 #endif // MAINWINDOW_H
-

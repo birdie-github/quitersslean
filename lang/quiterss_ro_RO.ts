@@ -85,200 +85,6 @@
     </message>
 </context>
 <context>
-    <name>AdBlockAddSubscriptionDialog</name>
-    <message>
-        <location filename="../src/adblock/adblockaddsubscriptiondialog.ui" line="14"/>
-        <source>Add Subscription</source>
-        <translation>Adaugă subscripţie</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockaddsubscriptiondialog.ui" line="23"/>
-        <source>Title:</source>
-        <translation>Titlu:</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockaddsubscriptiondialog.ui" line="33"/>
-        <source>Address:</source>
-        <translation>Adresă:</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockaddsubscriptiondialog.ui" line="53"/>
-        <source>Add new subscription to AdBlock:</source>
-        <translation>Adaugă subscripţie nouă la AdBlock:</translation>
-    </message>
-</context>
-<context>
-    <name>AdBlockCustomList</name>
-    <message>
-        <location filename="../src/adblock/adblocksubscription.cpp" line="323"/>
-        <location filename="../src/adblock/adblocksubscription.cpp" line="330"/>
-        <location filename="../src/application/mainwindow.cpp" line="5168"/>
-        <source>Custom Rules</source>
-        <translation>Reguli personalizate</translation>
-    </message>
-</context>
-<context>
-    <name>AdBlockDialog</name>
-    <message>
-        <location filename="../src/adblock/adblockdialog.ui" line="14"/>
-        <source>AdBlock Configuration</source>
-        <translation>Configuraţie AdBlock</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.ui" line="20"/>
-        <source>Enable AdBlock</source>
-        <translation>Activare AdBlock</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.ui" line="32"/>
-        <source>Search...</source>
-        <translation>Căutare...</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.ui" line="68"/>
-        <source>Options</source>
-        <translation>Opţiuni</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.ui" line="98"/>
-        <source>AdBlock</source>
-        <translation>AdBlock</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.ui" line="122"/>
-        <source>Use only essential part of EasyList (for performance reasons)</source>
-        <translation>Foloseşte doar o parte esenţială a EasyList (din motive de performanţă)</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.cpp" line="74"/>
-        <source>Add Rule</source>
-        <translation>Adaugă regulă</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.cpp" line="75"/>
-        <source>Remove Rule</source>
-        <translation>Înlătură regulă</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.cpp" line="77"/>
-        <source>Add Subscription</source>
-        <translation>Adaugă subscripţie</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.cpp" line="78"/>
-        <source>Remove Subscription</source>
-        <translation>Înlătură subscripţie</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.cpp" line="79"/>
-        <source>Update Subscriptions</source>
-        <translation>Actualizează subscripţie</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.cpp" line="81"/>
-        <source>Learn about writing rules...</source>
-        <translation>Aflaţi mai multe despre scrierea regulilor...</translation>
-    </message>
-</context>
-<context>
-    <name>AdBlockIcon</name>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="62"/>
-        <source>AdBlock lets you block unwanted content on web pages</source>
-        <translation>AdBlock vă permite să blocaţi conţinutul nedorit de pe paginile web</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="106"/>
-        <source>AdBlock</source>
-        <translation>AdBlock</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="133"/>
-        <source>Show AdBlock &amp;Settings</source>
-        <translation>Arată &amp;setările AdBlock</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="141"/>
-        <source>Disable on %1</source>
-        <translation>Dezactivează pe %1</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="147"/>
-        <source>Disable only on this page</source>
-        <translation>Dezactivează pe această pagină</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="157"/>
-        <source>Blocked Popup Windows</source>
-        <translation>Ferestre popup blocate</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="162"/>
-        <location filename="../src/adblock/adblockicon.cpp" line="179"/>
-        <source>%1 with (%2)</source>
-        <translation>%1 cu (%2)</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="173"/>
-        <source>No content blocked</source>
-        <translation>Fără conţinut blocat</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="176"/>
-        <source>Blocked URL (AdBlock Rule) - click to edit rule</source>
-        <translation>URL blocat (Regulă AdBlock) - clic pentru editare regulă</translation>
-    </message>
-</context>
-<context>
-    <name>AdBlockManager</name>
-    <message>
-        <location filename="../src/adblock/adblockmanager.cpp" line="281"/>
-        <source>EasyList</source>
-        <translation>EasyList</translation>
-    </message>
-</context>
-<context>
-    <name>AdBlockSubscription</name>
-    <message>
-        <location filename="../src/adblock/adblocksubscription.cpp" line="195"/>
-        <source>Cannot load subscription!</source>
-        <translation>Nu se poate încărca subscripţie!</translation>
-    </message>
-</context>
-<context>
-    <name>AdBlockTreeWidget</name>
-    <message>
-        <location filename="../src/adblock/adblocktreewidget.cpp" line="97"/>
-        <source>Add Rule</source>
-        <translation>Adaugă regulă</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblocktreewidget.cpp" line="99"/>
-        <source>Remove Rule</source>
-        <translation>Înlătură regulă</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblocktreewidget.cpp" line="160"/>
-        <source>Add Custom Rule</source>
-        <translation>Adaugă regulă personalizată</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblocktreewidget.cpp" line="160"/>
-        <source>Please write your rule here:</source>
-        <translation>Scrieţi regula dvs. aici:</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblocktreewidget.cpp" line="198"/>
-        <source>%1 (recently updated)</source>
-        <translation>%1 (recent actualizat)</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblocktreewidget.cpp" line="207"/>
-        <source>%1 (Error: %2)</source>
-        <translation>%1 (Eroare: %2)</translation>
-    </message>
-</context>
-<context>
     <name>AddFeedWizard</name>
     <message>
         <location filename="../src/addfeedwizard.cpp" line="37"/>
@@ -907,11 +713,6 @@ Ancient news could reappear</source>
         <translation>Afişare în tab nou la pornire</translation>
     </message>
     <message>
-        <location filename="../src/feedpropertiesdialog.cpp" line="206"/>
-        <source>Show news&apos; description instead of loading web page</source>
-        <translation>Arată descriere noutăţi în loc de încărcarea paginii web</translation>
-    </message>
-    <message>
         <location filename="../src/feedpropertiesdialog.cpp" line="119"/>
         <source>Automatically delete duplicate news</source>
         <translation>Şterge automat noutăţile duplicat</translation>
@@ -930,11 +731,6 @@ Ancient news could reappear</source>
         <location filename="../src/feedpropertiesdialog.cpp" line="145"/>
         <source>Avoid adding news before this date into the database:</source>
         <translation>Evită adăugrea de noutăţi înainte de această dată în baza de date:</translation>
-    </message>
-    <message>
-        <location filename="../src/feedpropertiesdialog.cpp" line="203"/>
-        <source>Enable JavaScript</source>
-        <translation>Activare JavaScript</translation>
     </message>
     <message>
         <location filename="../src/feedpropertiesdialog.cpp" line="208"/>
@@ -1437,11 +1233,6 @@ Ancient news could reappear</source>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../src/application/mainwindow.cpp" line="1856"/>
-        <source>&amp;AdBlock</source>
-        <translation>&amp;AdBlock</translation>
-    </message>
-    <message>
         <location filename="../src/application/mainwindow.cpp" line="2281"/>
         <location filename="../src/application/mainwindow.cpp" line="5062"/>
         <location filename="../src/application/mainwindow.cpp" line="7575"/>
@@ -1890,16 +1681,6 @@ Ancient news could reappear</source>
         <translation>Previzualizare pagină web</translation>
     </message>
     <message>
-        <location filename="../src/application/mainwindow.cpp" line="5041"/>
-        <source>Save page in database</source>
-        <translation>Salvează pagina în baza de date</translation>
-    </message>
-    <message>
-        <location filename="../src/application/mainwindow.cpp" line="5042"/>
-        <source>Save page in database instead of news description</source>
-        <translation>Salvează pagina în baza de date în loc de de descriere ştiri</translation>
-    </message>
-    <message>
         <location filename="../src/application/mainwindow.cpp" line="2638"/>
         <source>Confirm Delete</source>
         <translation>Confirmare ştergere</translation>
@@ -2272,11 +2053,6 @@ Ancient news could reappear</source>
         <location filename="../src/application/mainwindow.cpp" line="5047"/>
         <source>News Toolbar</source>
         <translation>Bară intrumente noutăţi</translation>
-    </message>
-    <message>
-        <location filename="../src/application/mainwindow.cpp" line="5048"/>
-        <source>Browser Toolbar</source>
-        <translation>Bară intrumente browser</translation>
     </message>
     <message>
         <location filename="../src/application/mainwindow.cpp" line="5049"/>
@@ -3164,26 +2940,6 @@ Ancient news could reappear</source>
         <translation>Opţiuni cerere reţea la actualizare fluxuri (necesită restart program):</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="505"/>
-        <source>Use embedded browser</source>
-        <translation>Foloseşte browser încorporat</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="506"/>
-        <source>Use external browser</source>
-        <translation>Foloseşte browser extern</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="507"/>
-        <source>Default external browser</source>
-        <translation>Foloseşte browser implicit</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="508"/>
-        <source>Following external browser:</source>
-        <translation>Urmărire browser extern:</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="511"/>
         <location filename="../src/optionsdialog.cpp" line="525"/>
         <location filename="../src/optionsdialog.cpp" line="606"/>
@@ -3200,16 +2956,6 @@ Ancient news could reappear</source>
         <translation>Încărcare imagini</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="514"/>
-        <source>Enable JavaScript</source>
-        <translation>Activare JavaScript</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="521"/>
-        <source>Open links in embedded browser in background</source>
-        <translation>Deschide legături în browser încorporat în fundal</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="522"/>
         <source>Open links in external browser in background (experimental)</source>
         <translation>Deschide legături în browser extern în fundal (experimental)</translation>
@@ -3218,11 +2964,6 @@ Ancient news could reappear</source>
         <location filename="../src/optionsdialog.cpp" line="548"/>
         <source>Default zoom on pages:</source>
         <translation>Zoom iniţial la pagini:</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="566"/>
-        <source>Browser selection:</source>
-        <translation>Selectare browser:</translation>
     </message>
     <message>
         <location filename="../src/optionsdialog.cpp" line="568"/>
@@ -3238,11 +2979,6 @@ Ancient news could reappear</source>
         <location filename="../src/optionsdialog.cpp" line="572"/>
         <source>User style sheet:</source>
         <translation>Stil foaie utilizator:</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="601"/>
-        <source>Maximum pages in cache</source>
-        <translation>Pagini maxim în cache</translation>
     </message>
     <message>
         <location filename="../src/optionsdialog.cpp" line="612"/>
@@ -3960,11 +3696,6 @@ Ancient news could reappear</source>
         <translation>Ac&apos;iune la deschidere noutăţi:</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="896"/>
-        <source>Show news description instead of loading web page</source>
-        <translation>Arată descriere noutăţi în loc de încărcarea paginii web</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="1736"/>
         <source>Text color of unread news</source>
         <translation>Culoarea textului noutăţilor necitite</translation>
@@ -4378,14 +4109,6 @@ Ancient news could reappear</source>
         <location filename="../src/application/mainwindow.cpp" line="5131"/>
         <source>&amp;Next &gt;</source>
         <translation>Î&amp;nainte &gt;</translation>
-    </message>
-</context>
-<context>
-    <name>RSSDetectionWidget</name>
-    <message>
-        <location filename="../src/webview/rssdetectionwidget.cpp" line="56"/>
-        <source>Untitled feed</source>
-        <translation>Flux fără nume</translation>
     </message>
 </context>
 <context>

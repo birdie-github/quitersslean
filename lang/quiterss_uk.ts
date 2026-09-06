@@ -85,200 +85,6 @@
     </message>
 </context>
 <context>
-    <name>AdBlockAddSubscriptionDialog</name>
-    <message>
-        <location filename="../src/adblock/adblockaddsubscriptiondialog.ui" line="14"/>
-        <source>Add Subscription</source>
-        <translation>Додати підписку</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockaddsubscriptiondialog.ui" line="23"/>
-        <source>Title:</source>
-        <translation>Заголовок:</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockaddsubscriptiondialog.ui" line="33"/>
-        <source>Address:</source>
-        <translation>Адреса:</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockaddsubscriptiondialog.ui" line="53"/>
-        <source>Add new subscription to AdBlock:</source>
-        <translation>Додати нову підписку в AdBlock:</translation>
-    </message>
-</context>
-<context>
-    <name>AdBlockCustomList</name>
-    <message>
-        <location filename="../src/adblock/adblocksubscription.cpp" line="323"/>
-        <location filename="../src/adblock/adblocksubscription.cpp" line="330"/>
-        <location filename="../src/application/mainwindow.cpp" line="5168"/>
-        <source>Custom Rules</source>
-        <translation>Користувацькі правила</translation>
-    </message>
-</context>
-<context>
-    <name>AdBlockDialog</name>
-    <message>
-        <location filename="../src/adblock/adblockdialog.ui" line="14"/>
-        <source>AdBlock Configuration</source>
-        <translation>Налаштування AdBlock</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.ui" line="20"/>
-        <source>Enable AdBlock</source>
-        <translation>Увімкнути AdBlock</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.ui" line="32"/>
-        <source>Search...</source>
-        <translation>Пошук...</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.ui" line="68"/>
-        <source>Options</source>
-        <translation>Налаштування</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.ui" line="98"/>
-        <source>AdBlock</source>
-        <translation>AdBlock</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.ui" line="122"/>
-        <source>Use only essential part of EasyList (for performance reasons)</source>
-        <translation>Використовуйте лише необхідні частини EasyList (для підвищення продуктивності)</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.cpp" line="74"/>
-        <source>Add Rule</source>
-        <translation>Додати правило</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.cpp" line="75"/>
-        <source>Remove Rule</source>
-        <translation>Вилучити правило</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.cpp" line="77"/>
-        <source>Add Subscription</source>
-        <translation>Додати підписку</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.cpp" line="78"/>
-        <source>Remove Subscription</source>
-        <translation>Вилучити підписку</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.cpp" line="79"/>
-        <source>Update Subscriptions</source>
-        <translation>Оновити підписки</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.cpp" line="81"/>
-        <source>Learn about writing rules...</source>
-        <translation>Інформація щодо створення правил...</translation>
-    </message>
-</context>
-<context>
-    <name>AdBlockIcon</name>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="62"/>
-        <source>AdBlock lets you block unwanted content on web pages</source>
-        <translation>AdBlock дозволяє блокувати небажаний вміст веб-сторінок</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="106"/>
-        <source>AdBlock</source>
-        <translation>AdBlock</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="133"/>
-        <source>Show AdBlock &amp;Settings</source>
-        <translation>Налаштування AdBlock</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="141"/>
-        <source>Disable on %1</source>
-        <translation>Вимкнути на %1</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="147"/>
-        <source>Disable only on this page</source>
-        <translation>Заборонити лише на цій сторінці</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="157"/>
-        <source>Blocked Popup Windows</source>
-        <translation>Заблоковані виринаючі вікна</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="162"/>
-        <location filename="../src/adblock/adblockicon.cpp" line="179"/>
-        <source>%1 with (%2)</source>
-        <translation>%1 з (%2)</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="173"/>
-        <source>No content blocked</source>
-        <translation>Відсутні заблоковані елементи</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="176"/>
-        <source>Blocked URL (AdBlock Rule) - click to edit rule</source>
-        <translation>Список заблокованого. Натисніть, щоб змінити правило</translation>
-    </message>
-</context>
-<context>
-    <name>AdBlockManager</name>
-    <message>
-        <location filename="../src/adblock/adblockmanager.cpp" line="281"/>
-        <source>EasyList</source>
-        <translation>EasyList</translation>
-    </message>
-</context>
-<context>
-    <name>AdBlockSubscription</name>
-    <message>
-        <location filename="../src/adblock/adblocksubscription.cpp" line="195"/>
-        <source>Cannot load subscription!</source>
-        <translation>Не вдається завантажити підписку!</translation>
-    </message>
-</context>
-<context>
-    <name>AdBlockTreeWidget</name>
-    <message>
-        <location filename="../src/adblock/adblocktreewidget.cpp" line="97"/>
-        <source>Add Rule</source>
-        <translation>Додати правило</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblocktreewidget.cpp" line="99"/>
-        <source>Remove Rule</source>
-        <translation>Вилучити правило</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblocktreewidget.cpp" line="160"/>
-        <source>Add Custom Rule</source>
-        <translation>Додати користувацьке правило</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblocktreewidget.cpp" line="160"/>
-        <source>Please write your rule here:</source>
-        <translation>Будь ласка, напишіть ваше правило тут:</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblocktreewidget.cpp" line="198"/>
-        <source>%1 (recently updated)</source>
-        <translation>%1 (нещодавно оновлено)</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblocktreewidget.cpp" line="207"/>
-        <source>%1 (Error: %2)</source>
-        <translation>%1 (Помилка: %2)</translation>
-    </message>
-</context>
-<context>
     <name>AddFeedWizard</name>
     <message>
         <location filename="../src/addfeedwizard.cpp" line="37"/>
@@ -905,11 +711,6 @@ Ancient news could reappear</source>
         <translation>Показувати в новій вкладці під час запуску</translation>
     </message>
     <message>
-        <location filename="../src/feedpropertiesdialog.cpp" line="206"/>
-        <source>Show news&apos; description instead of loading web page</source>
-        <translation>Показувати опис новини замість завантаження веб-сторінки</translation>
-    </message>
-    <message>
         <location filename="../src/feedpropertiesdialog.cpp" line="119"/>
         <source>Automatically delete duplicate news</source>
         <translation>Автоматично вилучати дублікати новин</translation>
@@ -928,11 +729,6 @@ Ancient news could reappear</source>
         <location filename="../src/feedpropertiesdialog.cpp" line="145"/>
         <source>Avoid adding news before this date into the database:</source>
         <translation>Уникати додавання новин до цієї дати до бази даних:</translation>
-    </message>
-    <message>
-        <location filename="../src/feedpropertiesdialog.cpp" line="203"/>
-        <source>Enable JavaScript</source>
-        <translation>Увімкнути JavaScript</translation>
     </message>
     <message>
         <location filename="../src/feedpropertiesdialog.cpp" line="208"/>
@@ -1435,11 +1231,6 @@ Ancient news could reappear</source>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../src/application/mainwindow.cpp" line="1856"/>
-        <source>&amp;AdBlock</source>
-        <translation>AdBlock</translation>
-    </message>
-    <message>
         <location filename="../src/application/mainwindow.cpp" line="2281"/>
         <location filename="../src/application/mainwindow.cpp" line="5062"/>
         <location filename="../src/application/mainwindow.cpp" line="7575"/>
@@ -1888,16 +1679,6 @@ Ancient news could reappear</source>
         <translation>Попередній огляд веб-сторінки</translation>
     </message>
     <message>
-        <location filename="../src/application/mainwindow.cpp" line="5041"/>
-        <source>Save page in database</source>
-        <translation>Зберегти сторінку в базі даних</translation>
-    </message>
-    <message>
-        <location filename="../src/application/mainwindow.cpp" line="5042"/>
-        <source>Save page in database instead of news description</source>
-        <translation>Зберегти сторінку в базі даних замість опису новини</translation>
-    </message>
-    <message>
         <location filename="../src/application/mainwindow.cpp" line="2638"/>
         <source>Confirm Delete</source>
         <translation>Підтвердження вилучення</translation>
@@ -2270,11 +2051,6 @@ Ancient news could reappear</source>
         <location filename="../src/application/mainwindow.cpp" line="5047"/>
         <source>News Toolbar</source>
         <translation>Панель списку новин</translation>
-    </message>
-    <message>
-        <location filename="../src/application/mainwindow.cpp" line="5048"/>
-        <source>Browser Toolbar</source>
-        <translation>Панель веб-переглядача</translation>
     </message>
     <message>
         <location filename="../src/application/mainwindow.cpp" line="5049"/>
@@ -3162,26 +2938,6 @@ Ancient news could reappear</source>
         <translation>Параметри мережевих запитів при оновленні каналів (необхідний перезапуск програми):</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="505"/>
-        <source>Use embedded browser</source>
-        <translation>Використовувати вбудований веб-переглядач</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="506"/>
-        <source>Use external browser</source>
-        <translation>Використовувати зовнішній веб-переглядач</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="507"/>
-        <source>Default external browser</source>
-        <translation>Типовий зовнішній веб-переглядач</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="508"/>
-        <source>Following external browser:</source>
-        <translation>Такий зовнішній веб-переглядач:</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="511"/>
         <location filename="../src/optionsdialog.cpp" line="525"/>
         <location filename="../src/optionsdialog.cpp" line="606"/>
@@ -3198,16 +2954,6 @@ Ancient news could reappear</source>
         <translation>Завантажувати зображення</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="514"/>
-        <source>Enable JavaScript</source>
-        <translation>Увімкнути JavaScript</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="521"/>
-        <source>Open links in embedded browser in background</source>
-        <translation>Відкривати посилання у вбудованому веб-переглядачі у фоновому режимі</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="522"/>
         <source>Open links in external browser in background (experimental)</source>
         <translation>Відкривати посилання у зовнішньому веб-переглядачі у фоновому режимі (експериментально)</translation>
@@ -3216,11 +2962,6 @@ Ancient news could reappear</source>
         <location filename="../src/optionsdialog.cpp" line="548"/>
         <source>Default zoom on pages:</source>
         <translation>Типове масштабування сторінки:</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="566"/>
-        <source>Browser selection:</source>
-        <translation>Вибір веб-переглядача:</translation>
     </message>
     <message>
         <location filename="../src/optionsdialog.cpp" line="568"/>
@@ -3236,11 +2977,6 @@ Ancient news could reappear</source>
         <location filename="../src/optionsdialog.cpp" line="572"/>
         <source>User style sheet:</source>
         <translation>Власна таблиця стилів:</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="601"/>
-        <source>Maximum pages in cache</source>
-        <translation>Максимум сторінок у кеші</translation>
     </message>
     <message>
         <location filename="../src/optionsdialog.cpp" line="612"/>
@@ -3958,11 +3694,6 @@ Ancient news could reappear</source>
         <translation>Дія при відкритті каналу:</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="896"/>
-        <source>Show news description instead of loading web page</source>
-        <translation>Показати опис новини замість завантаження веб-сторінки</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="1736"/>
         <source>Text color of unread news</source>
         <translation>Колір тексту непрочитаних новин в списку</translation>
@@ -4367,14 +4098,6 @@ Ancient news could reappear</source>
         <location filename="../src/application/mainwindow.cpp" line="5131"/>
         <source>&amp;Next &gt;</source>
         <translation>Упере&amp;д &gt;</translation>
-    </message>
-</context>
-<context>
-    <name>RSSDetectionWidget</name>
-    <message>
-        <location filename="../src/webview/rssdetectionwidget.cpp" line="56"/>
-        <source>Untitled feed</source>
-        <translation>Канал без імені</translation>
     </message>
 </context>
 <context>

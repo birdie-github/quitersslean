@@ -19,7 +19,6 @@
 #define WEBVIEW_H
 
 #include <QWebView>
-#include <QWebHistory>
 #include <QWebPage>
 #include <QWebFrame>
 #include <QWebElement>
@@ -42,12 +41,9 @@ public:
   int buttonClick_;
 
   bool isLoading() { return isLoading_; }
-  bool hasRss() { return hasRss_; }
 
 signals:
   void showContextMenu(const QPoint &);
-  void signalGoHome();
-  void rssChanged(bool);
 
 protected:
   virtual void mousePressEvent(QMouseEvent*);
@@ -57,15 +53,10 @@ protected:
 
 private slots:
   void slotLoadStarted();
-  void slotLoadProgress(int value);
   void slotLoadFinished();
-  void checkRss();
 
 private:
   bool isLoading_;
-  bool rssChecked_;
-  bool hasRss_;
-  int posX_;
   QPoint dragStartPos_;
 
 };

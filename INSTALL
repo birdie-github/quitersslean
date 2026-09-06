@@ -1,6 +1,7 @@
 Build depends:
   GCC or Clang compiler
   SQLite version 3.30.1 or newer
+  libxml2 development headers and pkg-config
   Qt 5.15.x with QtWebKit 5.212 (development headers required)
   Required Qt development tools:
     qmake
@@ -16,7 +17,6 @@ Build depends:
     QtWebKit
     QtWebKitWidgets
     QtXml
-
 
 Instructions for Linux and other UNIX-like systems:
   mkdir _build && cd _build
@@ -37,7 +37,6 @@ Instructions for Windows:
     qmake CONFIG+=release CONFIG-=debug_and_release QuiteRSS.pro
     nmake
   For MinGW, use mingw32-make instead of nmake.
-
 
 Instructions for Mac OS:
   cd /path/to/build

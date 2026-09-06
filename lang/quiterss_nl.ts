@@ -85,200 +85,6 @@
     </message>
 </context>
 <context>
-    <name>AdBlockAddSubscriptionDialog</name>
-    <message>
-        <location filename="../src/adblock/adblockaddsubscriptiondialog.ui" line="14"/>
-        <source>Add Subscription</source>
-        <translation>Subscriptie toevoegen</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockaddsubscriptiondialog.ui" line="23"/>
-        <source>Title:</source>
-        <translation>Titel:</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockaddsubscriptiondialog.ui" line="33"/>
-        <source>Address:</source>
-        <translation>Adres:</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockaddsubscriptiondialog.ui" line="53"/>
-        <source>Add new subscription to AdBlock:</source>
-        <translation>Voeg een nieuwe subscriptie toe aan Adblock:</translation>
-    </message>
-</context>
-<context>
-    <name>AdBlockCustomList</name>
-    <message>
-        <location filename="../src/adblock/adblocksubscription.cpp" line="323"/>
-        <location filename="../src/adblock/adblocksubscription.cpp" line="330"/>
-        <location filename="../src/application/mainwindow.cpp" line="5168"/>
-        <source>Custom Rules</source>
-        <translation>Personenlijke regels</translation>
-    </message>
-</context>
-<context>
-    <name>AdBlockDialog</name>
-    <message>
-        <location filename="../src/adblock/adblockdialog.ui" line="14"/>
-        <source>AdBlock Configuration</source>
-        <translation>Adblock instellingen</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.ui" line="20"/>
-        <source>Enable AdBlock</source>
-        <translation>Adblock inschakelen</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.ui" line="32"/>
-        <source>Search...</source>
-        <translation>Zoek...</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.ui" line="68"/>
-        <source>Options</source>
-        <translation>Opties</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.ui" line="98"/>
-        <source>AdBlock</source>
-        <translation>Adblock</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.ui" line="122"/>
-        <source>Use only essential part of EasyList (for performance reasons)</source>
-        <translation>Gebruik alleen het essentieel onderdeel van EasyList (vanwege de prestaties)</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.cpp" line="74"/>
-        <source>Add Rule</source>
-        <translation>Voeg een regel toe</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.cpp" line="75"/>
-        <source>Remove Rule</source>
-        <translation>Verwijder een regel</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.cpp" line="77"/>
-        <source>Add Subscription</source>
-        <translation>Voeg subscriptie toe</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.cpp" line="78"/>
-        <source>Remove Subscription</source>
-        <translation>Verwijder subscriptie</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.cpp" line="79"/>
-        <source>Update Subscriptions</source>
-        <translation>Update subscriptie</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.cpp" line="81"/>
-        <source>Learn about writing rules...</source>
-        <translation>Leer over het schrijven van regels...</translation>
-    </message>
-</context>
-<context>
-    <name>AdBlockIcon</name>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="62"/>
-        <source>AdBlock lets you block unwanted content on web pages</source>
-        <translation>AdBlock laat je ongewenste inhoud van webpagina&apos;s blokkeren</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="106"/>
-        <source>AdBlock</source>
-        <translation>Adblock</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="133"/>
-        <source>Show AdBlock &amp;Settings</source>
-        <translation>Toon Adblock in&amp;stellingen</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="141"/>
-        <source>Disable on %1</source>
-        <translation>Uitschakelen op %1</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="147"/>
-        <source>Disable only on this page</source>
-        <translation>Deze pagina alleen uitschakelen</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="157"/>
-        <source>Blocked Popup Windows</source>
-        <translation>Geblokkeerde popup vensters</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="162"/>
-        <location filename="../src/adblock/adblockicon.cpp" line="179"/>
-        <source>%1 with (%2)</source>
-        <translation>%1 met (%2)</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="173"/>
-        <source>No content blocked</source>
-        <translation>Geen inhoud geblokkeerd</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="176"/>
-        <source>Blocked URL (AdBlock Rule) - click to edit rule</source>
-        <translation>Geblokkeerde URL (Adblock regel) - klik om regel te bewerken</translation>
-    </message>
-</context>
-<context>
-    <name>AdBlockManager</name>
-    <message>
-        <location filename="../src/adblock/adblockmanager.cpp" line="281"/>
-        <source>EasyList</source>
-        <translation>Easylist</translation>
-    </message>
-</context>
-<context>
-    <name>AdBlockSubscription</name>
-    <message>
-        <location filename="../src/adblock/adblocksubscription.cpp" line="195"/>
-        <source>Cannot load subscription!</source>
-        <translation>Kan subscriptie niet laden!</translation>
-    </message>
-</context>
-<context>
-    <name>AdBlockTreeWidget</name>
-    <message>
-        <location filename="../src/adblock/adblocktreewidget.cpp" line="97"/>
-        <source>Add Rule</source>
-        <translation>Voeg regel toe</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblocktreewidget.cpp" line="99"/>
-        <source>Remove Rule</source>
-        <translation>Verwijder regel</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblocktreewidget.cpp" line="160"/>
-        <source>Add Custom Rule</source>
-        <translation>Voeg eigen regel toe</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblocktreewidget.cpp" line="160"/>
-        <source>Please write your rule here:</source>
-        <translation>Schrijf je regels hier AUB:</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblocktreewidget.cpp" line="198"/>
-        <source>%1 (recently updated)</source>
-        <translation>%1 (recent upgedate)</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblocktreewidget.cpp" line="207"/>
-        <source>%1 (Error: %2)</source>
-        <translation>%1 (Fout: %2)</translation>
-    </message>
-</context>
-<context>
     <name>AddFeedWizard</name>
     <message>
         <location filename="../src/addfeedwizard.cpp" line="37"/>
@@ -907,11 +713,6 @@ werd niet gevonden</translation>
         <translation>Toon bij starten in een nieuw tabblad</translation>
     </message>
     <message>
-        <location filename="../src/feedpropertiesdialog.cpp" line="206"/>
-        <source>Show news&apos; description instead of loading web page</source>
-        <translation>Toon nieuws beschrijving in plaats van webpagina laden</translation>
-    </message>
-    <message>
         <location filename="../src/feedpropertiesdialog.cpp" line="119"/>
         <source>Automatically delete duplicate news</source>
         <translation>Verwijder automatisch dubbel nieuws</translation>
@@ -930,11 +731,6 @@ werd niet gevonden</translation>
         <location filename="../src/feedpropertiesdialog.cpp" line="145"/>
         <source>Avoid adding news before this date into the database:</source>
         <translation>Voeg geen nieuws toe voor deze datum in de database</translation>
-    </message>
-    <message>
-        <location filename="../src/feedpropertiesdialog.cpp" line="203"/>
-        <source>Enable JavaScript</source>
-        <translation>Javascript inschakelen</translation>
     </message>
     <message>
         <location filename="../src/feedpropertiesdialog.cpp" line="208"/>
@@ -1437,11 +1233,6 @@ werd niet gevonden</translation>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../src/application/mainwindow.cpp" line="1856"/>
-        <source>&amp;AdBlock</source>
-        <translation>&amp;Adblock</translation>
-    </message>
-    <message>
         <location filename="../src/application/mainwindow.cpp" line="2281"/>
         <location filename="../src/application/mainwindow.cpp" line="5062"/>
         <location filename="../src/application/mainwindow.cpp" line="7575"/>
@@ -1890,16 +1681,6 @@ werd niet gevonden</translation>
         <translation>Voorbeeld van Webpagina</translation>
     </message>
     <message>
-        <location filename="../src/application/mainwindow.cpp" line="5041"/>
-        <source>Save page in database</source>
-        <translation>Sla pagina op in databank</translation>
-    </message>
-    <message>
-        <location filename="../src/application/mainwindow.cpp" line="5042"/>
-        <source>Save page in database instead of news description</source>
-        <translation>Pagina opslaan in DB in plaats van nieuws beschrijving </translation>
-    </message>
-    <message>
         <location filename="../src/application/mainwindow.cpp" line="2638"/>
         <source>Confirm Delete</source>
         <translation>Bevestig verwijderen</translation>
@@ -2272,11 +2053,6 @@ werd niet gevonden</translation>
         <location filename="../src/application/mainwindow.cpp" line="5047"/>
         <source>News Toolbar</source>
         <translation>Nieuws werkbalk</translation>
-    </message>
-    <message>
-        <location filename="../src/application/mainwindow.cpp" line="5048"/>
-        <source>Browser Toolbar</source>
-        <translation>Browser Werkbalk</translation>
     </message>
     <message>
         <location filename="../src/application/mainwindow.cpp" line="5049"/>
@@ -3164,26 +2940,6 @@ werd niet gevonden</translation>
         <translation>Opties netwerk aanvragen bij het updaten van feeds (vereist herstart programma):</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="505"/>
-        <source>Use embedded browser</source>
-        <translation>Gebruik ingebouwde browser</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="506"/>
-        <source>Use external browser</source>
-        <translation>Gebruik externe browser</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="507"/>
-        <source>Default external browser</source>
-        <translation>Standaard externe browser</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="508"/>
-        <source>Following external browser:</source>
-        <translation>De volgende externe browser:</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="511"/>
         <location filename="../src/optionsdialog.cpp" line="525"/>
         <location filename="../src/optionsdialog.cpp" line="606"/>
@@ -3200,16 +2956,6 @@ werd niet gevonden</translation>
         <translation>Laadt afbeeldingen</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="514"/>
-        <source>Enable JavaScript</source>
-        <translation>JavaScript Inschakelen</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="521"/>
-        <source>Open links in embedded browser in background</source>
-        <translation>Open links in externe browser in de achtergrond</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="522"/>
         <source>Open links in external browser in background (experimental)</source>
         <translation>Open links in externe browser in de achtergrond.(experimenteel)</translation>
@@ -3218,11 +2964,6 @@ werd niet gevonden</translation>
         <location filename="../src/optionsdialog.cpp" line="548"/>
         <source>Default zoom on pages:</source>
         <translation>Standaard zoom op pagina&apos;s</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="566"/>
-        <source>Browser selection:</source>
-        <translation>Browser selectie:</translation>
     </message>
     <message>
         <location filename="../src/optionsdialog.cpp" line="568"/>
@@ -3238,11 +2979,6 @@ werd niet gevonden</translation>
         <location filename="../src/optionsdialog.cpp" line="572"/>
         <source>User style sheet:</source>
         <translation>Gebruikers stylesheet</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="601"/>
-        <source>Maximum pages in cache</source>
-        <translation>Maximum pagina&apos;s in cache</translation>
     </message>
     <message>
         <location filename="../src/optionsdialog.cpp" line="612"/>
@@ -3960,11 +3696,6 @@ werd niet gevonden</translation>
         <translation>Aktie op feed opening:</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="896"/>
-        <source>Show news description instead of loading web page</source>
-        <translation>Toon nieuws beschrijving in plaats van webpagina laden</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="1736"/>
         <source>Text color of unread news</source>
         <translation>Tekstkleur van ongelezen nieuws</translation>
@@ -4378,14 +4109,6 @@ werd niet gevonden</translation>
         <location filename="../src/application/mainwindow.cpp" line="5131"/>
         <source>&amp;Next &gt;</source>
         <translation>&amp;Volgende &gt;</translation>
-    </message>
-</context>
-<context>
-    <name>RSSDetectionWidget</name>
-    <message>
-        <location filename="../src/webview/rssdetectionwidget.cpp" line="56"/>
-        <source>Untitled feed</source>
-        <translation>Naamloze feed</translation>
     </message>
 </context>
 <context>

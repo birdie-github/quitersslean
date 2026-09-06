@@ -85,200 +85,6 @@
     </message>
 </context>
 <context>
-    <name>AdBlockAddSubscriptionDialog</name>
-    <message>
-        <location filename="../src/adblock/adblockaddsubscriptiondialog.ui" line="14"/>
-        <source>Add Subscription</source>
-        <translation>Engadir subscrición</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockaddsubscriptiondialog.ui" line="23"/>
-        <source>Title:</source>
-        <translation>Título:</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockaddsubscriptiondialog.ui" line="33"/>
-        <source>Address:</source>
-        <translation>Enderezo:</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockaddsubscriptiondialog.ui" line="53"/>
-        <source>Add new subscription to AdBlock:</source>
-        <translation>Engadir nova subscrición a AdBlock:</translation>
-    </message>
-</context>
-<context>
-    <name>AdBlockCustomList</name>
-    <message>
-        <location filename="../src/adblock/adblocksubscription.cpp" line="323"/>
-        <location filename="../src/adblock/adblocksubscription.cpp" line="330"/>
-        <location filename="../src/application/mainwindow.cpp" line="5168"/>
-        <source>Custom Rules</source>
-        <translation>Personalizar regras</translation>
-    </message>
-</context>
-<context>
-    <name>AdBlockDialog</name>
-    <message>
-        <location filename="../src/adblock/adblockdialog.ui" line="14"/>
-        <source>AdBlock Configuration</source>
-        <translation>Configuración de AdBlock</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.ui" line="20"/>
-        <source>Enable AdBlock</source>
-        <translation>Activar AdBlock</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.ui" line="32"/>
-        <source>Search...</source>
-        <translation>Procurar...</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.ui" line="68"/>
-        <source>Options</source>
-        <translation>Opcións</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.ui" line="98"/>
-        <source>AdBlock</source>
-        <translation>AdBlock</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.ui" line="122"/>
-        <source>Use only essential part of EasyList (for performance reasons)</source>
-        <translation>Empregar só unha parte esencial de EasyList (por razóns de rendemento)</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.cpp" line="74"/>
-        <source>Add Rule</source>
-        <translation>Engadir regra</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.cpp" line="75"/>
-        <source>Remove Rule</source>
-        <translation>Eliminar regra</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.cpp" line="77"/>
-        <source>Add Subscription</source>
-        <translation>Engadir subscrición</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.cpp" line="78"/>
-        <source>Remove Subscription</source>
-        <translation>Eliminar subscrición</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.cpp" line="79"/>
-        <source>Update Subscriptions</source>
-        <translation>Actualizar subscricións</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.cpp" line="81"/>
-        <source>Learn about writing rules...</source>
-        <translation>Saber como definir regras...</translation>
-    </message>
-</context>
-<context>
-    <name>AdBlockIcon</name>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="62"/>
-        <source>AdBlock lets you block unwanted content on web pages</source>
-        <translation>AdBlock permíteche bloquear contido non desexado das páxinas web</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="106"/>
-        <source>AdBlock</source>
-        <translation>AdBlock</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="133"/>
-        <source>Show AdBlock &amp;Settings</source>
-        <translation>Mostrar &amp;axustes de AdBlock</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="141"/>
-        <source>Disable on %1</source>
-        <translation>Desactivar en %1</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="147"/>
-        <source>Disable only on this page</source>
-        <translation>Desactivar só nesta páxina</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="157"/>
-        <source>Blocked Popup Windows</source>
-        <translation>Xanelas emerxentes bloqueadas</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="162"/>
-        <location filename="../src/adblock/adblockicon.cpp" line="179"/>
-        <source>%1 with (%2)</source>
-        <translation>%1 con (%2)</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="173"/>
-        <source>No content blocked</source>
-        <translation>Non hai contido bloquedo</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="176"/>
-        <source>Blocked URL (AdBlock Rule) - click to edit rule</source>
-        <translation>URL bloqueado (por unha regra de AdBlock) - preme para editar a regra</translation>
-    </message>
-</context>
-<context>
-    <name>AdBlockManager</name>
-    <message>
-        <location filename="../src/adblock/adblockmanager.cpp" line="281"/>
-        <source>EasyList</source>
-        <translation>EasyList</translation>
-    </message>
-</context>
-<context>
-    <name>AdBlockSubscription</name>
-    <message>
-        <location filename="../src/adblock/adblocksubscription.cpp" line="195"/>
-        <source>Cannot load subscription!</source>
-        <translation>Non se pode cargar a subscrición!</translation>
-    </message>
-</context>
-<context>
-    <name>AdBlockTreeWidget</name>
-    <message>
-        <location filename="../src/adblock/adblocktreewidget.cpp" line="97"/>
-        <source>Add Rule</source>
-        <translation>Engadir regra</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblocktreewidget.cpp" line="99"/>
-        <source>Remove Rule</source>
-        <translation>Eliminar regra</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblocktreewidget.cpp" line="160"/>
-        <source>Add Custom Rule</source>
-        <translation>Engadir regra personalizada</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblocktreewidget.cpp" line="160"/>
-        <source>Please write your rule here:</source>
-        <translation>Por favor, escribe a túa regra aquí:</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblocktreewidget.cpp" line="198"/>
-        <source>%1 (recently updated)</source>
-        <translation>%1 (de recente actualización)</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblocktreewidget.cpp" line="207"/>
-        <source>%1 (Error: %2)</source>
-        <translation>%1 (Erro: %2)</translation>
-    </message>
-</context>
-<context>
     <name>AddFeedWizard</name>
     <message>
         <location filename="../src/addfeedwizard.cpp" line="37"/>
@@ -907,11 +713,6 @@ As novas antigas poderían reaparecer</translation>
         <translation>Mostrar nunha nova lapela ao iniciar</translation>
     </message>
     <message>
-        <location filename="../src/feedpropertiesdialog.cpp" line="206"/>
-        <source>Show news&apos; description instead of loading web page</source>
-        <translation>Mostrar a descrición das novas no canto de cargar a páxina web</translation>
-    </message>
-    <message>
         <location filename="../src/feedpropertiesdialog.cpp" line="119"/>
         <source>Automatically delete duplicate news</source>
         <translation>Eliminar automaticamente as novas duplicadas</translation>
@@ -930,11 +731,6 @@ As novas antigas poderían reaparecer</translation>
         <location filename="../src/feedpropertiesdialog.cpp" line="145"/>
         <source>Avoid adding news before this date into the database:</source>
         <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/feedpropertiesdialog.cpp" line="203"/>
-        <source>Enable JavaScript</source>
-        <translation>Activar JavaScript</translation>
     </message>
     <message>
         <location filename="../src/feedpropertiesdialog.cpp" line="208"/>
@@ -1437,11 +1233,6 @@ As novas antigas poderían reaparecer</translation>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../src/application/mainwindow.cpp" line="1856"/>
-        <source>&amp;AdBlock</source>
-        <translation>&amp;AdBlock</translation>
-    </message>
-    <message>
         <location filename="../src/application/mainwindow.cpp" line="2281"/>
         <location filename="../src/application/mainwindow.cpp" line="5062"/>
         <location filename="../src/application/mainwindow.cpp" line="7575"/>
@@ -1890,16 +1681,6 @@ As novas antigas poderían reaparecer</translation>
         <translation>Previsualizar páxina web</translation>
     </message>
     <message>
-        <location filename="../src/application/mainwindow.cpp" line="5041"/>
-        <source>Save page in database</source>
-        <translation>Gardar páxina na base de datos</translation>
-    </message>
-    <message>
-        <location filename="../src/application/mainwindow.cpp" line="5042"/>
-        <source>Save page in database instead of news description</source>
-        <translation>Gardar a páxina na base de datos no canto da descrición</translation>
-    </message>
-    <message>
         <location filename="../src/application/mainwindow.cpp" line="2638"/>
         <source>Confirm Delete</source>
         <translation>Confirmar a eliminación</translation>
@@ -2272,11 +2053,6 @@ As novas antigas poderían reaparecer</translation>
         <location filename="../src/application/mainwindow.cpp" line="5047"/>
         <source>News Toolbar</source>
         <translation>Barra de novas</translation>
-    </message>
-    <message>
-        <location filename="../src/application/mainwindow.cpp" line="5048"/>
-        <source>Browser Toolbar</source>
-        <translation>Barra do navegador</translation>
     </message>
     <message>
         <location filename="../src/application/mainwindow.cpp" line="5049"/>
@@ -3164,26 +2940,6 @@ As novas antigas poderían reaparecer</translation>
         <translation>Opcións de conexión cando se actualicen as canles (cómpre reiniciar o programa):</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="505"/>
-        <source>Use embedded browser</source>
-        <translation>Usar navegador interno</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="506"/>
-        <source>Use external browser</source>
-        <translation>Usar navegador externo</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="507"/>
-        <source>Default external browser</source>
-        <translation>Navegador externo predefinido</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="508"/>
-        <source>Following external browser:</source>
-        <translation>Un navegador externo concreto:</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="511"/>
         <location filename="../src/optionsdialog.cpp" line="525"/>
         <location filename="../src/optionsdialog.cpp" line="606"/>
@@ -3200,16 +2956,6 @@ As novas antigas poderían reaparecer</translation>
         <translation>Cargar imaxes</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="514"/>
-        <source>Enable JavaScript</source>
-        <translation>Activar JavaScript</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="521"/>
-        <source>Open links in embedded browser in background</source>
-        <translation>Abrir ligazóns en segundo plano no navegador interno</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="522"/>
         <source>Open links in external browser in background (experimental)</source>
         <translation>Abrir ligazóns en segundo plano no navegador externo (experimental)</translation>
@@ -3218,11 +2964,6 @@ As novas antigas poderían reaparecer</translation>
         <location filename="../src/optionsdialog.cpp" line="548"/>
         <source>Default zoom on pages:</source>
         <translation>Zoom predefinido nas páxinas:</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="566"/>
-        <source>Browser selection:</source>
-        <translation>Selección de navegador:</translation>
     </message>
     <message>
         <location filename="../src/optionsdialog.cpp" line="568"/>
@@ -3238,11 +2979,6 @@ As novas antigas poderían reaparecer</translation>
         <location filename="../src/optionsdialog.cpp" line="572"/>
         <source>User style sheet:</source>
         <translation>Usar folla de estilo:</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="601"/>
-        <source>Maximum pages in cache</source>
-        <translation>Número máximo de páxinas na caché</translation>
     </message>
     <message>
         <location filename="../src/optionsdialog.cpp" line="612"/>
@@ -3960,11 +3696,6 @@ As novas antigas poderían reaparecer</translation>
         <translation>Acción ao abrir a canle:</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="896"/>
-        <source>Show news description instead of loading web page</source>
-        <translation>Mostrar a descrición das novas no canto de cargar a páxina web</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="1736"/>
         <source>Text color of unread news</source>
         <translation>Cor do texto das novas sen ler</translation>
@@ -4378,14 +4109,6 @@ As novas antigas poderían reaparecer</translation>
         <location filename="../src/application/mainwindow.cpp" line="5131"/>
         <source>&amp;Next &gt;</source>
         <translation>&amp;Seguinte &gt;</translation>
-    </message>
-</context>
-<context>
-    <name>RSSDetectionWidget</name>
-    <message>
-        <location filename="../src/webview/rssdetectionwidget.cpp" line="56"/>
-        <source>Untitled feed</source>
-        <translation>Canle sen título</translation>
     </message>
 </context>
 <context>

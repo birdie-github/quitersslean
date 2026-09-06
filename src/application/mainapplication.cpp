@@ -22,7 +22,6 @@
 #include "database.h"
 #include "globals.h"
 #include "networkmanager.h"
-#include "adblockmanager.h"
 #include "settings.h"
 #include "splashscreen.h"
 #include "updatefeeds.h"
@@ -509,51 +508,13 @@ DownloadManager *MainApplication::downloadManager()
 
 void MainApplication::reloadUserStyleBrowser()
 {
-  Settings settings;
-  settings.beginGroup("Settings");
-  QString userStyleBrowser = settings.value("userStyleBrowser", QString()).toString();
-  QWebSettings::globalSettings()->setUserStyleSheetUrl(userStyleSheet(userStyleBrowser));
-  settings.endGroup();
+  QWebSettings::globalSettings()->setUserStyleSheetUrl(QUrl());
 }
 
 /** @brief Set user style sheet for browser
  * @param filePath Filepath of user style
  * @return URL-link to user style
  *---------------------------------------------------------------------------*/
-QUrl MainApplication::userStyleSheet(const QString &filePath) const
-{
-  QString userStyle;
-
-#ifndef HAVE_X11
-  // Don't grey out selection on losing focus (to prevent graying out found text)
-  QString highlightColor;
-  QString highlightedTextColor;
-#ifdef Q_OS_MAC
-  highlightColor = QLatin1String("#b6d6fc");
-  highlightedTextColor = QLatin1String("#000");
-#else
-  QPalette pal = style()->standardPalette();
-  highlightColor = pal.color(QPalette::Highlight).name();
-  highlightedTextColor = pal.color(QPalette::HighlightedText).name();
-#endif
-  userStyle += QString("::selection {background: %1; color: %2;} ").arg(highlightColor, highlightedTextColor);
-#endif
-
-  userStyle += AdBlockManager::instance()->elementHidingRules();
-
-  QFile file(filePath);
-  if (!filePath.isEmpty() && file.open(QFile::ReadOnly)) {
-    QString fileData = QString::fromUtf8(file.readAll());
-    fileData.remove(QLatin1Char('\n'));
-    userStyle.append(fileData);
-    file.close();
-  }
-
-  const QString &encodedStyle = userStyle.toLatin1().toBase64();
-  const QString &dataString = QString("data:text/css;charset=utf-8;base64,%1").arg(encodedStyle);
-
-  return QUrl(dataString);
-}
 
 void MainApplication::proxyLoadSettings()
 {

@@ -86,9 +86,6 @@
         <file alias="bulletError">images/bullet_error.png</file>
         <file alias="bulletUpdate">images/bullet_update.png</file>
         <file alias="play">images/control_play.png</file>
-        <file>images/adblock.png</file>
-        <file>images/adblock_big.png</file>
-        <file>images/adblock-disabled.png</file>
         <file alias="menu">images/menu.png</file>
         <file alias="backup">images/backup.png</file>
         <file alias="layout_classic">images/layout_classic.png</file>
@@ -111,9 +108,6 @@
     </qresource>
     <qresource prefix="/html">
         <file alias="description">html/news.html</file>
-        <file alias="audioplayer">html/audioplayer.html</file>
-        <file alias="videoplayer">html/videoplayer.html</file>
-        <file>html/adblockPage.html</file>
         <file alias="description_rtl">html/news_rtl.html</file>
         <file alias="newspaper_description">html/newspaper_description.html</file>
         <file alias="newspaper_head">html/newspaper_head.html</file>

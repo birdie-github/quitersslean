@@ -72,29 +72,9 @@ public:
   QSpinBox *numberRepeats_;
 
   // browser
-  QRadioButton *embeddedBrowserOn_;
-  QRadioButton *externalBrowserOn_;
-  QRadioButton *defaultExternalBrowserOn_;
-  QRadioButton *otherExternalBrowserOn_;
-  LineEdit *otherExternalBrowserEdit_;
-  QPushButton *otherExternalBrowserButton_;
   QCheckBox *autoLoadImages_;
-  QCheckBox *javaScriptEnable_;
   QSpinBox *defaultZoomPages_;
   QCheckBox *openLinkInBackground_;
-  QCheckBox *openLinkInBackgroundEmbedded_;
-  LineEdit *userStyleBrowserEdit_;
-
-  QSpinBox *maxPagesInCache_;
-  QGroupBox *diskCacheOn_;
-  QSpinBox *maxDiskCache_;
-  QLineEdit *dirDiskCacheEdit_;
-  QPushButton *dirDiskCacheButton_;
-
-  QRadioButton *saveCookies_;
-  QRadioButton *deleteCookiesOnClose_;
-  QRadioButton *blockCookies_;
-  QPushButton *clearCookies_;
 
   LineEdit *downloadLocationEdit_;
   QCheckBox *askDownloadLocation_;
@@ -120,8 +100,6 @@ public:
   QCheckBox *markReadSwitchingFeed_;
   QCheckBox *markReadClosingTab_;
   QCheckBox *markReadMinimize_;
-
-  QCheckBox *showDescriptionNews_;
 
   QComboBox *formatDate_;
   QComboBox *formatTime_;
@@ -233,7 +211,6 @@ private slots:
   void slotClearShortcut();
   void slotResetShortcut();
   void filterShortcutChanged(const QString &text);
-  void selectionBrowser();
   void selectionUserStyleNews();
   void selectionSoundNotifer();
   void slotPlaySoundNotifer();
@@ -250,8 +227,6 @@ private slots:
   void slotDeletePass();
   void slotDeleteAllPass();
   void slotShowPass();
-  void selectionUserStyleBrowser();
-  void selectionDirDiskCache();
   void selectionDownloadLocation();
 
 private:

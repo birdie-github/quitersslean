@@ -85,200 +85,6 @@
     </message>
 </context>
 <context>
-    <name>AdBlockAddSubscriptionDialog</name>
-    <message>
-        <location filename="../src/adblock/adblockaddsubscriptiondialog.ui" line="14"/>
-        <source>Add Subscription</source>
-        <translation>新增訂閱</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockaddsubscriptiondialog.ui" line="23"/>
-        <source>Title:</source>
-        <translation>標題:</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockaddsubscriptiondialog.ui" line="33"/>
-        <source>Address:</source>
-        <translation>地址:</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockaddsubscriptiondialog.ui" line="53"/>
-        <source>Add new subscription to AdBlock:</source>
-        <translation>新增 AdBlock 訂閱:</translation>
-    </message>
-</context>
-<context>
-    <name>AdBlockCustomList</name>
-    <message>
-        <location filename="../src/adblock/adblocksubscription.cpp" line="323"/>
-        <location filename="../src/adblock/adblocksubscription.cpp" line="330"/>
-        <location filename="../src/application/mainwindow.cpp" line="5168"/>
-        <source>Custom Rules</source>
-        <translation>自訂規則</translation>
-    </message>
-</context>
-<context>
-    <name>AdBlockDialog</name>
-    <message>
-        <location filename="../src/adblock/adblockdialog.ui" line="14"/>
-        <source>AdBlock Configuration</source>
-        <translation>AdBlock 設定</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.ui" line="20"/>
-        <source>Enable AdBlock</source>
-        <translation>啟用 AdBlock</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.ui" line="32"/>
-        <source>Search...</source>
-        <translation>搜尋…</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.ui" line="68"/>
-        <source>Options</source>
-        <translation>選項</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.ui" line="98"/>
-        <source>AdBlock</source>
-        <translation>AdBlock</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.ui" line="122"/>
-        <source>Use only essential part of EasyList (for performance reasons)</source>
-        <translation>僅使用 EasyList 的重要部分 (以免降低效能)</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.cpp" line="74"/>
-        <source>Add Rule</source>
-        <translation>新增規則</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.cpp" line="75"/>
-        <source>Remove Rule</source>
-        <translation>移除規則</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.cpp" line="77"/>
-        <source>Add Subscription</source>
-        <translation>新增訂閱</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.cpp" line="78"/>
-        <source>Remove Subscription</source>
-        <translation>移除訂閱</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.cpp" line="79"/>
-        <source>Update Subscriptions</source>
-        <translation>更新訂閱</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockdialog.cpp" line="81"/>
-        <source>Learn about writing rules...</source>
-        <translation>了解如何撰寫規則…</translation>
-    </message>
-</context>
-<context>
-    <name>AdBlockIcon</name>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="62"/>
-        <source>AdBlock lets you block unwanted content on web pages</source>
-        <translation>AdBlock 讓您可以封鎖網頁中不想要的內容</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="106"/>
-        <source>AdBlock</source>
-        <translation>AdBlock</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="133"/>
-        <source>Show AdBlock &amp;Settings</source>
-        <translation>顯示 AdBlock 選項(&amp;S)</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="141"/>
-        <source>Disable on %1</source>
-        <translation>在 %1 停用</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="147"/>
-        <source>Disable only on this page</source>
-        <translation>僅在此頁面停用</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="157"/>
-        <source>Blocked Popup Windows</source>
-        <translation>已封鎖彈出視窗</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="162"/>
-        <location filename="../src/adblock/adblockicon.cpp" line="179"/>
-        <source>%1 with (%2)</source>
-        <translation>%1 使用 (%2)</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="173"/>
-        <source>No content blocked</source>
-        <translation>未封鎖內容</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblockicon.cpp" line="176"/>
-        <source>Blocked URL (AdBlock Rule) - click to edit rule</source>
-        <translation>URL 已封鎖 (依照 AdBlock 規則) - 點擊此處以編輯規則</translation>
-    </message>
-</context>
-<context>
-    <name>AdBlockManager</name>
-    <message>
-        <location filename="../src/adblock/adblockmanager.cpp" line="281"/>
-        <source>EasyList</source>
-        <translation>EasyList</translation>
-    </message>
-</context>
-<context>
-    <name>AdBlockSubscription</name>
-    <message>
-        <location filename="../src/adblock/adblocksubscription.cpp" line="195"/>
-        <source>Cannot load subscription!</source>
-        <translation>無法載入訂閱！</translation>
-    </message>
-</context>
-<context>
-    <name>AdBlockTreeWidget</name>
-    <message>
-        <location filename="../src/adblock/adblocktreewidget.cpp" line="97"/>
-        <source>Add Rule</source>
-        <translation>新增規則</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblocktreewidget.cpp" line="99"/>
-        <source>Remove Rule</source>
-        <translation>移除規則</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblocktreewidget.cpp" line="160"/>
-        <source>Add Custom Rule</source>
-        <translation>新增自訂規則</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblocktreewidget.cpp" line="160"/>
-        <source>Please write your rule here:</source>
-        <translation>請在此撰寫您的規則:</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblocktreewidget.cpp" line="198"/>
-        <source>%1 (recently updated)</source>
-        <translation>%1 (最近更新)</translation>
-    </message>
-    <message>
-        <location filename="../src/adblock/adblocktreewidget.cpp" line="207"/>
-        <source>%1 (Error: %2)</source>
-        <translation>%1 (錯誤: %2)</translation>
-    </message>
-</context>
-<context>
     <name>AddFeedWizard</name>
     <message>
         <location filename="../src/addfeedwizard.cpp" line="37"/>
@@ -907,11 +713,6 @@ Ancient news could reappear</source>
         <translation>啟動時，於新分頁顯示</translation>
     </message>
     <message>
-        <location filename="../src/feedpropertiesdialog.cpp" line="206"/>
-        <source>Show news&apos; description instead of loading web page</source>
-        <translation>顯示新聞的描述，而不是載入網頁</translation>
-    </message>
-    <message>
         <location filename="../src/feedpropertiesdialog.cpp" line="119"/>
         <source>Automatically delete duplicate news</source>
         <translation>自動刪除重複的新聞</translation>
@@ -930,11 +731,6 @@ Ancient news could reappear</source>
         <location filename="../src/feedpropertiesdialog.cpp" line="145"/>
         <source>Avoid adding news before this date into the database:</source>
         <translation>不要將早於此日期的新聞加入資料庫:</translation>
-    </message>
-    <message>
-        <location filename="../src/feedpropertiesdialog.cpp" line="203"/>
-        <source>Enable JavaScript</source>
-        <translation>啟用 JavaScript</translation>
     </message>
     <message>
         <location filename="../src/feedpropertiesdialog.cpp" line="208"/>
@@ -1437,11 +1233,6 @@ Ancient news could reappear</source>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../src/application/mainwindow.cpp" line="1856"/>
-        <source>&amp;AdBlock</source>
-        <translation>AdBlock (&amp;A)</translation>
-    </message>
-    <message>
         <location filename="../src/application/mainwindow.cpp" line="2281"/>
         <location filename="../src/application/mainwindow.cpp" line="5062"/>
         <location filename="../src/application/mainwindow.cpp" line="7575"/>
@@ -1890,16 +1681,6 @@ Ancient news could reappear</source>
         <translation>預覽網頁</translation>
     </message>
     <message>
-        <location filename="../src/application/mainwindow.cpp" line="5041"/>
-        <source>Save page in database</source>
-        <translation>將網頁儲存於資料庫</translation>
-    </message>
-    <message>
-        <location filename="../src/application/mainwindow.cpp" line="5042"/>
-        <source>Save page in database instead of news description</source>
-        <translation>將網頁儲存於資料庫，而非只存新聞描述</translation>
-    </message>
-    <message>
         <location filename="../src/application/mainwindow.cpp" line="2638"/>
         <source>Confirm Delete</source>
         <translation>確認刪除</translation>
@@ -2272,11 +2053,6 @@ Ancient news could reappear</source>
         <location filename="../src/application/mainwindow.cpp" line="5047"/>
         <source>News Toolbar</source>
         <translation>新聞工具列</translation>
-    </message>
-    <message>
-        <location filename="../src/application/mainwindow.cpp" line="5048"/>
-        <source>Browser Toolbar</source>
-        <translation>瀏覽器工具列</translation>
     </message>
     <message>
         <location filename="../src/application/mainwindow.cpp" line="5049"/>
@@ -3164,26 +2940,6 @@ Ancient news could reappear</source>
         <translation>更新新聞源時 (需要重新啟動程式)，網路請求之選項:</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="505"/>
-        <source>Use embedded browser</source>
-        <translation>使用嵌入的瀏覽器</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="506"/>
-        <source>Use external browser</source>
-        <translation>使用外部的瀏覽器</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="507"/>
-        <source>Default external browser</source>
-        <translation>預設的外部瀏覽器</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="508"/>
-        <source>Following external browser:</source>
-        <translation>下面的外部瀏覽器: </translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="511"/>
         <location filename="../src/optionsdialog.cpp" line="525"/>
         <location filename="../src/optionsdialog.cpp" line="606"/>
@@ -3200,16 +2956,6 @@ Ancient news could reappear</source>
         <translation>載入圖片</translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="514"/>
-        <source>Enable JavaScript</source>
-        <translation>啟用 JavaScript</translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="521"/>
-        <source>Open links in embedded browser in background</source>
-        <translation>在背景於嵌入瀏覽器開啟連結</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="522"/>
         <source>Open links in external browser in background (experimental)</source>
         <translation>在背景於外部瀏覽器開啟連結 (實驗性)</translation>
@@ -3218,11 +2964,6 @@ Ancient news could reappear</source>
         <location filename="../src/optionsdialog.cpp" line="548"/>
         <source>Default zoom on pages:</source>
         <translation>網頁的預設縮放: </translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="566"/>
-        <source>Browser selection:</source>
-        <translation>瀏覽器的選擇: </translation>
     </message>
     <message>
         <location filename="../src/optionsdialog.cpp" line="568"/>
@@ -3238,11 +2979,6 @@ Ancient news could reappear</source>
         <location filename="../src/optionsdialog.cpp" line="572"/>
         <source>User style sheet:</source>
         <translation>使用者樣式表: </translation>
-    </message>
-    <message>
-        <location filename="../src/optionsdialog.cpp" line="601"/>
-        <source>Maximum pages in cache</source>
-        <translation>快取中的頁數上限</translation>
     </message>
     <message>
         <location filename="../src/optionsdialog.cpp" line="612"/>
@@ -3960,11 +3696,6 @@ Ancient news could reappear</source>
         <translation>新聞源開啟時: </translation>
     </message>
     <message>
-        <location filename="../src/optionsdialog.cpp" line="896"/>
-        <source>Show news description instead of loading web page</source>
-        <translation>顯示新聞描述，而不載入網頁</translation>
-    </message>
-    <message>
         <location filename="../src/optionsdialog.cpp" line="1736"/>
         <source>Text color of unread news</source>
         <translation>未讀新聞的文字色</translation>
@@ -4378,14 +4109,6 @@ Ancient news could reappear</source>
         <location filename="../src/application/mainwindow.cpp" line="5131"/>
         <source>&amp;Next &gt;</source>
         <translation>下一步(&amp;N) &gt;</translation>
-    </message>
-</context>
-<context>
-    <name>RSSDetectionWidget</name>
-    <message>
-        <location filename="../src/webview/rssdetectionwidget.cpp" line="56"/>
-        <source>Untitled feed</source>
-        <translation>未命名的新聞源</translation>
     </message>
 </context>
 <context>

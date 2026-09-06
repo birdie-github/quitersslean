@@ -28,17 +28,15 @@ WebView::WebView(QWidget *parent)
   : QWebView(parent)
   , buttonClick_(0)
   , isLoading_(false)
-  , rssChecked_(false)
-  , hasRss_(false)
 {
   setContextMenuPolicy(Qt::CustomContextMenu);
+  setAcceptDrops(false);
   setPage(new WebPage(this));
   QPalette pal(qApp->palette());
   pal.setColor(QPalette::Base, Qt::white);
   setPalette(pal);
 
   connect(this, SIGNAL(loadStarted()), this, SLOT(slotLoadStarted()));
-  connect(this, SIGNAL(loadProgress(int)), this, SLOT(slotLoadProgress(int)));
   connect(this, SIGNAL(loadFinished(bool)), this, SLOT(slotLoadFinished()));
 }
 
@@ -47,56 +45,37 @@ void WebView::disconnectObjects()
   disconnect(this);
 }
 
-/*virtual*/ void WebView::mousePressEvent(QMouseEvent *event)
+void WebView::mousePressEvent(QMouseEvent *event)
 {
   buttonClick_ = 0;
 
-  if (event->buttons() == Qt::RightButton) {
-    posX_ = event->pos().x();
-  } else if (event->buttons() == Qt::LeftButton) {
+  if (event->buttons() == Qt::LeftButton) {
     dragStartPos_ = event->pos();
   }
 
   QWebView::mousePressEvent(event);
 }
 
-/*virtual*/ void WebView::mouseReleaseEvent(QMouseEvent *event)
+void WebView::mouseReleaseEvent(QMouseEvent *event)
 {
-  if (event->button() & Qt::RightButton) {
-    int posX2 = event->pos().x();
-    if (posX_ > posX2+5) {
-      if (history()->canGoBack())
-        back();
-      else
-        emit signalGoHome();
-    } else if (posX_+5 < posX2) {
-      forward();
-    } else {
-      emit showContextMenu(event->pos());
-    }
-  } else if (event->button() & Qt::MiddleButton) {
-    if (event->modifiers() == Qt::NoModifier) {
-      buttonClick_ = MIDDLE_BUTTON;
-    } else {
-      buttonClick_ = MIDDLE_BUTTON_MOD;
-    }
-  } else if (event->button() & Qt::LeftButton) {
-    if (event->modifiers() == Qt::ControlModifier) {
-      buttonClick_ = LEFT_BUTTON_CTRL;
-    } else if ((event->modifiers() == Qt::ShiftModifier) ||
-               (event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier))) {
-      buttonClick_ = LEFT_BUTTON_SHIFT;
-    } else if (event->modifiers() == Qt::AltModifier) {
-      buttonClick_ = LEFT_BUTTON_ALT;
-    } else {
-      buttonClick_ = LEFT_BUTTON;
+  if (event->button() == Qt::RightButton) {
+    emit showContextMenu(event->pos());
+    event->accept();
+    return;
+  }
+  if (event->button() == Qt::MiddleButton ||
+      (event->button() == Qt::LeftButton && event->modifiers() != Qt::NoModifier)) {
+    const QUrl link = page()->mainFrame()->hitTestContent(event->pos()).linkUrl();
+    if (!link.isEmpty()) {
+      emit linkClicked(link);
+      event->accept();
+      return;
     }
   }
-
   QWebView::mouseReleaseEvent(event);
 }
 
-/*virtual*/ void WebView::wheelEvent(QWheelEvent *event)
+void WebView::wheelEvent(QWheelEvent *event)
 {
   if (event->modifiers() == Qt::ControlModifier) {
     if (event->delta() > 0) {
@@ -155,32 +134,9 @@ void WebView::slotLoadStarted()
 {
   isLoading_ = true;
 
-  rssChecked_ = false;
-  emit rssChanged(false);
-}
-
-void WebView::slotLoadProgress(int value)
-{
-  if (value > 60) {
-    checkRss();
-  }
 }
 
 void WebView::slotLoadFinished()
 {
   isLoading_ = false;
-}
-
-void WebView::checkRss()
-{
-  if (rssChecked_) {
-    return;
-  }
-
-  rssChecked_ = true;
-  QWebFrame* frame = page()->mainFrame();
-  const QWebElementCollection links = frame->findAllElements("link[type=\"application/rss+xml\"]");
-
-  hasRss_ = links.count() != 0;
-  emit rssChanged(hasRss_);
 }

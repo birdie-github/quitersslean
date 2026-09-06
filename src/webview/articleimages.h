@@ -1,4 +1,4 @@
-/* =============================================================================
+/* ============================================================
 * QuiteRSS is a open-source cross-platform RSS/Atom news feeds reader
 * Copyright (C) 2011-2020 QuiteRSS Team <quiterssteam@gmail.com>
 *
@@ -14,37 +14,21 @@
 *
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-* =========================================================================== */
-#ifndef LOCATIONBAR_H
-#define LOCATIONBAR_H
-
-#include <QLineEdit>
-#include <QToolButton>
-
-class WebView;
-
-class LocationBar : public QLineEdit
-{
-  Q_OBJECT
+* ============================================================ */
+#ifndef ARTICLEIMAGES_H
+#define ARTICLEIMAGES_H
+#include <QNetworkAccessManager>
+#include <QSet>
+#include <QUrl>
+class ArticleImages : public QNetworkAccessManager {
 public:
-  LocationBar(WebView *view, QWidget *parent = 0);
-
-public slots:
-  void updateTextMargins();
-  void showRssIcon(bool show);
-
-private slots:
-  void rssIconClicked();
-
+  explicit ArticleImages(QObject *parent = nullptr);
+  void allow(const QSet<QUrl> &urls) { allowed_ += urls; }
+  void reset();
+protected:
+  QNetworkReply *createRequest(Operation operation, const QNetworkRequest &request, QIODevice *data) override;
 private:
-  void mouseReleaseEvent(QMouseEvent*);
-  void focusInEvent(QFocusEvent *event);
-
-  WebView *view_;
-  bool focus_;
-  QWidget *rightWidget_;
-  QToolButton *rssButton_;
-
+  QSet<QUrl> allowed_;
+  QNetworkAccessManager *fetcher_;
 };
-
-#endif // LOCATIONBAR_H
+#endif

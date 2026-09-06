@@ -27,7 +27,6 @@
 #include "feedsview.h"
 #include "findtext.h"
 #include "lineedit.h"
-#include "locationbar.h"
 #include "newsheader.h"
 #include "newsmodel.h"
 #include "newsview.h"
@@ -52,8 +51,7 @@ public:
     TabTypeStar,
     TabTypeDel,
     TabTypeLabel,
-    TabTypeWeb,
-    TabTypeDownloads
+    TabTypeDownloads = 6
   };
 
   enum RefreshNewspaper {
@@ -80,17 +78,15 @@ public:
   void restoreNews();
   void slotCopyLinkNews();
   void showLabelsMenu();
-  void savePageAsDescript();
 
   bool openUrl(const QUrl &url);
-  void openInBrowserNews();
   void openInExternalBrowserNews();
-  void openNewsNewTab();
 
   void updateWebView(QModelIndex index);
   void loadNewspaper(int refresh = RefreshAll);
   void hideWebContent();
   QString getLinkNews(int row);
+  QUrl articleUrl(int row) const;
 
   void reduceNewsList();
   void increaseNewsList();
@@ -125,9 +121,6 @@ public:
 
   QWidget *newsWidget_;
   WebView *webView_;
-  QToolBar *webToolBar_;
-  LocationBar *locationBar_;
-  QWidget *webControlPanel_;
 
   QLabel *newsIconTitle_;
   QMovie *newsIconMovie_;
@@ -164,26 +157,19 @@ private slots:
 
   void slotSetHtmlWebView(const QString &html);
   void webHomePage();
-  void openPageInExternalBrowser();
   void slotLinkClicked(QUrl url);
   void slotLinkHovered(const QString &link, const QString &str1="", const QString &str2="");
   void slotSetValue(int value);
   void slotLoadStarted();
   void slotLoadFinished(bool);
-  void slotUrlEnter();
-  void slotUrlChanged(const QUrl &url);
   void showContextWebPage(const QPoint &p);
   void openUrlInExternalBrowser();
 
   void slotTabClose();
-  void webTitleChanged(QString title);
   void openLink();
-  void openLinkInNewTab();
 
   void slotFindText(const QString& text);
   void slotSelectFind();
-
-  void setWebToolbarVisible(bool show = true, bool checked = true);
 
   void slotNewslLabelClicked(QModelIndex index);
 
@@ -205,10 +191,6 @@ private:
   QProgressBar *webViewProgress_;
   QLabel *webViewProgressLabel_;
 
-  QAction *webHomePageAct_;
-  QAction *webExternalBrowserAct_;
-  QAction *urlExternalBrowserAct_;
-
   QTimer *markNewsReadTimer_;
 
   int webDefaultFontSize_;
@@ -218,7 +200,6 @@ private:
   QString linkNewsString_;
 
   QWidget *newsPanelWidget_;
-  bool webToolbarShow_;
 
   QString newspaperHeadHtml_;
   QString newspaperHtml_;
@@ -226,8 +207,6 @@ private:
   QString htmlString_;
   QString htmlRtlString_;
   QString cssString_;
-  QString audioPlayerHtml_;
-  QString videoPlayerHtml_;
 
 };
 

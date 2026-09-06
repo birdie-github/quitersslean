@@ -34,7 +34,10 @@ exists(.git) {
 !equals(QT_MAJOR_VERSION, 5): error("QuiteRSS requires Qt 5.15.x and QtWebKit")
 lessThan(QT_MINOR_VERSION, 15): error("QuiteRSS requires Qt 5.15 or newer within Qt 5")
 QT += widgets webkitwidgets network xml printsupport sql multimedia
-CONFIG += c++11
+CONFIG += c++11 link_pkgconfig
+PKGCONFIG += libxml-2.0
+HEADERS += src/webview/articlecontent.h src/webview/articleimages.h
+SOURCES += src/webview/articlecontent.cpp src/webview/articleimages.cpp
 
 unix:!mac:DEFINES += HAVE_X11
 
@@ -75,22 +78,10 @@ HEADERS += \
     src/application/settings.h \
     src/application/logfile.h \
     src/application/mainwindow.h \
-    src/adblock/adblocktreewidget.h \
-    src/adblock/adblocksubscription.h \
-    src/adblock/adblocksearchtree.h \
-    src/adblock/adblockrule.h \
-    src/adblock/adblockmanager.h \
-    src/adblock/adblockicon.h \
-    src/adblock/adblockdialog.h \
-    src/adblock/adblockblockednetworkreply.h \
-    src/adblock/adblockaddsubscriptiondialog.h \
-    src/adblock/followredirectreply.h \
     src/application/splashscreen.h \
     src/network/authenticationdialog.h \
     src/network/cookiejar.h \
     src/network/networkmanager.h \
-    src/webview/locationbar.h \
-    src/webview/rssdetectionwidget.h \
     src/webview/webpage.h \
     src/webview/webview.h \
     src/database/database.h \
@@ -105,7 +96,6 @@ HEADERS += \
     src/newsfilters/itemaction.h \
     src/network/sslerrordialog.h \
     src/network/networkmanagerproxy.h \
-    src/adblock/adblockmatcher.h \
     src/feedsview/feedsproxymodel.h \
     src/main/globals.h \
 
@@ -144,22 +134,10 @@ SOURCES += \
     src/application/mainwindow.cpp \
     src/main/globals.cpp \
     src/main/main.cpp \
-    src/adblock/adblocktreewidget.cpp \
-    src/adblock/adblocksubscription.cpp \
-    src/adblock/adblocksearchtree.cpp \
-    src/adblock/adblockrule.cpp \
-    src/adblock/adblockmanager.cpp \
-    src/adblock/adblockicon.cpp \
-    src/adblock/adblockdialog.cpp \
-    src/adblock/adblockblockednetworkreply.cpp \
-    src/adblock/adblockaddsubscriptiondialog.cpp \
-    src/adblock/followredirectreply.cpp \
     src/application/splashscreen.cpp \
     src/network/authenticationdialog.cpp \
     src/network/cookiejar.cpp \
     src/network/networkmanager.cpp \
-    src/webview/locationbar.cpp \
-    src/webview/rssdetectionwidget.cpp \
     src/webview/webpage.cpp \
     src/webview/webview.cpp \
     src/database/database.cpp \
@@ -174,7 +152,6 @@ SOURCES += \
     src/newsfilters/itemaction.cpp \
     src/network/sslerrordialog.cpp \
     src/network/networkmanagerproxy.cpp \
-    src/adblock/adblockmatcher.cpp \
     src/feedsview/feedsproxymodel.cpp
 
 INCLUDEPATH +=  $$PWD/src \
@@ -187,7 +164,6 @@ INCLUDEPATH +=  $$PWD/src \
                 $$PWD/src/newsfilters \
                 $$PWD/src/newsview \
                 $$PWD/src/notifications \
-                $$PWD/src/adblock \
                 $$PWD/src/network \
                 $$PWD/src/webview \
 
@@ -239,7 +215,6 @@ win32-msvc* {
 os2 {
   RC_FILE = quiterss_os2.rc
 }
-
 
 DISTFILES += \
     HISTORY_RU \
@@ -319,7 +294,6 @@ mac {
 RESOURCES += \
     QuiteRSS.qrc
 
-
 OTHER_FILES += \
     HISTORY_RU \
     HISTORY_EN \
@@ -328,7 +302,3 @@ OTHER_FILES += \
     CHANGELOG \
     INSTALL \
     Info.plist
-
-FORMS += \
-    src/adblock/adblockdialog.ui \
-    src/adblock/adblockaddsubscriptiondialog.ui

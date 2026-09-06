@@ -33,15 +33,14 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 * ============================================================ */
 #include "networkmanagerproxy.h"
-#include "webpage.h"
 #include "cookiejar.h"
 #include "mainapplication.h"
 
 #include <QNetworkRequest>
 
-NetworkManagerProxy::NetworkManagerProxy(WebPage *page, QObject* parent)
+NetworkManagerProxy::NetworkManagerProxy(QObject* parent)
   : QNetworkAccessManager(parent)
-  , page_(page)
+
 {
   setCookieJar(mainApp->cookieJar());
   // CookieJar is shared between NetworkManagers
@@ -59,35 +58,17 @@ NetworkManagerProxy::NetworkManagerProxy(WebPage *page, QObject* parent)
   connect(this, SIGNAL(finished(QNetworkReply*)),
           mainApp->networkManager(), SIGNAL(finished(QNetworkReply*)));
 
-  if (page_) {
-    connect(this, SIGNAL(sslErrors(QNetworkReply*,QList<QSslError>)),
-            mainApp->networkManager(), SIGNAL(sslErrors(QNetworkReply*,QList<QSslError>)));
-  } else {
-    connect(this, SIGNAL(sslErrors(QNetworkReply*, QList<QSslError>)),
-            SLOT(slotSslError(QNetworkReply*, QList<QSslError>)));
-  }
 }
 
 QNetworkReply* NetworkManagerProxy::createRequest(QNetworkAccessManager::Operation op,
                                                   const QNetworkRequest &request,
                                                   QIODevice* outgoingData)
 {
-  if (page_) {
-    QNetworkRequest pageRequest = request;
-    page_->populateNetworkRequest(pageRequest);
-    return mainApp->networkManager()->createRequest(op, pageRequest, outgoingData);
-  }
   return QNetworkAccessManager::createRequest(op, request, outgoingData);
-}
-
-void NetworkManagerProxy::slotSslError(QNetworkReply *reply, QList<QSslError> errors)
-{
-  reply->ignoreSslErrors(errors);
 }
 
 void NetworkManagerProxy::disconnectObjects()
 {
-  page_ = 0;
 
   disconnect(this);
   disconnect(mainApp->networkManager());

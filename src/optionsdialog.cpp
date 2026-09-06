@@ -67,7 +67,7 @@ OptionsDialog::OptionsDialog(QWidget *parent)
   treeItem << "2" << tr("Network Connections");
   categoriesTree_->addTopLevelItem(new QTreeWidgetItem(treeItem));
   treeItem.clear();
-  treeItem << "3" << tr("Browser");
+  treeItem << "3" << tr("Article View");
   categoriesTree_->addTopLevelItem(new QTreeWidgetItem(treeItem));
   treeItem.clear();
   treeItem << "4" << tr("Feeds");
@@ -494,189 +494,40 @@ void OptionsDialog::createNetworkConnectionsWidget()
  *----------------------------------------------------------------------------*/
 void OptionsDialog::createBrowserWidget()
 {
-  //! tab "General"
-  embeddedBrowserOn_ = new QRadioButton(tr("Use embedded browser"));
-  externalBrowserOn_ = new QRadioButton(tr("Use external browser"));
-  defaultExternalBrowserOn_ = new QRadioButton(tr("Default external browser"));
-  otherExternalBrowserOn_ = new QRadioButton(tr("Following external browser:"));
-
-  otherExternalBrowserEdit_ = new LineEdit();
-  otherExternalBrowserButton_ = new QPushButton(tr("Browse..."));
-
   autoLoadImages_ = new QCheckBox(tr("Load images"));
-  javaScriptEnable_ = new QCheckBox(tr("Enable JavaScript"));
   defaultZoomPages_ = new QSpinBox();
-  defaultZoomPages_->setMaximum(300);
-  defaultZoomPages_->setMinimum(30);
+  defaultZoomPages_->setRange(30, 300);
   defaultZoomPages_->setSuffix(" %");
-
-  openLinkInBackgroundEmbedded_ = new QCheckBox(tr("Open links in embedded browser in background"));
   openLinkInBackground_ = new QCheckBox(tr("Open links in external browser in background (experimental)"));
-
-  userStyleBrowserEdit_ = new LineEdit();
-  QPushButton *userStyleBrowserButton = new QPushButton(tr("Browse..."));
-  connect(userStyleBrowserButton, SIGNAL(clicked()),
-          this, SLOT(selectionUserStyleBrowser()));
-
-  QGridLayout *browserSelectionLayout = new QGridLayout();
-  browserSelectionLayout->setContentsMargins(15, 0, 5, 10);
-  browserSelectionLayout->addWidget(embeddedBrowserOn_, 0, 0);
-  browserSelectionLayout->addWidget(externalBrowserOn_, 1, 0);
-  QButtonGroup *browserSelectionBox = new QButtonGroup();
-  browserSelectionBox->addButton(embeddedBrowserOn_);
-  browserSelectionBox->addButton(externalBrowserOn_);
-
-  QGridLayout *externalBrowserLayout = new QGridLayout();
-  externalBrowserLayout->setContentsMargins(15, 0, 5, 10);
-  externalBrowserLayout->addWidget(defaultExternalBrowserOn_, 0, 0);
-  externalBrowserLayout->addWidget(otherExternalBrowserOn_, 1, 0);
-  externalBrowserLayout->addWidget(otherExternalBrowserEdit_, 2, 0);
-  externalBrowserLayout->addWidget(otherExternalBrowserButton_, 2, 1, Qt::AlignRight);
-  QButtonGroup *externalBrowserBox = new QButtonGroup();
-  externalBrowserBox->addButton(defaultExternalBrowserOn_);
-  externalBrowserBox->addButton(otherExternalBrowserOn_);
-
   QHBoxLayout *zoomLayout = new QHBoxLayout();
-  zoomLayout->addWidget(new QLabel(tr("Default zoom on pages:")));
+  zoomLayout->addWidget(new QLabel(tr("Default article zoom:")));
   zoomLayout->addWidget(defaultZoomPages_);
   zoomLayout->addStretch();
+  QVBoxLayout *articleLayout = new QVBoxLayout();
+  articleLayout->addWidget(autoLoadImages_);
+  articleLayout->addLayout(zoomLayout);
+  articleLayout->addWidget(openLinkInBackground_);
+  articleLayout->addStretch();
+  QWidget *articleWidget = new QWidget();
+  articleWidget->setLayout(articleLayout);
 
-  QVBoxLayout *contentBrowserLayout = new QVBoxLayout();
-  contentBrowserLayout->setContentsMargins(15, 0, 5, 10);
-  contentBrowserLayout->addWidget(autoLoadImages_);
-  contentBrowserLayout->addWidget(javaScriptEnable_);
-  contentBrowserLayout->addLayout(zoomLayout);
-
-  QGridLayout *userStyleBrowserLayout = new QGridLayout();
-  userStyleBrowserLayout->setContentsMargins(15, 0, 5, 10);
-  userStyleBrowserLayout->addWidget(userStyleBrowserEdit_, 0, 0);
-  userStyleBrowserLayout->addWidget(userStyleBrowserButton, 0, 1, Qt::AlignRight);
-
-  QVBoxLayout *browserLayoutV = new QVBoxLayout();
-  browserLayoutV->setMargin(10);
-  browserLayoutV->addWidget(new QLabel(tr("Browser selection:")));
-  browserLayoutV->addLayout(browserSelectionLayout);
-  browserLayoutV->addWidget(new QLabel(tr("External browser:")));
-  browserLayoutV->addLayout(externalBrowserLayout);
-  browserLayoutV->addWidget(new QLabel(tr("Content:")));
-  browserLayoutV->addLayout(contentBrowserLayout);
-  browserLayoutV->addWidget(new QLabel(tr("User style sheet:")));
-  browserLayoutV->addLayout(userStyleBrowserLayout);
-  browserLayoutV->addWidget(openLinkInBackgroundEmbedded_);
-  browserLayoutV->addWidget(openLinkInBackground_);
-  browserLayoutV->addStretch();
-
-  QWidget *generalBrowserWidget = new QWidget();
-  generalBrowserWidget->setLayout(browserLayoutV);
-
-  connect(otherExternalBrowserOn_, SIGNAL(toggled(bool)),
-          otherExternalBrowserEdit_, SLOT(setEnabled(bool)));
-  connect(otherExternalBrowserOn_, SIGNAL(toggled(bool)),
-          otherExternalBrowserButton_, SLOT(setEnabled(bool)));
-  otherExternalBrowserOn_->setChecked(true);
-
-  connect(otherExternalBrowserButton_, SIGNAL(clicked()),
-          this, SLOT(selectionBrowser()));
-
-#if defined(Q_OS_OS2)
-  otherExternalBrowserOn_->setVisible(false);
-  otherExternalBrowserEdit_->setVisible(false);
-  otherExternalBrowserButton_->setVisible(false);
-#endif
-
-  //! tab "History"
-  maxPagesInCache_ = new QSpinBox();
-  maxPagesInCache_->setRange(0, 20);
-
-  QHBoxLayout *historyLayout1 = new QHBoxLayout();
-  historyLayout1->addWidget(new QLabel(tr("Maximum pages in cache")));
-  historyLayout1->addWidget(maxPagesInCache_);
-  historyLayout1->addStretch();
-
-  dirDiskCacheEdit_ = new LineEdit();
-  dirDiskCacheButton_ = new QPushButton(tr("Browse..."));
-
-  connect(dirDiskCacheButton_, SIGNAL(clicked()),
-          this, SLOT(selectionDirDiskCache()));
-
-  QHBoxLayout *historyLayout2 = new QHBoxLayout();
-  historyLayout2->addWidget(new QLabel(tr("Store cache in:")));
-  historyLayout2->addWidget(dirDiskCacheEdit_, 1);
-  historyLayout2->addWidget(dirDiskCacheButton_);
-
-  maxDiskCache_ = new QSpinBox();
-  maxDiskCache_->setRange(10, 300);
-
-  QHBoxLayout *historyLayout3 = new QHBoxLayout();
-  historyLayout3->addWidget(new QLabel(tr("Maximum size of disk cache")));
-  historyLayout3->addWidget(maxDiskCache_);
-  historyLayout3->addWidget(new QLabel(tr("MB")), 1);
-
-  QVBoxLayout *historyLayout4 = new QVBoxLayout();
-  historyLayout4->addLayout(historyLayout2);
-  historyLayout4->addLayout(historyLayout3);
-
-  diskCacheOn_ = new QGroupBox(tr("Use disk cache"));
-  diskCacheOn_->setCheckable(true);
-  diskCacheOn_->setChecked(false);
-  diskCacheOn_->setLayout(historyLayout4);
-
-  saveCookies_ = new QRadioButton(tr("Allow local data to be set"));
-  deleteCookiesOnClose_ = new QRadioButton(tr("Keep local data only until quit application"));
-  blockCookies_ = new QRadioButton(tr("Block sites from setting any data"));
-  clearCookies_ = new QPushButton(tr("Clear"));
-  connect(clearCookies_, SIGNAL(clicked()), mainApp->cookieJar(), SLOT(clearCookies()));
-
-  QGridLayout *cookiesLayout = new QGridLayout();
-  cookiesLayout->setContentsMargins(15, 0, 5, 10);
-  cookiesLayout->addWidget(saveCookies_, 0, 0);
-  cookiesLayout->addWidget(deleteCookiesOnClose_, 1, 0);
-  cookiesLayout->addWidget(blockCookies_, 2, 0);
-  cookiesLayout->addWidget(clearCookies_, 3, 0, Qt::AlignLeft);
-  QButtonGroup *cookiesBox = new QButtonGroup();
-  cookiesBox->addButton(saveCookies_);
-  cookiesBox->addButton(deleteCookiesOnClose_);
-  cookiesBox->addButton(blockCookies_);
-
-  QVBoxLayout *historyMainLayout = new QVBoxLayout();
-  historyMainLayout->setMargin(10);
-  historyMainLayout->addLayout(historyLayout1);
-  historyMainLayout->addWidget(diskCacheOn_);
-  historyMainLayout->addSpacing(10);
-  historyMainLayout->addWidget(new QLabel(tr("Cookies:")));
-  historyMainLayout->addLayout(cookiesLayout);
-  historyMainLayout->addStretch();
-
-  QWidget *historyBrowserWidget_ = new QWidget();
-  historyBrowserWidget_->setLayout(historyMainLayout);
-
-  //! tab "Downloads"
   downloadLocationEdit_ = new LineEdit();
-  QPushButton *downloadLocationButton = new QPushButton(tr("Browse..."));
-  connect(downloadLocationButton, SIGNAL(clicked()),
-          this, SLOT(selectionDownloadLocation()));
-
+  QPushButton *browse = new QPushButton(tr("Browse..."));
+  connect(browse, SIGNAL(clicked()), this, SLOT(selectionDownloadLocation()));
   askDownloadLocation_ = new QCheckBox(tr("Ask where to save each file before downloading"));
-
-  QGridLayout *downLocationLayout = new QGridLayout();
-  downLocationLayout->setContentsMargins(15, 0, 5, 10);
-  downLocationLayout->addWidget(downloadLocationEdit_, 0, 0);
-  downLocationLayout->addWidget(downloadLocationButton, 0, 1, Qt::AlignRight);
-  downLocationLayout->addWidget(askDownloadLocation_, 1, 0);
-
+  QHBoxLayout *location = new QHBoxLayout();
+  location->addWidget(downloadLocationEdit_);
+  location->addWidget(browse);
   QVBoxLayout *downloadsLayout = new QVBoxLayout();
-  downloadsLayout->setMargin(10);
   downloadsLayout->addWidget(new QLabel(tr("Download location:")));
-  downloadsLayout->addLayout(downLocationLayout);
+  downloadsLayout->addLayout(location);
+  downloadsLayout->addWidget(askDownloadLocation_);
   downloadsLayout->addStretch();
-
-  QWidget *downloadsWidget = new QWidget(this);
-  downloadsWidget->setLayout(downloadsLayout);
-
+  QWidget *downloads = new QWidget();
+  downloads->setLayout(downloadsLayout);
   browserWidget_ = new QTabWidget();
-  browserWidget_->addTab(generalBrowserWidget, tr("General"));
-  browserWidget_->addTab(historyBrowserWidget_, tr("History"));
-  browserWidget_->addTab(downloadsWidget, tr("Downloads"));
+  browserWidget_->addTab(articleWidget, tr("Articles"));
+  browserWidget_->addTab(downloads, tr("Downloads"));
 }
 
 /** @brief Create windet "Feeds"
@@ -824,8 +675,6 @@ void OptionsDialog::createFeedsWidget()
   styleSheetNewsLayout->addWidget(styleSheetNewsEdit_, 0, 0);
   styleSheetNewsLayout->addWidget(styleSheetNewsButton, 0, 1, Qt::AlignRight);
 
-  showDescriptionNews_ = new QCheckBox(tr("Show news description instead of loading web page"));
-
   QVBoxLayout *displayFeedsLayout = new QVBoxLayout();
   displayFeedsLayout->addWidget(alternatingRowColorsNews_);
   displayFeedsLayout->addSpacing(10);
@@ -836,7 +685,6 @@ void OptionsDialog::createFeedsWidget()
   displayFeedsLayout->addSpacing(10);
   displayFeedsLayout->addWidget(new QLabel(tr("Style sheet for news:")));
   displayFeedsLayout->addLayout(styleSheetNewsLayout);
-  displayFeedsLayout->addWidget(showDescriptionNews_);
   displayFeedsLayout->addStretch();
 
   QWidget *displayFeedsWidget = new QWidget();
@@ -2223,20 +2071,7 @@ int OptionsDialog::getOpeningFeed()
   else return 0;
 }
 //----------------------------------------------------------------------------
-void OptionsDialog::selectionBrowser()
-{
-  QString path;
 
-  QFileInfo file(otherExternalBrowserEdit_->text());
-  if (file.isFile()) path = otherExternalBrowserEdit_->text();
-  else path = file.path();
-
-  QString fileName = QFileDialog::getOpenFileName(this,
-                                                  tr("Open File..."),
-                                                  path);
-  if (!fileName.isEmpty())
-    otherExternalBrowserEdit_->setText(fileName);
-}
 //----------------------------------------------------------------------------
 void OptionsDialog::selectionUserStyleNews()
 {
@@ -2745,31 +2580,9 @@ void OptionsDialog::applyPass()
   db_.commit();
 }
 //----------------------------------------------------------------------------
-void OptionsDialog::selectionUserStyleBrowser()
-{
-  QString path;
 
-  QFileInfo file(userStyleBrowserEdit_->text());
-  if (file.isFile()) path = userStyleBrowserEdit_->text();
-  else path = file.path();
-
-  QString fileName = QFileDialog::getOpenFileName(this,
-                                                  tr("Select Style Sheet File"),
-                                                  path, "*.css");
-
-  if (!fileName.isEmpty())
-    userStyleBrowserEdit_->setText(fileName);
-}
 //----------------------------------------------------------------------------
-void OptionsDialog::selectionDirDiskCache()
-{
-  QString dirStr = QFileDialog::getExistingDirectory(this, tr("Open Directory..."),
-                                                       dirDiskCacheEdit_->text(),
-                                                       QFileDialog::ShowDirsOnly
-                                                       | QFileDialog::DontResolveSymlinks);
-  if (!dirStr.isEmpty())
-    dirDiskCacheEdit_->setText(dirStr);
-}
+
 //----------------------------------------------------------------------------
 void OptionsDialog::selectionDownloadLocation()
 {

@@ -16,265 +16,46 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 * ============================================================ */
 #include "webpage.h"
-
-#include "mainapplication.h"
-#include "networkmanagerproxy.h"
-#include "adblockicon.h"
-#include "adblockmanager.h"
-
-#include <QAction>
-#include <QDesktopServices>
+#include "articlecontent.h"
+#include "articleimages.h"
+#include <QWebFrame>
+#include <QWebSettings>
 #include <QNetworkRequest>
+#include <QWebHistory>
 
-QList<WebPage*> WebPage::livingPages_;
-
-WebPage::WebPage(QObject *parent)
-  : QWebPage(parent)
-  , loadProgress_(-1)
-{
-  networkManagerProxy_ = new NetworkManagerProxy(this, this);
-  setNetworkAccessManager(networkManagerProxy_);
-
-  // Disable NPAPI even when an existing profile enabled browser plug-ins.
+WebPage::WebPage(QObject *parent) : QWebPage(parent), images_(new ArticleImages(this)) {
+  setNetworkAccessManager(images_);
+  setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
+  setForwardUnsupportedContent(false);
+  settings()->setAttribute(QWebSettings::JavascriptEnabled, false);
+  settings()->setAttribute(QWebSettings::JavaEnabled, false);
   settings()->setAttribute(QWebSettings::PluginsEnabled, false);
-  setForwardUnsupportedContent(true);
-
-  action(QWebPage::OpenFrameInNewWindow)->setVisible(false);
-  action(QWebPage::OpenImageInNewWindow)->setVisible(false);
-
-  connect(this, SIGNAL(loadProgress(int)), this, SLOT(progress(int)));
-  connect(this, SIGNAL(loadFinished(bool)), this, SLOT(finished()));
-
-  connect(this, SIGNAL(unsupportedContent(QNetworkReply*)),
-          this, SLOT(handleUnsupportedContent(QNetworkReply*)));
-  connect(this, SIGNAL(downloadRequested(QNetworkRequest)),
-          this, SLOT(downloadRequested(QNetworkRequest)));
-  connect(this, SIGNAL(printRequested(QWebFrame*)),
-          mainApp->mainWindow(), SLOT(slotPrint(QWebFrame*)));
-  connect(this, SIGNAL(fullScreenRequested(QWebFullScreenRequest)),
-          this, SLOT(slotFullScreenRequested(QWebFullScreenRequest)));
-  livingPages_.append(this);
+  settings()->setAttribute(QWebSettings::LocalStorageEnabled, false);
+  settings()->setAttribute(QWebSettings::OfflineStorageDatabaseEnabled, false);
+  settings()->setAttribute(QWebSettings::OfflineWebApplicationCacheEnabled, false);
+  settings()->setAttribute(QWebSettings::LocalContentCanAccessFileUrls, false);
+  settings()->setAttribute(QWebSettings::LocalContentCanAccessRemoteUrls, false);
+  settings()->setAttribute(QWebSettings::JavascriptCanOpenWindows, false);
+  settings()->setAttribute(QWebSettings::JavascriptCanAccessClipboard, false);
+  settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, false);
+  history()->setMaximumItemCount(0);
 }
-
-WebPage::~WebPage()
-{
-  livingPages_.removeOne(this);
+void WebPage::disconnectObjects() { images_->reset(); disconnect(this); }
+void WebPage::resetArticleImages() { images_->reset(); }
+QString WebPage::prepareArticle(const QString &html, const QUrl &base, const QString &prefix, bool images) {
+  QSet<QUrl> urls;
+  const QString result = ArticleContent::sanitize(html, base, prefix, images, &urls);
+  images_->allow(urls);
+  return result;
 }
-
-void WebPage::disconnectObjects()
-{
-  livingPages_.removeOne(this);
-
-  disconnect(this);
-  networkManagerProxy_->disconnectObjects();
-}
-
-bool WebPage::acceptNavigationRequest(QWebFrame *frame,
-                                      const QNetworkRequest &request,
-                                      NavigationType type)
-{
-  lastRequestType_ = type;
-  lastRequestUrl_ = request.url();
-
-  return QWebPage::acceptNavigationRequest(frame,request,type);
-}
-
-QWebPage *WebPage::createWindow(WebWindowType type)
-{
-  Q_UNUSED(type)
-
-  return mainApp->mainWindow()->createWebTab();
-}
-
-void WebPage::scheduleAdjustPage()
-{
-  WebView* webView = qobject_cast<WebView*>(view());
-  if (!webView) {
-    return;
+bool WebPage::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &request, NavigationType type) {
+  if (frame && frame != mainFrame()) return false;
+  if (type == NavigationTypeLinkClicked) {
+    emit linkClicked(request.url());
+    return false;
   }
-
-  if (webView->isLoading()) {
-    adjustingScheduled_ = true;
-  } else {
-    const QSize &originalSize = webView->size();
-    QSize newSize(originalSize.width() - 1, originalSize.height() - 1);
-
-    webView->resize(newSize);
-    webView->resize(originalSize);
-  }
+  // Permit only our substitute document, never arbitrary navigation, forms or reloads.
+  return type == NavigationTypeOther && (request.url().isEmpty() || request.url() == QUrl("about:blank") ||
+    request.url() == QUrl("https://quiterss.invalid/"));
 }
-
-bool WebPage::isLoading() const
-{
-  return loadProgress_ < 100;
-}
-
-void WebPage::urlChanged(const QUrl &url)
-{
-  Q_UNUSED(url)
-
-  if (isLoading()) {
-    adBlockedEntries_.clear();
-  }
-}
-
-void WebPage::progress(int prog)
-{
-  loadProgress_ = prog;
-}
-
-void WebPage::finished()
-{
-  progress(100);
-
-  if (adjustingScheduled_) {
-    adjustingScheduled_ = false;
-
-    WebView* webView = qobject_cast<WebView*>(view());
-    const QSize &originalSize = webView->size();
-    QSize newSize(originalSize.width() - 1, originalSize.height() - 1);
-
-    webView->resize(newSize);
-    webView->resize(originalSize);
-  }
-
-  // AdBlock
-  cleanBlockedObjects();
-}
-
-void WebPage::downloadRequested(const QNetworkRequest &request)
-{
-  mainApp->downloadManager()->download(request);
-}
-
-void WebPage::handleUnsupportedContent(QNetworkReply* reply)
-{
-  if (!reply)
-    return;
-
-  const QUrl &url = reply->url();
-
-  switch (reply->error()) {
-  case QNetworkReply::NoError:
-    if (reply->header(QNetworkRequest::ContentTypeHeader).isValid()) {
-      mainApp->downloadManager()->handleUnsupportedContent(reply, mainApp->mainWindow()->askDownloadLocation_);
-      return;
-    } // fall through
-
-  case QNetworkReply::ProtocolUnknownError: {
-    qDebug() << "WebPage::UnsupportedContent" << url << "ProtocolUnknowError";
-    QDesktopServices::openUrl(url);
-
-    reply->deleteLater();
-    return;
-  }
-  default:
-    break;
-  }
-
-  qDebug() << "WebPage::UnsupportedContent error" << url << reply->errorString();
-  reply->deleteLater();
-}
-
-bool WebPage::isPointerSafeToUse(WebPage* page)
-{
-  // Pointer to WebPage is passed with every QNetworkRequest casted to void*
-  // So there is no way to test whether pointer is still valid or not, except
-  // this hack.
-
-  return page == 0 ? false : livingPages_.contains(page);
-}
-
-void WebPage::populateNetworkRequest(QNetworkRequest &request)
-{
-  WebPage* pagePointer = this;
-
-  QVariant variant = QVariant::fromValue((void*) pagePointer);
-  request.setAttribute((QNetworkRequest::Attribute)(QNetworkRequest::User + 100), variant);
-
-  if (lastRequestUrl_ == request.url()) {
-    request.setAttribute((QNetworkRequest::Attribute)(QNetworkRequest::User + 101), lastRequestType_);
-    if (lastRequestType_ == NavigationTypeLinkClicked) {
-      request.setRawHeader("X-QuiteRSS-UserLoadAction", QByteArray("1"));
-    }
-  }
-}
-
-void WebPage::addAdBlockRule(const AdBlockRule* rule, const QUrl &url)
-{
-  AdBlockedEntry entry;
-  entry.rule = rule;
-  entry.url = url;
-
-  if (!adBlockedEntries_.contains(entry)) {
-    adBlockedEntries_.append(entry);
-  }
-}
-
-QVector<WebPage::AdBlockedEntry> WebPage::adBlockedEntries() const
-{
-  return adBlockedEntries_;
-}
-
-void WebPage::cleanBlockedObjects()
-{
-  AdBlockManager* manager = AdBlockManager::instance();
-  if (!manager->isEnabled()) {
-    return;
-  }
-
-  const QWebElement docElement = mainFrame()->documentElement();
-
-  foreach (const AdBlockedEntry &entry, adBlockedEntries_) {
-    const QString urlString = entry.url.toString();
-    if (urlString.endsWith(QLatin1String(".js")) || urlString.endsWith(QLatin1String(".css"))) {
-      continue;
-    }
-
-    QString urlEnd;
-
-    int pos = urlString.lastIndexOf(QLatin1Char('/'));
-    if (pos > 8) {
-      urlEnd = urlString.mid(pos + 1);
-    }
-
-    if (urlString.endsWith(QLatin1Char('/'))) {
-      urlEnd = urlString.left(urlString.size() - 1);
-    }
-
-    QString selector("img[src$=\"%1\"], iframe[src$=\"%1\"],embed[src$=\"%1\"]");
-    QWebElementCollection elements = docElement.findAll(selector.arg(urlEnd));
-
-    foreach (QWebElement element, elements) {
-      QString src = element.attribute("src");
-      src.remove(QLatin1String("../"));
-
-      if (urlString.contains(src)) {
-        element.setStyleProperty("display", "none");
-      }
-    }
-  }
-
-  // Apply domain-specific element hiding rules
-  QString elementHiding = manager->elementHidingRulesForDomain(mainFrame()->url());
-  if (elementHiding.isEmpty()) {
-    return;
-  }
-
-  elementHiding.append(QLatin1String("\n</style>"));
-
-  QWebElement bodyElement = docElement.findFirst("body");
-  bodyElement.appendInside("<style type=\"text/css\">\n/* AdBlock */\n" + elementHiding);
-
-  // When hiding some elements, scroll position of page will change
-  // If user loaded anchor link in background tab (and didn't show it yet), fix the scroll position
-  if (view() && !view()->isVisible() && !mainFrame()->url().fragment().isEmpty()) {
-    mainFrame()->scrollToAnchor(mainFrame()->url().fragment());
-  }
-}
-
-void WebPage::slotFullScreenRequested(QWebFullScreenRequest fullScreenRequest)
-{
-  fullScreenRequest.accept();
-  mainApp->mainWindow()->webViewFullScreen(fullScreenRequest.toggleOn());
-}
+QWebPage *WebPage::createWindow(WebWindowType) { return nullptr; }

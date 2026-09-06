@@ -171,9 +171,7 @@ private:
   QWidget *createGeneralTab();
 
   // Tab "Display"
-  QCheckBox *showDescriptionNews_;
   QCheckBox *loadImagesOn_;
-  QCheckBox *javaScriptEnable_;
   QCheckBox *layoutDirection_;
 
   QWidget *createDisplayTab();

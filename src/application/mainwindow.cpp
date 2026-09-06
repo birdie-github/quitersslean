@@ -21,8 +21,6 @@
 #include "mainapplication.h"
 #include "database.h"
 #include "aboutdialog.h"
-#include "adblockmanager.h"
-#include "adblockicon.h"
 #include "addfeedwizard.h"
 #include "addfolderdialog.h"
 #include "cleanupwizard.h"
@@ -47,7 +45,6 @@ MainWindow::MainWindow(QWidget *parent)
   , isMinimizeToTray_(true)
   , currentNewsTab(NULL)
   , isOpeningLink_(false)
-  , openNewsTab_(0)
   , feedsFilterAction_(NULL)
   , newsFilterAction_(NULL)
   , newsView_(NULL)
@@ -599,8 +596,6 @@ void MainWindow::createStatusBar()
   stopUpdateButton_->move(progressBar_->rect().right() - stopUpdateButton_->sizeHint().width(),
                           progressBar_->rect().top());
 
-  adblockIcon_ = new AdBlockIcon(this);
-
   QToolButton *loadImagesButton = new QToolButton(this);
   loadImagesButton->setFocusPolicy(Qt::NoFocus);
   loadImagesButton->setIconSize(QSize(16,16));
@@ -621,7 +616,6 @@ void MainWindow::createStatusBar()
   statusAll_ = new QLabel(this);
   statusAll_->hide();
   statusBar()->addPermanentWidget(statusAll_);
-  statusBar()->addPermanentWidget(adblockIcon_);
   statusBar()->addPermanentWidget(loadImagesButton);
   statusBar()->addPermanentWidget(fullScreenButton);
   statusBar()->setVisible(true);
@@ -794,8 +788,6 @@ void MainWindow::createActions()
   feedsToolbarToggle_->setCheckable(true);
   newsToolbarToggle_ = new QAction(this);
   newsToolbarToggle_->setCheckable(true);
-  browserToolbarToggle_ = new QAction(this);
-  browserToolbarToggle_->setCheckable(true);
   categoriesPanelToggle_ = new QAction(this);
   categoriesPanelToggle_->setCheckable(true);
   statusBarToggle_ = new QAction(this);
@@ -901,13 +893,6 @@ void MainWindow::createActions()
   savePageAsAct_->setIcon(QIcon(":/images/save_as"));
   this->addAction(savePageAsAct_);
   connect(savePageAsAct_, SIGNAL(triggered()), this, SLOT(slotSavePageAs()));
-
-  savePageAsDescriptAct_ = new QAction(this);
-  savePageAsDescriptAct_->setObjectName("savePageAsDescriptAct");
-  savePageAsDescriptAct_->setIcon(QIcon(":/images/save_as"));
-  this->addAction(savePageAsDescriptAct_);
-  connect(savePageAsDescriptAct_, SIGNAL(triggered()),
-          this, SLOT(slotSavePageAsDescript()));
 
   zoomInAct_ = new QAction(this);
   zoomInAct_->setObjectName("zoomInAct");
@@ -1088,22 +1073,10 @@ void MainWindow::createActions()
   reportProblemAct_->setObjectName("reportProblemAct_");
   connect(reportProblemAct_, SIGNAL(triggered()), this, SLOT(slotReportProblem()));
 
-  openInBrowserAct_ = new QAction(this);
-  openInBrowserAct_->setObjectName("openInBrowserAct");
-  this->addAction(openInBrowserAct_);
-
   openInExternalBrowserAct_ = new QAction(this);
   openInExternalBrowserAct_->setObjectName("openInExternalBrowserAct");
   openInExternalBrowserAct_->setIcon(QIcon(":/images/openBrowser"));
   this->addAction(openInExternalBrowserAct_);
-
-  openNewsNewTabAct_ = new QAction(this);
-  openNewsNewTabAct_->setObjectName("openInNewTabAct");
-  openNewsNewTabAct_->setIcon(QIcon(":/images/images/tab_go.png"));
-  this->addAction(openNewsNewTabAct_);
-  openNewsBackgroundTabAct_ = new QAction(this);
-  openNewsBackgroundTabAct_->setObjectName("openInBackgroundTabAct");
-  this->addAction(openNewsBackgroundTabAct_);
 
   markStarAct_ = new QAction(this);
   markStarAct_->setObjectName("markStarAct");
@@ -1350,13 +1323,6 @@ void MainWindow::createActions()
   this->addAction(settingPageLabelsAct_);
   connect(settingPageLabelsAct_, SIGNAL(triggered()), this, SLOT(showSettingPageLabels()));
 
-  backWebPageAct_ = new QAction(this);
-  backWebPageAct_->setObjectName("backWebPageAct");
-  forwardWebPageAct_ = new QAction(this);
-  forwardWebPageAct_->setObjectName("forwardWebPageAct");
-  reloadWebPageAct_ = new QAction(this);
-  reloadWebPageAct_->setObjectName("reloadWebPageAct");
-
   shareGroup_ = new QActionGroup(this);
   shareGroup_->setExclusive(false);
 
@@ -1470,14 +1436,8 @@ void MainWindow::createActions()
   connect(newsKeyPageDownAct_, SIGNAL(triggered()),
           this, SLOT(slotNewsPageDownPressed()));
 
-  connect(openInBrowserAct_, SIGNAL(triggered()),
-          this, SLOT(openInBrowserNews()));
   connect(openInExternalBrowserAct_, SIGNAL(triggered()),
           this, SLOT(openInExternalBrowserNews()));
-  connect(openNewsNewTabAct_, SIGNAL(triggered()),
-          this, SLOT(slotOpenNewsNewTab()));
-  connect(openNewsBackgroundTabAct_, SIGNAL(triggered()),
-          this, SLOT(slotOpenNewsBackgroundTab()));
 }
 // ---------------------------------------------------------------------------
 void MainWindow::createShortcut()
@@ -1540,14 +1500,8 @@ void MainWindow::createShortcut()
 
   listActions_.append(openDescriptionNewsAct_);
   openDescriptionNewsAct_->setShortcut(QKeySequence(Qt::Key_Return));
-  listActions_.append(openInBrowserAct_);
-  openInBrowserAct_->setShortcut(QKeySequence(Qt::Key_Space));
   listActions_.append(openInExternalBrowserAct_);
   openInExternalBrowserAct_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_O));
-  openNewsNewTabAct_->setShortcut(QKeySequence(Qt::Key_T));
-  listActions_.append(openNewsNewTabAct_);
-  openNewsBackgroundTabAct_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_T));
-  listActions_.append(openNewsBackgroundTabAct_);
 
   switchFocusAct_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Tab));
   listActions_.append(switchFocusAct_);
@@ -1573,7 +1527,6 @@ void MainWindow::createShortcut()
 
   savePageAsAct_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_S));
   listActions_.append(savePageAsAct_);
-  listActions_.append(savePageAsDescriptAct_);
 
   fullScreenAct_->setShortcut(QKeySequence(Qt::Key_F11));
   listActions_.append(fullScreenAct_);
@@ -1605,9 +1558,6 @@ void MainWindow::createShortcut()
 
   listActions_.append(copyLinkAct_);
 
-  listActions_.append(backWebPageAct_);
-  listActions_.append(forwardWebPageAct_);
-  listActions_.append(reloadWebPageAct_);
   listActions_.append(pageUpWebViewAct_);
   listActions_.append(pageDownWebViewAct_);
 
@@ -1686,7 +1636,6 @@ void MainWindow::createMenu()
   toolbarsMenu_->addAction(mainToolbarToggle_);
   toolbarsMenu_->addAction(feedsToolbarToggle_);
   toolbarsMenu_->addAction(newsToolbarToggle_);
-  toolbarsMenu_->addAction(browserToolbarToggle_);
   toolbarsMenu_->addAction(categoriesPanelToggle_);
   toolbarsMenu_->addAction(statusBarToggle_);
 
@@ -1847,7 +1796,6 @@ void MainWindow::createMenu()
   browserMenu_->addSeparator();
   browserMenu_->addAction(savePageAsAct_);
   browserMenu_->addSeparator();
-  browserMenu_->addAction(tr("&AdBlock"), AdBlockManager::instance(), SLOT(showDialog()));
 
   toolsMenu_ = new QMenu(this);
   toolsMenu_->addAction(showDownloadManagerAct_);
@@ -2031,8 +1979,6 @@ void MainWindow::loadSettings()
   markReadClosingTab_ = settings.value("markReadClosingTab", false).toBool();
   markReadMinimize_ = settings.value("markReadMinimize", false).toBool();
 
-  showDescriptionNews_ = settings.value("showDescriptionNews", true).toBool();
-
   formatDate_ = settings.value("formatData", "dd.MM.yy").toString();
   formatTime_ = settings.value("formatTime", "hh:mm").toString();
   feedsModel_->formatDate_ = formatDate_;
@@ -2061,18 +2007,11 @@ void MainWindow::loadSettings()
   cleanUpDeleted_ = settings.value("cleanUpDeleted", false).toBool();
   optimizeDB_ = settings.value("optimizeDB", false).toBool();
 
-  externalBrowserOn_ = settings.value("externalBrowserOn", 0).toInt();
-  externalBrowser_ = settings.value("externalBrowser", "").toString();
-  javaScriptEnable_ = settings.value("javaScriptEnable", true).toBool();
-  maxPagesInCache_ = settings.value("maxPagesInCache", 3).toInt();
   downloadLocation_ = settings.value("downloadLocation", "").toString();
   askDownloadLocation_ = settings.value("askDownloadLocation", true).toBool();
   defaultZoomPages_ = settings.value("defaultZoomPages", 100).toInt();
   autoLoadImages_ = settings.value("autoLoadImages", true).toBool();
 
-  QWebSettings::globalSettings()->setAttribute(
-        QWebSettings::JavascriptEnabled, javaScriptEnable_);
-  QWebSettings::globalSettings()->setMaximumPagesInCache(maxPagesInCache_);
   QWebSettings::globalSettings()->setAttribute(
         QWebSettings::ErrorPageEnabled, false);
   QWebSettings::globalSettings()->setOfflineStorageDefaultQuota(0);
@@ -2104,7 +2043,6 @@ void MainWindow::loadSettings()
   mainToolbarToggle_->setChecked(settings.value("mainToolbarShow2", false).toBool());
   feedsToolbarToggle_->setChecked(settings.value("feedsToolbarShow2", true).toBool());
   newsToolbarToggle_->setChecked(settings.value("newsToolbarShow", true).toBool());
-  browserToolbarToggle_->setChecked(settings.value("browserToolbarShow", true).toBool());
   categoriesPanelToggle_->setChecked(settings.value("categoriesPanelShow", true).toBool());
   categoriesWidget_->setVisible(categoriesPanelToggle_->isChecked());
   statusBarToggle_->setChecked(settings.value("statusBarShow", true).toBool());
@@ -2198,7 +2136,6 @@ void MainWindow::loadSettings()
   }
 
   openLinkInBackground_ = settings.value("openLinkInBackground", true).toBool();
-  openLinkInBackgroundEmbedded_ = settings.value("openLinkInBackgroundEmbedded", true).toBool();
   openingLinkTimeout_ = settings.value("openingLinkTimeout", 1000).toInt();
 
   stayOnTopAct_->setChecked(settings.value("stayOnTop", false).toBool());
@@ -2288,7 +2225,6 @@ void MainWindow::loadSettings()
 
   showMenuBar();
 
-  adblockIcon_->setEnabled(settings.value("AdBlock/enabled", true).toBool());
 }
 
 /** @brief Save settings in ini-file
@@ -2344,8 +2280,6 @@ void MainWindow::saveSettings()
   settings.setValue("markReadClosingTab", markReadClosingTab_);
   settings.setValue("markReadMinimize", markReadMinimize_);
 
-  settings.setValue("showDescriptionNews", showDescriptionNews_);
-
   settings.setValue("formatData", formatDate_);
   settings.setValue("formatTime", formatTime_);
 
@@ -2372,10 +2306,6 @@ void MainWindow::saveSettings()
   settings.setValue("cleanUpDeleted", cleanUpDeleted_);
   settings.setValue("optimizeDB", optimizeDB_);
 
-  settings.setValue("externalBrowserOn", externalBrowserOn_);
-  settings.setValue("externalBrowser", externalBrowser_);
-  settings.setValue("javaScriptEnable", javaScriptEnable_);
-  settings.setValue("maxPagesInCache", maxPagesInCache_);
   settings.setValue("downloadLocation", downloadLocation_);
   settings.setValue("askDownloadLocation", askDownloadLocation_);
   settings.setValue("defaultZoomPages", defaultZoomPages_);
@@ -2406,7 +2336,6 @@ void MainWindow::saveSettings()
   settings.setValue("mainToolbarShow2", mainToolbarToggle_->isChecked());
   settings.setValue("feedsToolbarShow2", feedsToolbarToggle_->isChecked());
   settings.setValue("newsToolbarShow", newsToolbarToggle_->isChecked());
-  settings.setValue("browserToolbarShow", browserToolbarToggle_->isChecked());
   settings.setValue("categoriesPanelShow", categoriesPanelToggle_->isChecked());
   settings.setValue("statusBarShow", statusBarToggle_->isChecked());
 
@@ -2423,7 +2352,6 @@ void MainWindow::saveSettings()
   settings.setValue("browserPosition", browserPosition_);
 
   settings.setValue("openLinkInBackground", openLinkInBackground_);
-  settings.setValue("openLinkInBackgroundEmbedded", openLinkInBackgroundEmbedded_);
   settings.setValue("openingLinkTimeout", openingLinkTimeout_);
 
   settings.setValue("stayOnTop", stayOnTopAct_->isChecked());
@@ -2482,7 +2410,7 @@ void MainWindow::saveSettings()
 
   if (stackedWidget_->count()) {
     NewsTabWidget *widget;
-    if (currentNewsTab->type_ < NewsTabWidget::TabTypeWeb)
+    if (currentNewsTab->type_ < NewsTabWidget::TabTypeDownloads)
       widget = currentNewsTab;
     else
       widget = (NewsTabWidget*)stackedWidget_->widget(TAB_WIDGET_PERMANENT);
@@ -2500,7 +2428,6 @@ void MainWindow::saveSettings()
                     newsFilterGroup_->checkedAction()->objectName());
 
   mainApp->cookieJar()->saveCookies();
-  AdBlockManager::instance()->save();
 }
 
 void MainWindow::showMainMenu()
@@ -3010,7 +2937,7 @@ void MainWindow::slotRecountCategoryCounts(QList<int> deletedList, QList<int> st
   categoriesTree_->topLevelItem(CategoriesTreeWidget::LabelsItem)->setFont(0, font);
 
   NewsTabWidget *widget = (NewsTabWidget*)stackedWidget_->widget(stackedWidget_->currentIndex());
-  if ((widget->type_ > NewsTabWidget::TabTypeFeed) && (widget->type_ < NewsTabWidget::TabTypeWeb)
+  if ((widget->type_ > NewsTabWidget::TabTypeFeed) && (widget->type_ < NewsTabWidget::TabTypeDownloads)
       && categoriesTree_->currentIndex().isValid()) {
     int unreadCount = widget->getUnreadCount(categoriesTree_->currentItem()->text(4));
     int allCount = widget->newsModel_->rowCount();
@@ -3140,7 +3067,7 @@ void MainWindow::slotFeedClicked(QModelIndex index)
 
   int feedIdCur = feedsModel_->idByIndex(feedsProxyModel_->mapToSource(index));
 
-  if (stackedWidget_->count() && currentNewsTab->type_ < NewsTabWidget::TabTypeWeb) {
+  if (stackedWidget_->count() && currentNewsTab->type_ < NewsTabWidget::TabTypeDownloads) {
     currentNewsTab->newsHeader_->saveStateColumns(currentNewsTab);
   }
 
@@ -3333,39 +3260,9 @@ void MainWindow::showOptionDlg(int index)
   optionsDialog_->numberRequests_->setValue(numberRequests);
   optionsDialog_->numberRepeats_->setValue(numberRepeats);
 
-  optionsDialog_->embeddedBrowserOn_->setChecked(externalBrowserOn_ <= 0);
-  optionsDialog_->externalBrowserOn_->setChecked(externalBrowserOn_ >= 1);
-  optionsDialog_->defaultExternalBrowserOn_->setChecked((externalBrowserOn_ == 0) ||
-                                                        (externalBrowserOn_ == 1));
-  optionsDialog_->otherExternalBrowserOn_->setChecked((externalBrowserOn_ == -1) ||
-                                                      (externalBrowserOn_ == 2));
-  optionsDialog_->otherExternalBrowserEdit_->setText(externalBrowser_);
   optionsDialog_->autoLoadImages_->setChecked(autoLoadImages_);
-  optionsDialog_->javaScriptEnable_->setChecked(javaScriptEnable_);
   optionsDialog_->defaultZoomPages_->setValue(defaultZoomPages_);
   optionsDialog_->openLinkInBackground_->setChecked(openLinkInBackground_);
-  optionsDialog_->openLinkInBackgroundEmbedded_->setChecked(openLinkInBackgroundEmbedded_);
-  optionsDialog_->maxPagesInCache_->setValue(maxPagesInCache_);
-
-  settings.beginGroup("Settings");
-
-  QString userStyleBrowser = settings.value("userStyleBrowser", QString()).toString();
-  optionsDialog_->userStyleBrowserEdit_->setText(userStyleBrowser);
-
-  bool useDiskCache = settings.value("useDiskCache", true).toBool();
-  optionsDialog_->diskCacheOn_->setChecked(useDiskCache);
-  QString diskCacheDir = settings.value("dirDiskCache", mainApp->cacheDefaultDir()).toString();
-  if (diskCacheDir.isEmpty()) diskCacheDir = mainApp->cacheDefaultDir();
-  optionsDialog_->dirDiskCacheEdit_->setText(diskCacheDir);
-  int maxDiskCache = settings.value("maxDiskCache", 50).toInt();
-  optionsDialog_->maxDiskCache_->setValue(maxDiskCache);
-
-  settings.endGroup();
-
-  UseCookies useCookies = mainApp->cookieJar()->useCookies();
-  optionsDialog_->saveCookies_->setChecked(useCookies == SaveCookies);
-  optionsDialog_->deleteCookiesOnClose_->setChecked(useCookies == DeleteCookiesOnClose);
-  optionsDialog_->blockCookies_->setChecked(useCookies == BlockCookies);
 
   optionsDialog_->downloadLocationEdit_->setText(downloadLocation_);
   optionsDialog_->askDownloadLocation_->setChecked(askDownloadLocation_);
@@ -3385,8 +3282,6 @@ void MainWindow::showOptionDlg(int index)
   optionsDialog_->markReadSwitchingFeed_->setChecked(markReadSwitchingFeed_);
   optionsDialog_->markReadClosingTab_->setChecked(markReadClosingTab_);
   optionsDialog_->markReadMinimize_->setChecked(markReadMinimize_);
-
-  optionsDialog_->showDescriptionNews_->setChecked(showDescriptionNews_);
 
   for (int i = 0; i < optionsDialog_->formatDate_->count(); i++) {
     if (optionsDialog_->formatDate_->itemData(i).toString() == formatDate_) {
@@ -3596,20 +3491,6 @@ void MainWindow::showOptionDlg(int index)
   optionsDialog_->colorsTree_->topLevelItem(22)->setText(1, notifierBackgroundColor_);
 
   NewsTabWidget *widget = (NewsTabWidget*)stackedWidget_->widget(TAB_WIDGET_PERMANENT);
-  backWebPageAct_->setText(widget->webView_->page()->action(QWebPage::Back)->text());
-  backWebPageAct_->setToolTip(widget->webView_->page()->action(QWebPage::Back)->toolTip() + " " + tr("(Browser)"));
-  backWebPageAct_->setIcon(widget->webView_->page()->action(QWebPage::Back)->icon());
-  backWebPageAct_->setShortcut(widget->webView_->page()->action(QWebPage::Back)->shortcut());
-
-  forwardWebPageAct_->setText(widget->webView_->page()->action(QWebPage::Forward)->text());
-  forwardWebPageAct_->setToolTip(widget->webView_->page()->action(QWebPage::Forward)->toolTip() + " " + tr("(Browser)"));
-  forwardWebPageAct_->setIcon(widget->webView_->page()->action(QWebPage::Forward)->icon());
-  forwardWebPageAct_->setShortcut(widget->webView_->page()->action(QWebPage::Forward)->shortcut());
-
-  reloadWebPageAct_->setText(widget->webView_->page()->action(QWebPage::Reload)->text());
-  reloadWebPageAct_->setToolTip(widget->webView_->page()->action(QWebPage::Reload)->toolTip() + " " + tr("(Browser)"));
-  reloadWebPageAct_->setIcon(widget->webView_->page()->action(QWebPage::Reload)->icon());
-  reloadWebPageAct_->setShortcut(widget->webView_->page()->action(QWebPage::Reload)->shortcut());
 
   optionsDialog_->loadActionShortcut(listActions_, &listDefaultShortcut_);
 
@@ -3750,57 +3631,9 @@ void MainWindow::showOptionDlg(int index)
   settings.setValue("Settings/numberRequest", numberRequests);
   settings.setValue("Settings/numberRepeats", numberRepeats);
 
-  if (optionsDialog_->embeddedBrowserOn_->isChecked()) {
-    if (optionsDialog_->defaultExternalBrowserOn_->isChecked())
-      externalBrowserOn_ = 0;
-    else
-      externalBrowserOn_ = -1;
-  } else {
-    if (optionsDialog_->defaultExternalBrowserOn_->isChecked())
-      externalBrowserOn_ = 1;
-    else
-      externalBrowserOn_ = 2;
-  }
-
-  externalBrowser_ = optionsDialog_->otherExternalBrowserEdit_->text();
   autoLoadImages_ = optionsDialog_->autoLoadImages_->isChecked();
-  javaScriptEnable_ = optionsDialog_->javaScriptEnable_->isChecked();
   openLinkInBackground_ = optionsDialog_->openLinkInBackground_->isChecked();
-  openLinkInBackgroundEmbedded_ = optionsDialog_->openLinkInBackgroundEmbedded_->isChecked();
-  maxPagesInCache_ = optionsDialog_->maxPagesInCache_->value();
   defaultZoomPages_ = optionsDialog_->defaultZoomPages_->value();
-
-  QWebSettings::globalSettings()->setAttribute(
-        QWebSettings::JavascriptEnabled, javaScriptEnable_);
-  QWebSettings::globalSettings()->setMaximumPagesInCache(maxPagesInCache_);
-
-  settings.beginGroup("Settings");
-
-  userStyleBrowser = optionsDialog_->userStyleBrowserEdit_->text();
-  settings.setValue("userStyleBrowser", userStyleBrowser);
-
-  useDiskCache = optionsDialog_->diskCacheOn_->isChecked();
-  settings.setValue("useDiskCache", useDiskCache);
-  maxDiskCache = optionsDialog_->maxDiskCache_->value();
-  settings.setValue("maxDiskCache", maxDiskCache);
-
-  if (diskCacheDir != optionsDialog_->dirDiskCacheEdit_->text()) {
-    Common::removePath(diskCacheDir);
-  }
-  diskCacheDir = optionsDialog_->dirDiskCacheEdit_->text();
-  if (diskCacheDir.isEmpty()) diskCacheDir = mainApp->cacheDefaultDir();
-  settings.setValue("dirDiskCache", diskCacheDir);
-
-  settings.endGroup();
-
-  mainApp->setDiskCache();
-
-  useCookies = SaveCookies;
-  if (optionsDialog_->deleteCookiesOnClose_->isChecked())
-    useCookies = DeleteCookiesOnClose;
-  else if (optionsDialog_->blockCookies_->isChecked())
-    useCookies = BlockCookies;
-  mainApp->cookieJar()->setUseCookies(useCookies);
 
   downloadLocation_ = optionsDialog_->downloadLocationEdit_->text();
   askDownloadLocation_ = optionsDialog_->askDownloadLocation_->isChecked();
@@ -3827,8 +3660,6 @@ void MainWindow::showOptionDlg(int index)
   markReadSwitchingFeed_ = optionsDialog_->markReadSwitchingFeed_->isChecked();
   markReadClosingTab_ = optionsDialog_->markReadClosingTab_->isChecked();
   markReadMinimize_ = optionsDialog_->markReadMinimize_->isChecked();
-
-  showDescriptionNews_ = optionsDialog_->showDescriptionNews_->isChecked();
 
   formatDate_ = optionsDialog_->formatDate_->itemData(
         optionsDialog_->formatDate_->currentIndex()).toString();
@@ -3992,7 +3823,7 @@ void MainWindow::showOptionDlg(int index)
   mainApp->reloadUserStyleBrowser();
 
   if (currentNewsTab != NULL) {
-    if (currentNewsTab->type_ < NewsTabWidget::TabTypeWeb)
+    if (currentNewsTab->type_ < NewsTabWidget::TabTypeDownloads)
       currentNewsTab->newsHeader_->saveStateColumns(currentNewsTab);
     currentNewsTab->setSettings(false);
   }
@@ -4324,7 +4155,7 @@ void MainWindow::setFeedsFilter(bool clicked)
 void MainWindow::setNewsFilter(QAction* pAct, bool clicked)
 {
   if (currentNewsTab == NULL) return;
-  if (currentNewsTab->type_ >= NewsTabWidget::TabTypeWeb) {
+  if (currentNewsTab->type_ >= NewsTabWidget::TabTypeDownloads) {
     filterNewsAll_->setChecked(true);
     return;
   }
@@ -4442,7 +4273,7 @@ void MainWindow::setNewsFilter(QAction* pAct, bool clicked)
 void MainWindow::setFeedRead(int type, int feedId, FeedReedType feedReadType,
                              NewsTabWidget *widgetTab, int idException)
 {
-  if ((type >= NewsTabWidget::TabTypeWeb) || (type == NewsTabWidget::TabTypeDel))
+  if ((type >= NewsTabWidget::TabTypeDownloads) || (type == NewsTabWidget::TabTypeDel))
     return;
 
   if ((type == NewsTabWidget::TabTypeFeed) && (feedReadType != FeedReadSwitchingTab)) {
@@ -4467,7 +4298,7 @@ void MainWindow::setFeedRead(int type, int feedId, FeedReedType feedReadType,
     }
     for (int i = 0; i < stackedWidget_->count(); i++) {
       NewsTabWidget *widget = (NewsTabWidget*)stackedWidget_->widget(i);
-      if ((widget->type_ < NewsTabWidget::TabTypeWeb) &&
+      if ((widget->type_ < NewsTabWidget::TabTypeDownloads) &&
           !((feedReadType == FeedReadSwitchingFeed) && (i == TAB_WIDGET_PERMANENT))) {
         int row = widget->newsView_->currentIndex().row();
         int newsId = widget->newsModel_->index(row, widget->newsModel_->fieldIndex("id")).data().toInt();
@@ -4877,13 +4708,8 @@ void MainWindow::retranslateStrings()
 
   openDescriptionNewsAct_->setText(tr("Open News"));
   openDescriptionNewsAct_->setToolTip(tr("Open News Description"));
-  openInBrowserAct_->setText(tr("Open in Browser"));
   openInExternalBrowserAct_->setText(tr("Open in External Browser"));
   openInExternalBrowserAct_->setToolTip(tr("Open News in External Browser"));
-  openNewsNewTabAct_->setText(tr("Open in New Tab"));
-  openNewsNewTabAct_->setToolTip(tr("Open News in New Tab"));
-  openNewsBackgroundTabAct_->setText(tr("Open in Background Tab"));
-  openNewsBackgroundTabAct_->setToolTip(tr("Open News in Background Tab"));
   markStarAct_->setText(tr("Star"));
   markStarAct_->setToolTip(tr("Mark News Star"));
   deleteNewsAct_->setText(tr("Delete"));
@@ -4906,7 +4732,7 @@ void MainWindow::retranslateStrings()
   viewMenu_->setTitle(tr("&View"));
   feedMenu_->setTitle(tr("Fee&ds"));
   newsMenu_->setTitle(tr("&News"));
-  browserMenu_->setTitle(tr("&Browser"));
+  browserMenu_->setTitle(tr("&Article"));
   toolsMenu_->setTitle(tr("&Tools"));
   helpMenu_->setTitle(tr("&Help"));
 
@@ -4935,7 +4761,7 @@ void MainWindow::retranslateStrings()
   pinkStyle_->setText(tr("Pink"));
   grayStyle_->setText(tr("Gray"));
 
-  browserPositionMenu_->setTitle(tr("Browser Position"));
+  browserPositionMenu_->setTitle(tr("Article Pane Position"));
   topBrowserPositionAct_->setText(tr("Top"));
   bottomBrowserPositionAct_->setText(tr("Bottom"));
   rightBrowserPositionAct_->setText(tr("Right"));
@@ -4992,15 +4818,12 @@ void MainWindow::retranslateStrings()
   pageDownWebViewAct_->setText(tr("Page down (Browser)"));
 
   savePageAsAct_->setText(tr("Save As..."));
-  savePageAsAct_->setToolTip(tr("Save Page As..."));
-  savePageAsDescriptAct_->setText(tr("Save page in database"));
-  savePageAsDescriptAct_->setToolTip(tr("Save page in database instead of news description"));
+  savePageAsAct_->setToolTip(tr("Save Article As..."));
 
   toolbarsMenu_->setTitle(tr("Show/Hide"));
   mainToolbarToggle_->setText(tr("Main Toolbar"));
   feedsToolbarToggle_->setText(tr("Feeds Toolbar"));
   newsToolbarToggle_->setText(tr("News Toolbar"));
-  browserToolbarToggle_->setText(tr("Browser Toolbar"));
   categoriesPanelToggle_->setText(tr("Panel Categories"));
   statusBarToggle_->setText(tr("Status Bar"));
 
@@ -5031,8 +4854,8 @@ void MainWindow::retranslateStrings()
   categoriesTree_->topLevelItem(CategoriesTreeWidget::DeletedItem)->setText(0, tr("Deleted"));
   categoriesTree_->topLevelItem(CategoriesTreeWidget::LabelsItem)->setText(0, tr("Labels"));
 
-  reduceNewsListAct_->setText(tr("Decrease news list/increase browser"));
-  increaseNewsListAct_->setText(tr("Increase news list/decrease browser"));
+  reduceNewsListAct_->setText(tr("Decrease news list/increase article pane"));
+  increaseNewsListAct_->setText(tr("Increase news list/decrease article pane"));
 
   findTextAct_->setText(tr("Find"));
 
@@ -5119,8 +4942,6 @@ void MainWindow::retranslateStrings()
   }
   findFeeds_->retranslateStrings();
   mainApp->downloadManager()->retranslateStrings();
-  adblockIcon_->retranslateStrings();
-  QApplication::translate("AdBlockCustomList", "Custom Rules");
 
   if ((mainApp->language() == "ar") || (mainApp->language() == "fa")) {
     QApplication::setLayoutDirection(Qt::RightToLeft);
@@ -5235,11 +5056,7 @@ void MainWindow::showFeedPropertiesDlg()
       feedsModel_->dataField(index, "displayEmbeddedImages").toInt();
   properties.display.javaScriptEnable =
       feedsModel_->dataField(index, "javaScriptEnable").toInt();
-  if (feedsModel_->dataField(index, "displayNews").toString().isEmpty())
-    properties.display.displayNews = !showDescriptionNews_;
-  else
-    properties.display.displayNews =
-        feedsModel_->dataField(index, "displayNews").toInt();
+  properties.display.displayNews = feedsModel_->dataField(index, "displayNews").toInt();
   properties.display.layoutDirection =
       feedsModel_->dataField(index, "layoutDirection").toInt();
 
@@ -5844,7 +5661,7 @@ void MainWindow::slotIconFeedUpdate(int feedId, QByteArray faviconData)
       widget->newsIconTitle_->setPixmap(iconTab);
     }
   }
-  if (currentNewsTab->type_ < NewsTabWidget::TabTypeWeb)
+  if (currentNewsTab->type_ < NewsTabWidget::TabTypeDownloads)
     currentNewsTab->newsView_->viewport()->update();
 }
 // ----------------------------------------------------------------------------
@@ -6126,9 +5943,7 @@ void MainWindow::setStyleApp(QAction *pAct)
     fileName.append("/style/green.qss");
   }
 
-  QString userStyleBrowser = "";
   if (pAct->objectName() == "darkStyle_") {
-    userStyleBrowser = mainApp->styleSheetWebDarkFile();
     feedsModel_->textColor_ = "#e1e0e1";
     newsListTextColor_ = "#e1e0e1";
     newsListBackgroundColor_ = "#464546";
@@ -6164,7 +5979,6 @@ void MainWindow::setStyleApp(QAction *pAct)
   }
 
   settings.beginGroup("Settings");
-  settings.setValue("userStyleBrowser", userStyleBrowser);
   settings.setValue("transparencyNotify", transparencyNotify_);
   settings.endGroup();
   settings.beginGroup("Color");
@@ -6201,7 +6015,7 @@ void MainWindow::setStyleApp(QAction *pAct)
 
   mainApp->reloadUserStyleBrowser();
   if (currentNewsTab != NULL) {
-    if (currentNewsTab->type_ < NewsTabWidget::TabTypeWeb)
+    if (currentNewsTab->type_ < NewsTabWidget::TabTypeDownloads)
       currentNewsTab->newsHeader_->saveStateColumns(currentNewsTab);
     currentNewsTab->setSettings(false);
   }
@@ -6237,7 +6051,7 @@ void MainWindow::slotSwitchPrevFocus()
  *---------------------------------------------------------------------------*/
 void MainWindow::slotOpenFeedNewTab()
 {
-  if (stackedWidget_->count() && currentNewsTab->type_ < NewsTabWidget::TabTypeWeb) {
+  if (stackedWidget_->count() && currentNewsTab->type_ < NewsTabWidget::TabTypeDownloads) {
     setFeedRead(currentNewsTab->type_, currentNewsTab->feedId_, FeedReadSwitchingTab, currentNewsTab);
     currentNewsTab->newsHeader_->saveStateColumns(currentNewsTab);
     Settings settings;
@@ -6292,7 +6106,7 @@ void MainWindow::slotTabCurrentChanged(int index)
 
   NewsTabWidget *widget = (NewsTabWidget*)stackedWidget_->widget(index);
 
-  if ((widget->type_ == NewsTabWidget::TabTypeFeed) || (widget->type_ >= NewsTabWidget::TabTypeWeb))
+  if ((widget->type_ == NewsTabWidget::TabTypeFeed) || (widget->type_ >= NewsTabWidget::TabTypeDownloads))
     categoriesTree_->setCurrentIndex(QModelIndex());
   if (widget->type_ != NewsTabWidget::TabTypeFeed) {
     feedsView_->setCurrentIndex(QModelIndex());
@@ -6313,7 +6127,7 @@ void MainWindow::slotTabCurrentChanged(int index)
 
   if (!updateCurrentTab_) return;
 
-  if ((tabBar_->closingTabState_ == TabBar::CloseTabIdle) && (currentNewsTab->type_ < NewsTabWidget::TabTypeWeb)) {
+  if ((tabBar_->closingTabState_ == TabBar::CloseTabIdle) && (currentNewsTab->type_ < NewsTabWidget::TabTypeDownloads)) {
     setFeedRead(currentNewsTab->type_, currentNewsTab->feedId_, FeedReadSwitchingTab, currentNewsTab);
 
     currentNewsTab->newsHeader_->saveStateColumns(currentNewsTab);
@@ -6346,13 +6160,6 @@ void MainWindow::slotTabCurrentChanged(int index)
 
     statusUnread_->setVisible(widget->feedId_);
     statusAll_->setVisible(widget->feedId_);
-  } else if (widget->type_ == NewsTabWidget::TabTypeWeb) {
-    statusUnread_->setVisible(false);
-    statusAll_->setVisible(false);
-    currentNewsTab = widget;
-    currentNewsTab->setSettings(false);
-    currentNewsTab->retranslateStrings();
-    currentNewsTab->webView_->setFocus();
   } else if (widget->type_ == NewsTabWidget::TabTypeDownloads) {
     statusUnread_->setVisible(false);
     statusAll_->setVisible(false);
@@ -6445,29 +6252,7 @@ void MainWindow::setBrowserPosition(QAction *action)
 
 /** @brief Create tab with browser only (without news list)
  *---------------------------------------------------------------------------*/
-QWebPage *MainWindow::createWebTab(QUrl url)
-{
-  NewsTabWidget *widget = new NewsTabWidget(this, NewsTabWidget::TabTypeWeb);
-  int indexTab = addTab(widget);
-  widget->setTextTab(tr("Loading..."));
 
-  if (openNewsTab_ == NEW_TAB_FOREGROUND) {
-    currentNewsTab = widget;
-    emit signalSetCurrentTab(indexTab);
-  }
-
-  widget->setSettings();
-  widget->retranslateStrings();
-
-  openNewsTab_ = 0;
-
-  if (!url.isEmpty()) {
-      widget->locationBar_->setText(url.toString());
-      widget->webView_->load(url);
-    }
-
-  return widget->webView_->page();
-}
 // ----------------------------------------------------------------------------
 void MainWindow::creatFeedTab(int feedId, int feedParId)
 {
@@ -6616,27 +6401,15 @@ void MainWindow::restoreNews()
   currentNewsTab->restoreNews();
 }
 // ----------------------------------------------------------------------------
-void MainWindow::openInBrowserNews()
-{
-  currentNewsTab->openInBrowserNews();
-}
+
 // ----------------------------------------------------------------------------
 void MainWindow::openInExternalBrowserNews()
 {
   currentNewsTab->openInExternalBrowserNews();
 }
 // ----------------------------------------------------------------------------
-void MainWindow::slotOpenNewsNewTab()
-{
-  openNewsTab_ = NEW_TAB_FOREGROUND;
-  currentNewsTab->openNewsNewTab();
-}
+
 // ----------------------------------------------------------------------------
-void MainWindow::slotOpenNewsBackgroundTab()
-{
-  openNewsTab_ = NEW_TAB_BACKGROUND;
-  currentNewsTab->openNewsNewTab();
-}
 
 /** @brief Copy news URL-link
  *----------------------------------------------------------------------------*/
@@ -6697,7 +6470,7 @@ void MainWindow::setCurrentTab(int index, bool updateCurrentTab)
  *---------------------------------------------------------------------------*/
 void MainWindow::findText()
 {
-  if (currentNewsTab->type_ < NewsTabWidget::TabTypeWeb) {
+  if (currentNewsTab->type_ < NewsTabWidget::TabTypeDownloads) {
     if (!currentNewsTab->findText_->hasFocus())
       currentNewsTab->findText_->setFocus();
     else
@@ -6825,7 +6598,7 @@ void MainWindow::slotOpenNew(int feedId, int newsId)
   feedsModel_->setData(feedsModel_->indexSibling(feedIndex, "currentNews"),
                            newsId);
 
-  if (stackedWidget_->count() && currentNewsTab->type_ < NewsTabWidget::TabTypeWeb) {
+  if (stackedWidget_->count() && currentNewsTab->type_ < NewsTabWidget::TabTypeDownloads) {
     currentNewsTab->newsHeader_->saveStateColumns(currentNewsTab);
   }
 
@@ -6885,7 +6658,7 @@ void MainWindow::slotMarkReadNewsInNotification(int feedId, int newsId, int read
 {
   QSqlQuery q;
   bool showNews = false;
-  if (currentNewsTab->type_ < NewsTabWidget::TabTypeWeb) {
+  if (currentNewsTab->type_ < NewsTabWidget::TabTypeDownloads) {
     int cnt = newsModel_->rowCount();
     for (int i = 0; i < cnt; ++i) {
       if (newsId == newsModel_->index(i, newsModel_->fieldIndex("id")).data().toInt()) {
@@ -6933,7 +6706,7 @@ void MainWindow::slotDeleteNewsInNotification(int feedId, int newsId)
                arg(QDateTime::currentDateTime().toString(Qt::ISODate)).
                arg(newsId));
 
-  if (currentNewsTab->type_ < NewsTabWidget::TabTypeWeb) {
+  if (currentNewsTab->type_ < NewsTabWidget::TabTypeDownloads) {
     for (int i = 0; i < newsModel_->rowCount(); ++i) {
       if (newsId == newsModel_->index(i, newsModel_->fieldIndex("id")).data().toInt()) {
         newsModel_->setData(newsModel_->index(i, newsModel_->fieldIndex("new")), 0);
@@ -6973,7 +6746,7 @@ void MainWindow::slotMarkAllReadNewsInNotification()
     QList<int> idFeedList = notificationWidget->idFeedList();
     QList<int> idNewsList = notificationWidget->idNewsList();
 
-    if (currentNewsTab->type_ < NewsTabWidget::TabTypeWeb) {
+    if (currentNewsTab->type_ < NewsTabWidget::TabTypeDownloads) {
       for (int i = 0; i < newsModel_->rowCount(); ++i) {
         if (idNewsList.contains(newsModel_->index(i, newsModel_->fieldIndex("id")).data().toInt())) {
           newsModel_->setData(
@@ -7261,7 +7034,7 @@ void MainWindow::slotMoveIndex(const QModelIndex &indexWhere, int how)
  *---------------------------------------------------------------------------*/
 void MainWindow::slotCategoriesClicked(QTreeWidgetItem *item, int, bool createTab)
 {
-  if (stackedWidget_->count() && currentNewsTab->type_ < NewsTabWidget::TabTypeWeb) {
+  if (stackedWidget_->count() && currentNewsTab->type_ < NewsTabWidget::TabTypeDownloads) {
     currentNewsTab->newsHeader_->saveStateColumns(currentNewsTab);
     Settings settings;
     settings.setValue("NewsTabSplitterState", currentNewsTab->newsTabWidgetSplitter_->saveState());
@@ -7522,7 +7295,7 @@ void MainWindow::feedsSplitterMoved(int pos, int)
  *---------------------------------------------------------------------------*/
 void MainWindow::setLabelNews(QAction *action)
 {
-  if (currentNewsTab->type_ >= NewsTabWidget::TabTypeWeb) return;
+  if (currentNewsTab->type_ >= NewsTabWidget::TabTypeDownloads) return;
 
   newsLabelAction_->setIcon(action->icon());
   newsLabelAction_->setToolTip(action->text());
@@ -7535,7 +7308,7 @@ void MainWindow::setLabelNews(QAction *action)
  *---------------------------------------------------------------------------*/
 void MainWindow::setDefaultLabelNews()
 {
-  if (currentNewsTab->type_ >= NewsTabWidget::TabTypeWeb) return;
+  if (currentNewsTab->type_ >= NewsTabWidget::TabTypeDownloads) return;
 
   currentNewsTab->setLabelNews(newsLabelAction_->data().toInt());
 }
@@ -7548,7 +7321,7 @@ void MainWindow::getLabelNews()
     newsLabelGroup_->actions().at(i)->setChecked(false);
   }
 
-  if (currentNewsTab->type_ >= NewsTabWidget::TabTypeWeb) return;
+  if (currentNewsTab->type_ >= NewsTabWidget::TabTypeDownloads) return;
 
   QList<QModelIndex> indexes = newsView_->selectionModel()->selectedRows(
         newsModel_->fieldIndex("label"));
@@ -7665,11 +7438,6 @@ void MainWindow::slotSavePageAs()
   file.close();
 }
 
-void MainWindow::slotSavePageAsDescript()
-{
-  currentNewsTab->savePageAsDescript();
-}
-
 /** @brief Restore last deleted news
  *---------------------------------------------------------------------------*/
 void MainWindow::restoreLastNews()
@@ -7707,7 +7475,7 @@ void MainWindow::restoreLastNews()
  *---------------------------------------------------------------------------*/
 void MainWindow::nextUnreadNews()
 {
-  if (currentNewsTab->type_ >= NewsTabWidget::TabTypeWeb) return;
+  if (currentNewsTab->type_ >= NewsTabWidget::TabTypeDownloads) return;
   newsView_->clearSelection();
 
   int newsRow = currentNewsTab->findUnreadNews(true);
@@ -7770,7 +7538,7 @@ void MainWindow::nextUnreadNews()
  *---------------------------------------------------------------------------*/
 void MainWindow::prevUnreadNews()
 {
-  if (currentNewsTab->type_ >= NewsTabWidget::TabTypeWeb) return;
+  if (currentNewsTab->type_ >= NewsTabWidget::TabTypeDownloads) return;
   newsView_->clearSelection();
 
   int newsRow = currentNewsTab->findUnreadNews(false);
@@ -7849,7 +7617,6 @@ void MainWindow::showCustomizeToolbarDlg(QAction *action)
   if (action->objectName() == "customizeFeedsToolbarAct") {
     toolbar = feedsToolBar_;
   } else if (action->objectName() == "customizeNewsToolbarAct") {
-    if (currentNewsTab->type_ == NewsTabWidget::TabTypeWeb) return;
     if (currentNewsTab->type_ == NewsTabWidget::TabTypeDownloads) return;
     toolbar = currentNewsTab->newsToolBar_;
   }
@@ -7882,7 +7649,7 @@ void MainWindow::showMenuShareNews()
       shareMenu_->popup(widget->mapToGlobal(QPoint(0, feedsToolBar_->height()-1)));
     }
   }
-  if (currentNewsTab->type_ < NewsTabWidget::TabTypeWeb) {
+  if (currentNewsTab->type_ < NewsTabWidget::TabTypeDownloads) {
     if (currentNewsTab->newsToolBar_->widgetForAction(shareMenuAct_)) {
       QWidget *widget = currentNewsTab->newsToolBar_->widgetForAction(shareMenuAct_);
       if (widget->underMouse()) {
@@ -7890,12 +7657,7 @@ void MainWindow::showMenuShareNews()
       }
     }
   }
-  if (currentNewsTab->webToolBar_->widgetForAction(shareMenuAct_)) {
-    QWidget *widget = currentNewsTab->webToolBar_->widgetForAction(shareMenuAct_);
-    if (widget->underMouse()) {
-      shareMenu_->popup(widget->mapToGlobal(QPoint(0, currentNewsTab->webToolBar_->height()-1)));
-    }
-  }
+
 }
 
 /** @brief Open feed home page in external browser
@@ -7954,12 +7716,12 @@ void MainWindow::sortedByTitleFeedsTree()
 void MainWindow::showNewsMenu()
 {
   if (currentNewsTab)
-    newsSortByMenu_->setEnabled(currentNewsTab->type_ < NewsTabWidget::TabTypeWeb);
+    newsSortByMenu_->setEnabled(currentNewsTab->type_ < NewsTabWidget::TabTypeDownloads);
 }
 // ----------------------------------------------------------------------------
 void MainWindow::showNewsSortByMenu()
 {
-  if (currentNewsTab->type_ >= NewsTabWidget::TabTypeWeb) return;
+  if (currentNewsTab->type_ >= NewsTabWidget::TabTypeDownloads) return;
 
   QListIterator<QAction *> iter(newsSortByColumnGroup_->actions());
   while (iter.hasNext()) {
@@ -7992,7 +7754,7 @@ void MainWindow::showNewsSortByMenu()
 // ----------------------------------------------------------------------------
 void MainWindow::setNewsSortByColumn()
 {
-  if (currentNewsTab->type_ >= NewsTabWidget::TabTypeWeb) return;
+  if (currentNewsTab->type_ >= NewsTabWidget::TabTypeDownloads) return;
 
   int lIdx = newsSortByColumnGroup_->checkedAction()->data().toInt();
   if (newsSortOrderGroup_->actions().at(0)->isChecked()) {
@@ -8165,16 +7927,4 @@ void MainWindow::createBackup()
         arg(timeStr);
     QFile::copy(settings.fileName(), backupFileName);
   }
-}
-
-void MainWindow::webViewFullScreen(bool on)
-{
-  feedsWidget_->setVisible(!on);
-  pushButtonNull_->setVisible(!on);
-  tabBarWidget_->setVisible(!on);
-  currentNewsTab->newsWidget_->setVisible(!on);
-  currentNewsTab->webControlPanel_->setVisible(!on);
-  pushButtonNull_->setVisible(!on);
-  statusBar()->setVisible(!on);
-  setFullScreen();
 }

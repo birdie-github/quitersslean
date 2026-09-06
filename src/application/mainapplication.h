@@ -102,8 +102,6 @@ private:
   void closeSplashScreen();
   void setProgressSplashScreen(int value);
 
-  QUrl userStyleSheet(const QString &filePath) const;
-
   void setProxy();
 
   bool isPortableAppsCom_;

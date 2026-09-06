@@ -21,9 +21,6 @@
 #include <QString>
 #include <QDir>
 
-
-#define ADBLOCK_EASYLIST_URL "https://easylist-downloads.adblockplus.org/easylist.txt"
-
 #ifndef QSL
 #define QSL(x) QStringLiteral(x)
 #endif
