@@ -178,10 +178,9 @@ OBJECTS_DIR = $${BUILD_DIR}/obj
 MOC_DIR = $${BUILD_DIR}/moc
 RCC_DIR = $${BUILD_DIR}/rcc
 
-isEmpty(SYSTEMQTSA) {
-  include(3rdparty/qtsingleapplication/qtsingleapplication.pri)
-} else {
-  CONFIG += qtsingleapplication
+# Require the installed Qt 5 QtSingleApplication library and qmake feature.
+!load(qtsingleapplication, true) {
+  error("QtSingleApplication for Qt 5 is required. Install its development package with qtsingleapplication.prf; on Fedora: qtsingleapplication-qt5-devel.")
 }
 include(3rdparty/qftp/qftp.pri)
 include(3rdparty/sqlite.pri)

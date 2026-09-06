@@ -3,18 +3,18 @@ on: [push, pull_request, workflow_dispatch]
 jobs:
   build:
     runs-on: ubuntu-22.04
+    container: fedora:44
     strategy:
       matrix:
         compiler: [g++, clang++]
     steps:
-      - uses: actions/checkout@v4
       - name: Install dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y qtbase5-dev qttools5-dev-tools qtmultimedia5-dev libsqlite3-dev libxml2-dev
+          dnf install -y git gcc-c++ clang make pkgconf-pkg-config qt5-qtbase-devel qt5-qttools-devel qt5-qtmultimedia-devel qtsingleapplication-qt5-devel sqlite-devel libxml2-devel
+      - uses: actions/checkout@v4
       - name: Build
         run: |
           mkdir _build
           cd _build
-          qmake ../QuiteRSS.pro CONFIG+=release CONFIG-=debug_and_release QMAKE_CXX=${{ matrix.compiler }} QMAKE_LINK=${{ matrix.compiler }}
+          qmake-qt5 ../QuiteRSS.pro CONFIG+=release CONFIG-=debug_and_release QMAKE_CXX=${{ matrix.compiler }} QMAKE_LINK=${{ matrix.compiler }}
           make -j2

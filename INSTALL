@@ -3,6 +3,8 @@ Build depends:
   SQLite version 3.30.1 or newer
   libxml2 development headers and pkg-config
   Qt 5.15.x (development headers required)
+  QtSingleApplication built for Qt 5, including headers, library and
+    qtsingleapplication.prf (Fedora: qtsingleapplication-qt5-devel)
   Required Qt development tools:
     qmake
     lrelease
@@ -35,7 +37,15 @@ For making debug build use CONFIG+=debug instead of CONFIG+=release.
 By default qmake uses gcc, for using clang you need to alter qmake command:
   qmake QMAKE_CC=clang QMAKE_CXX=clang++ QMAKE_LINK=clang++ QMAKE_LINK_C=clang CONFIG+=release PREFIX=/usr ../QuiteRSS.pro
 
-For building with system qtsingleapplication add SYSTEMQTSA=1 to qmake command.
+QtSingleApplication must be installed before running qmake on every platform.
+The bundled copy is no longer used; SYSTEMQTSA is no longer needed.
+On Fedora: sudo dnf install qtsingleapplication-qt5-devel
+The Qt 6 package cannot be used with this Qt 5 application.
+For a custom dependency installation, put its qtsingleapplication.prf directory
+on QMAKEFEATURES. The feature must set the installed include and library paths.
+Use a library built with a compatible Qt version, compiler and architecture.
+Distributors must also provide the QtSingleApplication shared library at runtime
+when linking dynamically.
 
 Instructions for Windows:
   Use a Qt 5.15 toolchain.
