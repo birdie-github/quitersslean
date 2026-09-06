@@ -1102,7 +1102,7 @@ void ParseObject::runUserFilter(int feedId, int filterId)
           case 0: // condition -> contains
             qStr1.append(QString("UPPER(title) LIKE '%%1%' ").arg(content.toUpper()));
             break;
-          case 1: // condition -> doesn't contains
+          case 1: // condition -> doesn't contain
             qStr1.append(QString("UPPER(title) NOT LIKE '%%1%' ").arg(content.toUpper()));
             break;
           case 2: // condition -> is
@@ -1127,7 +1127,7 @@ void ParseObject::runUserFilter(int feedId, int filterId)
           case 0: // condition -> contains
             qStr1.append(QString("UPPER(description) LIKE '%%1%' ").arg(content.toUpper()));
             break;
-          case 1: // condition -> doesn't contains
+          case 1: // condition -> doesn't contain
             qStr1.append(QString("UPPER(description) NOT LIKE '%%1%' ").arg(content.toUpper()));
             break;
           case 2: // condition -> regExp
@@ -1140,7 +1140,7 @@ void ParseObject::runUserFilter(int feedId, int filterId)
           case 0: // condition -> contains
             qStr1.append(QString("UPPER(author_name) LIKE '%%1%' ").arg(content.toUpper()));
             break;
-          case 1: // condition -> doesn't contains
+          case 1: // condition -> doesn't contain
             qStr1.append(QString("UPPER(author_name) NOT LIKE '%%1%' ").arg(content.toUpper()));
             break;
           case 2: // condition -> is
@@ -1159,7 +1159,7 @@ void ParseObject::runUserFilter(int feedId, int filterId)
           case 0: // condition -> contains
             qStr1.append(QString("UPPER(category) LIKE '%%1%' ").arg(content.toUpper()));
             break;
-          case 1: // condition -> doesn't contains
+          case 1: // condition -> doesn't contain
             qStr1.append(QString("UPPER(category) NOT LIKE '%%1%' ").arg(content.toUpper()));
             break;
           case 2: // condition -> is
@@ -1211,7 +1211,7 @@ void ParseObject::runUserFilter(int feedId, int filterId)
           case 0: // condition -> contains
             qStr1.append(QString("link_href LIKE '%%1%' ").arg(content));
             break;
-          case 1: // condition -> doesn't contains
+          case 1: // condition -> doesn't contain
             qStr1.append(QString("link_href NOT LIKE '%%1%' ").arg(content));
             break;
           case 2: // condition -> is
@@ -1236,7 +1236,7 @@ void ParseObject::runUserFilter(int feedId, int filterId)
           case 0: // condition -> contains
             qStr1.append(QString("(UPPER(title) LIKE '%%1%' OR UPPER(description) LIKE '%%1%') ").arg(content.toUpper()));
             break;
-          case 1: // condition -> doesn't contains
+          case 1: // condition -> doesn't contain
             qStr1.append(QString("(UPPER(title) NOT LIKE '%%1%' OR UPPER(description) NOT LIKE '%%1%') ").arg(content.toUpper()));
             break;
           case 2: // condition -> regExp
