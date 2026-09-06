@@ -93,6 +93,17 @@ private:
     if (done_) return;
     ArticleImages::trace("fetch " + ArticleImages::describeUrl(target));
     QNetworkRequest request(target);
+    if (target.scheme() == QLatin1String("https")) {
+      // The article fetcher is independent of the feed NetworkManager and its
+      // lazy certificate initialization. Use platform roots explicitly for each
+      // HTTPS request, including redirects; never bypass peer verification.
+      QSslConfiguration ssl = request.sslConfiguration();
+      ssl.setCaCertificates(QSslConfiguration::systemCaCertificates());
+      ssl.setPeerVerifyMode(QSslSocket::VerifyPeer);
+      request.setSslConfiguration(ssl);
+      ArticleImages::trace("TLS request-ca-count=" + QString::number(ssl.caCertificates().size()) +
+                           " verify-mode=" + QString::number(int(ssl.peerVerifyMode())));
+    }
     request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::ManualRedirectPolicy);
     request.setAttribute(QNetworkRequest::CookieLoadControlAttribute, QNetworkRequest::Manual);
     request.setAttribute(QNetworkRequest::CookieSaveControlAttribute, QNetworkRequest::Manual);
