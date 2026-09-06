@@ -27,6 +27,7 @@ public:
     QzRegExp();
     QzRegExp(const QString &pattern, Qt::CaseSensitivity cs = Qt::CaseSensitive);
     QzRegExp(const QzRegExp &re);
+    QzRegExp &operator=(const QzRegExp &re) = default;
 
     void setMinimal(bool minimal);
     int indexIn(const QString &str, int offset = 0) const;

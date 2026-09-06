@@ -19,6 +19,7 @@
 #include "VersionNo.h"
 #include "mainapplication.h"
 #include "globals.h"
+#include "common.h"
 
 #include <QDebug>
 #include <QtSql>
