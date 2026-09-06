@@ -33,6 +33,18 @@
 #include <QStringList>
 
 namespace {
+QByteArray imageAcceptHeader() {
+  const QList<QByteArray> formats = QImageReader::supportedImageFormats();
+  QStringList types;
+  // Only advertise formats allowed by the article policy and decodable by Qt.
+  // CDNs may negotiate WebP even for URLs ending in .jpg.
+  if (formats.contains("png")) types.append("image/png");
+  if (formats.contains("jpeg") || formats.contains("jpg")) types.append("image/jpeg");
+  if (formats.contains("gif")) types.append("image/gif");
+  if (formats.contains("webp")) types.append("image/webp");
+  if (formats.contains("bmp")) types.append("image/bmp");
+  return types.join(",").toLatin1();
+}
 class NoCookies : public QNetworkCookieJar {
 public:
   explicit NoCookies(QObject *parent) : QNetworkCookieJar(parent) {}
@@ -108,7 +120,9 @@ private:
     request.setAttribute(QNetworkRequest::CookieLoadControlAttribute, QNetworkRequest::Manual);
     request.setAttribute(QNetworkRequest::CookieSaveControlAttribute, QNetworkRequest::Manual);
     request.setAttribute(QNetworkRequest::AuthenticationReuseAttribute, QNetworkRequest::Manual);
-    request.setRawHeader("Accept", "image/png,image/jpeg,image/gif,image/webp,image/bmp");
+    const QByteArray accept = imageAcceptHeader();
+    request.setRawHeader("Accept", accept);
+    ArticleImages::trace("Accept=" + QString::fromLatin1(accept));
     // New request: never carry feed credentials, Referer, cookies, or publisher headers.
     pending_ = fetcher_->get(request);
     connect(pending_.data(), &QNetworkReply::sslErrors, this,
@@ -129,6 +143,7 @@ private:
       if (!pending_ || done_) return;
       ArticleImages::trace("response " + ArticleImages::describeUrl(pending_->url()) +
                            " status=" + pending_->attribute(QNetworkRequest::HttpStatusCodeAttribute).toString() +
+                           " content-type=" + pending_->header(QNetworkRequest::ContentTypeHeader).toString() +
                            " error=" + QString::number(int(pending_->error())));
       if (pending_->error() != NoError) { finish(pending_->error(), pending_->errorString()); return; }
       const QUrl redirect = pending_->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();

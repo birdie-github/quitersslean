@@ -18,6 +18,14 @@ Build depends:
     QtWebKitWidgets
     QtXml
 
+Runtime image support:
+  Full article image support requires Qt image-format plugins, including WebP.
+  On Fedora, install qt5-qtimageformats; packaged builds should depend on it at
+  runtime. This is not a compiler or development-header dependency.
+  Bundled distributions must deploy the matching Qt image-format plugins.
+  Without WebP support, the reader does not advertise WebP to image servers,
+  but images available only in WebP format still cannot be displayed.
+
 Instructions for Linux and other UNIX-like systems:
   mkdir _build && cd _build
   qmake CONFIG+=release PREFIX=/usr ../QuiteRSS.pro

@@ -21,7 +21,11 @@ cookies, Referer, disk cache or SSL-error exceptions. Redirects are limited to f
 restricted to HTTP(S), and may not downgrade HTTPS. Remote responses are buffered
 (up to 16 MiB), checked as raster images (PNG/JPEG/GIF/WebP/BMP, up to 64 megapixels),
 then returned to WebKit. Requests time out after 30 seconds. Qt image handlers are
-needed for the corresponding formats. Inline raster data URLs are limited to 8 MiB.
+needed for the corresponding formats. Full support requires the Qt image-format
+plugins (Fedora: qt5-qtimageformats), a runtime dependency. Requests advertise only
+permitted formats with installed decoders. This allows servers to return JPEG
+instead of WebP when WebP support is absent; WebP-only images still require the
+plugin. Inline raster data URLs are limited to 8 MiB.
 Article input is limited to 4 MiB; HTML traversal is limited to 128 levels and 50,000
 nodes. Very large or unusual content should be opened externally.
 
