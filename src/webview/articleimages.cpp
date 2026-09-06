@@ -28,6 +28,8 @@
 #include <cstring>
 #include <cstdio>
 #include <QSslSocket>
+#include <QSslError>
+#include <QSslConfiguration>
 #include <QStringList>
 
 namespace {
@@ -98,6 +100,15 @@ private:
     request.setRawHeader("Accept", "image/png,image/jpeg,image/gif,image/webp,image/bmp");
     // New request: never carry feed credentials, Referer, cookies, or publisher headers.
     pending_ = fetcher_->get(request);
+    connect(pending_.data(), &QNetworkReply::sslErrors, this,
+            [this](const QList<QSslError> &errors) {
+      if (!pending_) return;
+      for (const QSslError &error : errors) {
+        ArticleImages::trace("TLS validation " + ArticleImages::describeUrl(pending_->url()) +
+                             " code=" + QString::number(int(error.error())) +
+                             " message=" + error.errorString());
+      }
+    });
     connect(pending_.data(), &QNetworkReply::readyRead, this, [this]() {
       if (!pending_) return;
       body_ += pending_->readAll();
@@ -150,6 +161,10 @@ private:
 }
 ArticleImages::ArticleImages(QObject *parent) : QNetworkAccessManager(parent), fetcher_(new QNetworkAccessManager(this)) {
   if (tracingEnabled()) {
+    const QSslConfiguration ssl = QSslConfiguration::defaultConfiguration();
+    trace(QString("TLS default-ca-count=%1 system-ca-count=%2 protocol=%3 verify-mode=%4")
+          .arg(ssl.caCertificates().size()).arg(QSslConfiguration::systemCaCertificates().size())
+          .arg(int(ssl.protocol())).arg(int(ssl.peerVerifyMode())));
     QStringList formats;
     for (const QByteArray &format : QImageReader::supportedImageFormats())
       formats.append(QString::fromLatin1(format));
