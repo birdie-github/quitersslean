@@ -19,7 +19,6 @@
 #define UPDATEAPPDIALOG_H
 
 #include <QNetworkReply>
-#include <QWebFrame>
 
 #include "dialog.h"
 #include "networkmanagerproxy.h"

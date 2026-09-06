@@ -83,7 +83,6 @@ MainApplication::MainApplication(int &argc, char **argv)
   qWarning() << "Run application 3";
   setProgressSplashScreen(60);
 
-  loadSettings();
   qWarning() << "Run application 4";
   updateFeeds_ = new UpdateFeeds(mainWindow_);
   setProgressSplashScreen(90);
@@ -210,11 +209,6 @@ void MainApplication::connectDatabase()
   }
 
   Database::initialization();
-}
-
-void MainApplication::loadSettings()
-{
-  reloadUserStyleBrowser();
 }
 
 void MainApplication::quitApplication()
@@ -474,15 +468,6 @@ QString MainApplication::styleSheetNewsDefaultFile() const
   }
 }
 
-QString MainApplication::styleSheetWebDarkFile() const
-{
-  if (isPortable()) {
-    return "style/web_dark.css";
-  } else {
-    return resourcesDir() % "/style/web_dark.css";
-  }
-}
-
 UpdateFeeds *MainApplication::updateFeeds()
 {
   return updateFeeds_;
@@ -505,16 +490,6 @@ DownloadManager *MainApplication::downloadManager()
   }
   return downloadManager_;
 }
-
-void MainApplication::reloadUserStyleBrowser()
-{
-  QWebSettings::globalSettings()->setUserStyleSheetUrl(QUrl());
-}
-
-/** @brief Set user style sheet for browser
- * @param filePath Filepath of user style
- * @return URL-link to user style
- *---------------------------------------------------------------------------*/
 
 void MainApplication::proxyLoadSettings()
 {

@@ -31,13 +31,13 @@ exists(.git) {
   }
 }
 
-!equals(QT_MAJOR_VERSION, 5): error("QuiteRSS requires Qt 5.15.x and QtWebKit")
+!equals(QT_MAJOR_VERSION, 5): error("QuiteRSS requires Qt 5.15.x")
 lessThan(QT_MINOR_VERSION, 15): error("QuiteRSS requires Qt 5.15 or newer within Qt 5")
-QT += widgets webkitwidgets network xml printsupport sql multimedia
+QT += widgets network xml printsupport sql multimedia
 CONFIG += c++11 link_pkgconfig
 PKGCONFIG += libxml-2.0
-HEADERS += src/webview/articlecontent.h src/webview/articleimages.h
-SOURCES += src/webview/articlecontent.cpp src/webview/articleimages.cpp
+HEADERS += src/articleview/articlecontent.h src/articleview/articleimages.h
+SOURCES += src/articleview/articlecontent.cpp src/articleview/articleimages.cpp
 
 unix:!mac:DEFINES += HAVE_X11
 
@@ -82,8 +82,7 @@ HEADERS += \
     src/network/authenticationdialog.h \
     src/network/cookiejar.h \
     src/network/networkmanager.h \
-    src/webview/webpage.h \
-    src/webview/webview.h \
+    src/articleview/articleview.h \
     src/database/database.h \
     src/common/common.h \
     src/common/delegatewithoutfocus.h \
@@ -138,8 +137,7 @@ SOURCES += \
     src/network/authenticationdialog.cpp \
     src/network/cookiejar.cpp \
     src/network/networkmanager.cpp \
-    src/webview/webpage.cpp \
-    src/webview/webview.cpp \
+    src/articleview/articleview.cpp \
     src/database/database.cpp \
     src/common/common.cpp \
     src/common/delegatewithoutfocus.cpp \
@@ -165,7 +163,7 @@ INCLUDEPATH +=  $$PWD/src \
                 $$PWD/src/newsview \
                 $$PWD/src/notifications \
                 $$PWD/src/network \
-                $$PWD/src/webview \
+                $$PWD/src/articleview \
 
 CONFIG += debug_and_release
 CONFIG(debug, debug|release) {

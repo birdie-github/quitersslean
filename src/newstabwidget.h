@@ -20,7 +20,6 @@
 
 #include <QtWidgets>
 #include <QtSql>
-#include <QtWebKit>
 
 #include "feedsproxymodel.h"
 #include "feedsmodel.h"
@@ -30,7 +29,7 @@
 #include "newsheader.h"
 #include "newsmodel.h"
 #include "newsview.h"
-#include "webview.h"
+#include "articleview.h"
 
 class MainWindow;
 
@@ -82,9 +81,9 @@ public:
   bool openUrl(const QUrl &url);
   void openInExternalBrowserNews();
 
-  void updateWebView(QModelIndex index);
+  void updateArticleView(QModelIndex index, bool preservePosition = false);
   void loadNewspaper(int refresh = RefreshAll);
-  void hideWebContent();
+  void hideArticleContent();
   QString getLinkNews(int row);
   QUrl articleUrl(int row) const;
 
@@ -120,7 +119,7 @@ public:
   QSplitter *newsTabWidgetSplitter_;
 
   QWidget *newsWidget_;
-  WebView *webView_;
+  ArticleView *articleView_;
 
   QLabel *newsIconTitle_;
   QMovie *newsIconMovie_;
@@ -145,9 +144,7 @@ public slots:
   void slotSort(int column, int order);
 
 signals:
-  void signalSetHtmlWebView(const QString &html = "", const QUrl &baseUrl = QUrl());
   void signalSetTextTab(const QString &text, NewsTabWidget *widget);
-  void loadProgress(int);
 
 private slots:
   void showContextMenuNews(const QPoint &pos);
@@ -155,18 +152,14 @@ private slots:
   void slotSetItemStar(QModelIndex index, int starred);
   void slotMarkReadTimeout();
 
-  void slotSetHtmlWebView(const QString &html);
-  void webHomePage();
   void slotLinkClicked(QUrl url);
-  void slotLinkHovered(const QString &link, const QString &str1="", const QString &str2="");
-  void slotSetValue(int value);
+  void slotLinkHovered(const QString &link);
   void slotLoadStarted();
   void slotLoadFinished(bool);
-  void showContextWebPage(const QPoint &p);
+  void showArticleContextMenu(const QPoint &p);
   void openUrlInExternalBrowser();
 
   void slotTabClose();
-  void openLink();
 
   void slotFindText(const QString& text);
   void slotSelectFind();
@@ -175,7 +168,7 @@ private slots:
 
 private:
   void createNewsList();
-  void createWebWidget();
+  void createArticleWidget();
   QString getHtmlLabels(int row);
   void actionNewspaper(QUrl url);
 
@@ -189,12 +182,9 @@ private:
   QFrame *lineWebWidget;
   QWidget *webWidget_;
   QProgressBar *webViewProgress_;
-  QLabel *webViewProgressLabel_;
 
   QTimer *markNewsReadTimer_;
 
-  int webDefaultFontSize_;
-  int webDefaultFixedFontSize_;
 
   QUrl linkUrl_;
   QString linkNewsString_;

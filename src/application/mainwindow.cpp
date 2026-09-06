@@ -28,7 +28,6 @@
 #include "feedpropertiesdialog.h"
 #include "filterrulesdialog.h"
 #include "newsfiltersdialog.h"
-#include "webpage.h"
 #include "settings.h"
 
 #if defined(Q_OS_WIN)
@@ -1922,48 +1921,6 @@ void MainWindow::loadSettings()
   notificationFontFamily_ = settings.value("notificationFontFamily", qApp->font().family()).toString();
   notificationFontSize_ = settings.value("notificationFontSize", qApp->font().pointSize()).toInt();
 
-  QString browserStandardFont = settings.value(
-        "browserStandardFont", QWebSettings::globalSettings()->fontFamily(QWebSettings::StandardFont)).toString();
-  QString browserFixedFont = settings.value(
-        "browserFixedFont", QWebSettings::globalSettings()->fontFamily(QWebSettings::FixedFont)).toString();
-  QString browserSerifFont = settings.value(
-        "browserSerifFont", QWebSettings::globalSettings()->fontFamily(QWebSettings::SerifFont)).toString();
-  QString browserSansSerifFont = settings.value(
-        "browserSansSerifFont", QWebSettings::globalSettings()->fontFamily(QWebSettings::SansSerifFont)).toString();
-  QString browserCursiveFont = settings.value(
-        "browserCursiveFont", QWebSettings::globalSettings()->fontFamily(QWebSettings::CursiveFont)).toString();
-  QString browserFantasyFont = settings.value(
-        "browserFantasyFont", QWebSettings::globalSettings()->fontFamily(QWebSettings::FantasyFont)).toString();
-  int browserDefaultFontSize = settings.value(
-        "browserDefaultFontSize", QWebSettings::globalSettings()->fontSize(QWebSettings::DefaultFontSize)).toInt();
-  int browserFixedFontSize = settings.value(
-        "browserFixedFontSize", QWebSettings::globalSettings()->fontSize(QWebSettings::DefaultFixedFontSize)).toInt();
-  int browserMinFontSize = settings.value(
-        "browserMinFontSize", QWebSettings::globalSettings()->fontSize(QWebSettings::MinimumFontSize)).toInt();
-  int browserMinLogFontSize = settings.value(
-        "browserMinLogFontSize", QWebSettings::globalSettings()->fontSize(QWebSettings::MinimumLogicalFontSize)).toInt();
-
-  QWebSettings::globalSettings()->setFontFamily(
-        QWebSettings::StandardFont, browserStandardFont);
-  QWebSettings::globalSettings()->setFontFamily(
-        QWebSettings::FixedFont, browserFixedFont);
-  QWebSettings::globalSettings()->setFontFamily(
-        QWebSettings::SerifFont, browserSerifFont);
-  QWebSettings::globalSettings()->setFontFamily(
-        QWebSettings::SansSerifFont, browserSansSerifFont);
-  QWebSettings::globalSettings()->setFontFamily(
-        QWebSettings::CursiveFont, browserCursiveFont);
-  QWebSettings::globalSettings()->setFontFamily(
-        QWebSettings::FantasyFont, browserFantasyFont);
-  QWebSettings::globalSettings()->setFontSize(
-        QWebSettings::DefaultFontSize, browserDefaultFontSize);
-  QWebSettings::globalSettings()->setFontSize(
-        QWebSettings::DefaultFixedFontSize, browserFixedFontSize);
-  QWebSettings::globalSettings()->setFontSize(
-        QWebSettings::MinimumFontSize, browserMinFontSize);
-  QWebSettings::globalSettings()->setFontSize(
-        QWebSettings::MinimumLogicalFontSize, browserMinLogFontSize);
-
   updateFeedsEnable_ = settings.value("autoUpdatefeeds", false).toBool();
   updateFeedsInterval_ = settings.value("autoUpdatefeedsTime", 10).toInt();
   updateFeedsIntervalType_ = settings.value("autoUpdatefeedsInterval", 0).toInt();
@@ -2011,11 +1968,6 @@ void MainWindow::loadSettings()
   askDownloadLocation_ = settings.value("askDownloadLocation", true).toBool();
   defaultZoomPages_ = settings.value("defaultZoomPages", 100).toInt();
   autoLoadImages_ = settings.value("autoLoadImages", true).toBool();
-
-  QWebSettings::globalSettings()->setAttribute(
-        QWebSettings::ErrorPageEnabled, false);
-  QWebSettings::globalSettings()->setOfflineStorageDefaultQuota(0);
-  QWebSettings::globalSettings()->setOfflineStoragePath(mainApp->dataDir());
 
   soundNewNews_ = settings.value("soundNewNews", true).toBool();
   soundNotifyPath_ = settings.value("soundNotifyPath", mainApp->soundNotifyDefaultFile()).toString();
@@ -3055,7 +3007,7 @@ void MainWindow::slotUpdateNews(int refresh)
     newsView_->setCurrentIndex(newsModel_->index(newsRow, newsModel_->fieldIndex("title")));
   } else {
     currentNewsTab->currentNewsIdOld = newsId;
-    currentNewsTab->hideWebContent();
+    currentNewsTab->hideArticleContent();
   }
 }
 
@@ -3367,40 +3319,6 @@ void MainWindow::showOptionDlg(int index)
   optionsDialog_->fontsTree_->topLevelItem(3)->setText(2, strFont);
   strFont = QString("%1, %2").arg(notificationFontFamily_).arg(notificationFontSize_);
   optionsDialog_->fontsTree_->topLevelItem(4)->setText(2, strFont);
-
-  settings.beginGroup("Settings");
-  QString browserStandardFont = settings.value(
-        "browserStandardFont", QWebSettings::globalSettings()->fontFamily(QWebSettings::StandardFont)).toString();
-  QString browserFixedFont = settings.value(
-        "browserFixedFont", QWebSettings::globalSettings()->fontFamily(QWebSettings::FixedFont)).toString();
-  QString browserSerifFont = settings.value(
-        "browserSerifFont", QWebSettings::globalSettings()->fontFamily(QWebSettings::SerifFont)).toString();
-  QString browserSansSerifFont = settings.value(
-        "browserSansSerifFont", QWebSettings::globalSettings()->fontFamily(QWebSettings::SansSerifFont)).toString();
-  QString browserCursiveFont = settings.value(
-        "browserCursiveFont", QWebSettings::globalSettings()->fontFamily(QWebSettings::CursiveFont)).toString();
-  QString browserFantasyFont = settings.value(
-        "browserFantasyFont", QWebSettings::globalSettings()->fontFamily(QWebSettings::FantasyFont)).toString();
-  int browserDefaultFontSize = settings.value(
-        "browserDefaultFontSize", QWebSettings::globalSettings()->fontSize(QWebSettings::DefaultFontSize)).toInt();
-  int browserFixedFontSize = settings.value(
-        "browserFixedFontSize", QWebSettings::globalSettings()->fontSize(QWebSettings::DefaultFixedFontSize)).toInt();
-  int browserMinFontSize = settings.value(
-        "browserMinFontSize", QWebSettings::globalSettings()->fontSize(QWebSettings::MinimumFontSize)).toInt();
-  int browserMinLogFontSize = settings.value(
-        "browserMinLogFontSize", QWebSettings::globalSettings()->fontSize(QWebSettings::MinimumLogicalFontSize)).toInt();
-  settings.endGroup();
-
-  optionsDialog_->browserStandardFont_->setCurrentFont(QFont(browserStandardFont));
-  optionsDialog_->browserFixedFont_->setCurrentFont(QFont(browserFixedFont));
-  optionsDialog_->browserSerifFont_->setCurrentFont(QFont(browserSerifFont));
-  optionsDialog_->browserSansSerifFont_->setCurrentFont(QFont(browserSansSerifFont));
-  optionsDialog_->browserCursiveFont_->setCurrentFont(QFont(browserCursiveFont));
-  optionsDialog_->browserFantasyFont_->setCurrentFont(QFont(browserFantasyFont));
-  optionsDialog_->browserDefaultFontSize_->setValue(browserDefaultFontSize);
-  optionsDialog_->browserFixedFontSize_->setValue(browserFixedFontSize);
-  optionsDialog_->browserMinFontSize_->setValue(browserMinFontSize);
-  optionsDialog_->browserMinLogFontSize_->setValue(browserMinLogFontSize);
 
   QPixmap pixmapColor(14, 14);
   pixmapColor.fill(feedsModel_->textColor_);
@@ -3741,51 +3659,6 @@ void MainWindow::showOptionDlg(int index)
   notificationFontFamily_ = optionsDialog_->fontsTree_->topLevelItem(4)->text(2).section(", ", 0, 0);
   notificationFontSize_ = optionsDialog_->fontsTree_->topLevelItem(4)->text(2).section(", ", 1).toInt();
 
-  browserStandardFont = optionsDialog_->browserStandardFont_->currentFont().family();
-  browserFixedFont = optionsDialog_->browserFixedFont_->currentFont().family();
-  browserSerifFont = optionsDialog_->browserSerifFont_->currentFont().family();
-  browserSansSerifFont = optionsDialog_->browserSansSerifFont_->currentFont().family();
-  browserCursiveFont = optionsDialog_->browserCursiveFont_->currentFont().family();
-  browserFantasyFont = optionsDialog_->browserFantasyFont_->currentFont().family();
-  browserDefaultFontSize = optionsDialog_->browserDefaultFontSize_->value();
-  browserFixedFontSize = optionsDialog_->browserFixedFontSize_->value();
-  browserMinFontSize = optionsDialog_->browserMinFontSize_->value();
-  browserMinLogFontSize = optionsDialog_->browserMinLogFontSize_->value();
-
-  QWebSettings::globalSettings()->setFontFamily(
-        QWebSettings::StandardFont, browserStandardFont);
-  QWebSettings::globalSettings()->setFontFamily(
-        QWebSettings::FixedFont, browserFixedFont);
-  QWebSettings::globalSettings()->setFontFamily(
-        QWebSettings::SerifFont, browserSerifFont);
-  QWebSettings::globalSettings()->setFontFamily(
-        QWebSettings::SansSerifFont, browserSansSerifFont);
-  QWebSettings::globalSettings()->setFontFamily(
-        QWebSettings::CursiveFont, browserCursiveFont);
-  QWebSettings::globalSettings()->setFontFamily(
-        QWebSettings::FantasyFont, browserFantasyFont);
-  QWebSettings::globalSettings()->setFontSize(
-        QWebSettings::DefaultFontSize, browserDefaultFontSize);
-  QWebSettings::globalSettings()->setFontSize(
-        QWebSettings::DefaultFixedFontSize, browserFixedFontSize);
-  QWebSettings::globalSettings()->setFontSize(
-        QWebSettings::MinimumFontSize, browserMinFontSize);
-  QWebSettings::globalSettings()->setFontSize(
-        QWebSettings::MinimumLogicalFontSize, browserMinLogFontSize);
-
-  settings.beginGroup("Settings");
-  settings.setValue("browserStandardFont", browserStandardFont);
-  settings.setValue("browserFixedFont", browserFixedFont);
-  settings.setValue("browserSerifFont", browserSerifFont);
-  settings.setValue("browserSansSerifFont", browserSansSerifFont);
-  settings.setValue("browserCursiveFont", browserCursiveFont);
-  settings.setValue("browserFantasyFont", browserFantasyFont);
-  settings.setValue("browserDefaultFontSize", browserDefaultFontSize);
-  settings.setValue("browserFixedFontSize", browserFixedFontSize);
-  settings.setValue("browserMinFontSize", browserMinFontSize);
-  settings.setValue("browserMinLogFontSize", browserMinLogFontSize);
-  settings.endGroup();
-
   feedsModel_->textColor_ = optionsDialog_->colorsTree_->topLevelItem(0)->text(1);
   feedsModel_->backgroundColor_ = optionsDialog_->colorsTree_->topLevelItem(1)->text(1);
   feedsView_->setStyleSheet(QString("#feedsView_ {background: %1;}").arg(feedsModel_->backgroundColor_));
@@ -3820,7 +3693,6 @@ void MainWindow::showOptionDlg(int index)
 
   saveSettings();
   saveActionShortcuts();
-  mainApp->reloadUserStyleBrowser();
 
   if (currentNewsTab != NULL) {
     if (currentNewsTab->type_ < NewsTabWidget::TabTypeDownloads)
@@ -4259,7 +4131,7 @@ void MainWindow::setNewsFilter(QAction* pAct, bool clicked)
       newsView_->setCurrentIndex(newsModel_->index(newsRow, newsModel_->fieldIndex("title")));
     } else {
       currentNewsTab->currentNewsIdOld = newsId;
-      currentNewsTab->hideWebContent();
+      currentNewsTab->hideArticleContent();
     }
   }
 
@@ -4519,7 +4391,7 @@ void MainWindow::restoreFeedsOnStartUp()
   feedsView_->setCurrentIndex(feedIndex);
   updateCurrentTab_ = false;
   slotFeedClicked(feedIndex);
-  currentNewsTab->webView_->setFocus();
+  currentNewsTab->articleView_->setFocus();
   updateCurrentTab_ = true;
 
   slotUpdateStatus(-1, false);
@@ -4814,8 +4686,8 @@ void MainWindow::retranslateStrings()
   printPreviewAct_->setText(tr("Print Preview..."));
   printPreviewAct_->setToolTip(tr("Preview Web Page"));
 
-  pageUpWebViewAct_->setText(tr("Page up (Browser)"));
-  pageDownWebViewAct_->setText(tr("Page down (Browser)"));
+  pageUpWebViewAct_->setText(tr("Page up (Article)"));
+  pageDownWebViewAct_->setText(tr("Page down (Article)"));
 
   savePageAsAct_->setText(tr("Save As..."));
   savePageAsAct_->setToolTip(tr("Save Article As..."));
@@ -6013,7 +5885,6 @@ void MainWindow::setStyleApp(QAction *pAct)
         arg(feedsPanel_->palette().background().color().name()).
         arg(qApp->palette().color(QPalette::Dark).name()));
 
-  mainApp->reloadUserStyleBrowser();
   if (currentNewsTab != NULL) {
     if (currentNewsTab->type_ < NewsTabWidget::TabTypeDownloads)
       currentNewsTab->newsHeader_->saveStateColumns(currentNewsTab);
@@ -6028,7 +5899,7 @@ void MainWindow::slotSwitchFocus()
   if (feedsView_->hasFocus()) {
     newsView_->setFocus();
   } else if (newsView_->hasFocus()) {
-    currentNewsTab->webView_->setFocus();
+    currentNewsTab->articleView_->setFocus();
   } else {
     feedsView_->setFocus();
   }
@@ -6039,8 +5910,8 @@ void MainWindow::slotSwitchFocus()
 void MainWindow::slotSwitchPrevFocus()
 {
   if (feedsView_->hasFocus()) {
-    currentNewsTab->webView_->setFocus();
-  } else if (currentNewsTab->webView_->hasFocus()) {
+    currentNewsTab->articleView_->setFocus();
+  } else if (currentNewsTab->articleView_->hasFocus()) {
     newsView_->setFocus();
   } else {
     feedsView_->setFocus();
@@ -6426,13 +6297,13 @@ void MainWindow::slotShowLabelsMenu()
 void MainWindow::slotPageUpWebView()
 {
   QKeyEvent keyEvent(QEvent::KeyPress, Qt::Key_PageUp, Qt::NoModifier);
-  QApplication::sendEvent(currentNewsTab->webView_->page(), &keyEvent);
+  QApplication::sendEvent(currentNewsTab->articleView_, &keyEvent);
 }
 
 void MainWindow::slotPageDownWebView()
 {
   QKeyEvent keyEvent(QEvent::KeyPress, Qt::Key_PageDown, Qt::NoModifier);
-  QApplication::sendEvent(currentNewsTab->webView_->page(), &keyEvent);
+  QApplication::sendEvent(currentNewsTab->articleView_, &keyEvent);
 }
 /** @brief Reload full model
  * @details Performs: reload model, reset proxy model, restore focus
@@ -6812,13 +6683,13 @@ void MainWindow::browserZoom(QAction *action)
   if (currentNewsTab->type_ == NewsTabWidget::TabTypeDownloads) return;
 
   if (action->objectName() == "zoomInAct") {
-    if (currentNewsTab->webView_->zoomFactor() < 5.0)
-      currentNewsTab->webView_->setZoomFactor(currentNewsTab->webView_->zoomFactor()+0.1);
+    if (currentNewsTab->articleView_->zoomFactor() < 5.0)
+      currentNewsTab->articleView_->setZoomFactor(currentNewsTab->articleView_->zoomFactor()+0.1);
   } else if (action->objectName() == "zoomOutAct") {
-    if (currentNewsTab->webView_->zoomFactor() > 0.3)
-      currentNewsTab->webView_->setZoomFactor(currentNewsTab->webView_->zoomFactor()-0.1);
+    if (currentNewsTab->articleView_->zoomFactor() > 0.3)
+      currentNewsTab->articleView_->setZoomFactor(currentNewsTab->articleView_->zoomFactor()-0.1);
   } else {
-    currentNewsTab->webView_->setZoomFactor(1);
+    currentNewsTab->articleView_->setZoomFactor(1);
   }
 }
 
@@ -6831,38 +6702,27 @@ void MainWindow::slotReportProblem()
 
 /** @brief Print browser page
  *---------------------------------------------------------------------------*/
-void MainWindow::slotPrint(QWebFrame *frame)
+void MainWindow::slotPrint()
 {
   if (currentNewsTab->type_ == NewsTabWidget::TabTypeDownloads) return;
-
   QPrinter printer;
-  printer.setDocName(tr("Web Page"));
-  QPrintDialog *printDlg = new QPrintDialog(&printer);
-  if (!frame)
-    connect(printDlg, SIGNAL(accepted(QPrinter*)), currentNewsTab->webView_, SLOT(print(QPrinter*)));
-  else
-    connect(printDlg, SIGNAL(accepted(QPrinter*)), frame, SLOT(print(QPrinter*)));
-  printDlg->exec();
-  printDlg->deleteLater();
+  printer.setDocName(tr("Article"));
+  QPrintDialog dialog(&printer, this);
+  if (dialog.exec() == QDialog::Accepted) currentNewsTab->articleView_->print(&printer);
 }
 
 /** @brief Call print preview dialog
  *---------------------------------------------------------------------------*/
-void MainWindow::slotPrintPreview(QWebFrame *frame)
+void MainWindow::slotPrintPreview()
 {
   if (currentNewsTab->type_ == NewsTabWidget::TabTypeDownloads) return;
-
   QPrinter printer;
-  printer.setDocName(tr("Web Page"));
-  QPrintPreviewDialog *prevDlg = new QPrintPreviewDialog(&printer);
-  prevDlg->setWindowFlags(prevDlg->windowFlags() | Qt::WindowMaximizeButtonHint);
-  prevDlg->resize(650, 800);
-  if (!frame)
-    connect(prevDlg, SIGNAL(paintRequested(QPrinter*)), currentNewsTab->webView_, SLOT(print(QPrinter*)));
-  else
-    connect(prevDlg, SIGNAL(paintRequested(QPrinter*)), frame, SLOT(print(QPrinter*)));
-  prevDlg->exec();
-  prevDlg->deleteLater();
+  printer.setDocName(tr("Article"));
+  QPrintPreviewDialog dialog(&printer, this);
+  dialog.setWindowFlags(dialog.windowFlags() | Qt::WindowMaximizeButtonHint);
+  dialog.resize(650, 800);
+  connect(&dialog, &QPrintPreviewDialog::paintRequested, currentNewsTab->articleView_, &ArticleView::print);
+  dialog.exec();
 }
 // ----------------------------------------------------------------------------
 void MainWindow::setFullScreen()
@@ -7391,7 +7251,7 @@ void MainWindow::slotSavePageAs()
 {
   if (currentNewsTab->type_ == NewsTabWidget::TabTypeDownloads) return;
 
-  QString fileName = currentNewsTab->webView_->title();
+  QString fileName = "news_descriptions";
   if (newsLayout_ == 0) {
     if (fileName == "news_descriptions") {
       int row = currentNewsTab->newsView_->currentIndex().row();
@@ -7424,11 +7284,11 @@ void MainWindow::slotSavePageAs()
   }
   QFileInfo fileInfo(fileName);
   if (fileInfo.suffix() == "txt") {
-    file.write(currentNewsTab->webView_->page()->mainFrame()->toPlainText().toUtf8());
+    file.write(currentNewsTab->articleView_->toPlainText().toUtf8());
   } else {
-    QString html = currentNewsTab->webView_->page()->mainFrame()->toHtml();
+    QString html = currentNewsTab->articleView_->exportHtml();
     QzRegExp reg("news_descriptions", Qt::CaseInsensitive);
-    html = html.replace(reg, title);
+    html = html.replace(reg, title.toHtmlEscaped());
     reg.setPattern("<img class=\"quiterss-img\"[^>]+\\>");
     html = html.remove(reg);
     QTextCodec *codec = QTextCodec::codecForHtml(html.toUtf8(),

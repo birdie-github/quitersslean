@@ -21,7 +21,6 @@
 #include "common.h"
 #include "settings.h"
 #include "authenticationdialog.h"
-#include "webpage.h"
 #include "sslerrordialog.h"
 
 #include <QNetworkReply>

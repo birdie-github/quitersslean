@@ -31,11 +31,6 @@ td {
   font-size: %2pt;
 }
 
-img:not(.quiterss-img) {
-  display: block;
-  max-width: 100%;
-  height: auto;
-}
 
 div {
   display: block;
@@ -61,7 +56,7 @@ a {
   float: %16;
 }
 
-.title {
+.title, .title a {
   color: %10;
   font-family: %3;
   font-size: %4pt;
@@ -112,7 +107,6 @@ a.enclosure {
   text-align: %14;
   width: 100%;
   padding: 5px;
-  position: -webkit-sticky;
   top: 0;
 }
 

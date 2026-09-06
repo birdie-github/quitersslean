@@ -2,7 +2,7 @@ Build depends:
   GCC or Clang compiler
   SQLite version 3.30.1 or newer
   libxml2 development headers and pkg-config
-  Qt 5.15.x with QtWebKit 5.212 (development headers required)
+  Qt 5.15.x (development headers required)
   Required Qt development tools:
     qmake
     lrelease
@@ -14,8 +14,6 @@ Build depends:
     QtMultimedia
     QtNetwork
     QtSql compiled with sqlite support
-    QtWebKit
-    QtWebKitWidgets
     QtXml
 
 Runtime image support:
@@ -40,7 +38,7 @@ By default qmake uses gcc, for using clang you need to alter qmake command:
 For building with system qtsingleapplication add SYSTEMQTSA=1 to qmake command.
 
 Instructions for Windows:
-  Use a Qt 5.15 toolchain with matching QtWebKit 5.212 libraries.
+  Use a Qt 5.15 toolchain.
   From the compiler environment, run:
     qmake CONFIG+=release CONFIG-=debug_and_release QuiteRSS.pro
     nmake

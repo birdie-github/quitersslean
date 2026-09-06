@@ -171,16 +171,6 @@ public:
   // fonts
   QTreeWidget *fontsTree_;
   QTreeWidget *colorsTree_;
-  QFontComboBox *browserStandardFont_;
-  QFontComboBox *browserFixedFont_;
-  QFontComboBox *browserSerifFont_;
-  QFontComboBox *browserSansSerifFont_;
-  QFontComboBox *browserCursiveFont_;
-  QFontComboBox *browserFantasyFont_;
-  QSpinBox *browserDefaultFontSize_;
-  QSpinBox *browserFixedFontSize_;
-  QSpinBox *browserMinFontSize_;
-  QSpinBox *browserMinLogFontSize_;
 
   // shortcut
   void loadActionShortcut(QList<QAction *> actions, QStringList *list);

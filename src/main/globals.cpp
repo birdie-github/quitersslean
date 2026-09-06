@@ -18,9 +18,9 @@
 #include "globals.h"
 
 #include <QStandardPaths>
-#include <QWebPage>
 #include <QCoreApplication>
 #include <QDir>
+#include <QFile>
 #include <QStringBuilder>
 
 #include "settings.h"

@@ -22,7 +22,6 @@
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
 #include <QtSql>
-#include <QtWebKit>
 #include <QPrintDialog>
 #include <QPrintPreviewDialog>
 #include <QPrinter>
@@ -40,7 +39,7 @@
 #include "tabbar.h"
 #include "optionsdialog.h"
 #include "updateappdialog.h"
-#include "webview.h"
+#include "articleview.h"
 #include "parseobject.h"
 #include "toolbutton.h"
 
@@ -278,8 +277,8 @@ public slots:
   void slotCloseTab(int index);
   void feedsModelReload(bool checkFilter = false);
   void setStatusFeed(int feedId, QString status);
-  void slotPrint(QWebFrame *frame = 0);
-  void slotPrintPreview(QWebFrame* frame = 0);
+  void slotPrint();
+  void slotPrintPreview();
 
 signals:
   void signalQuitApp();

@@ -74,7 +74,7 @@ public:
 protected:
   qint64 readData(char *data, qint64 maxSize) override {
     if (!done_) return 0;
-    if (!offset_) ArticleImages::trace("WebKit reads " + ArticleImages::describeUrl(url()) +
+    if (!offset_) ArticleImages::trace("article reader reads " + ArticleImages::describeUrl(url()) +
                                       " bytes=" + QString::number(body_.size()));
     const qint64 size = qMin(maxSize, qint64(body_.size()) - offset_);
     if (size <= 0) return done_ ? -1 : 0;

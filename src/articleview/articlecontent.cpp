@@ -110,7 +110,7 @@ struct Writer {
         if (!name.isEmpty()) attributes += attribute("name", prefix + name);
       }
       const QString id = attr(node, "id");
-      if (!id.isEmpty()) attributes += attribute("id", prefix + id);
+      if (!id.isEmpty()) out += "<a" + attribute("name", prefix + id) + ">&#8203;</a>";
       if (tag == "img") {
         QString src = attr(node, "src").trimmed();
         if (src.isEmpty()) src = attr(node, "data-src").trimmed();
@@ -125,7 +125,15 @@ struct Writer {
       }
       for (const char *key : {"title", "alt", "dir", "align", "width", "height", "colspan", "rowspan", "border", "cellpadding", "cellspacing"}) {
         const QString value = attr(node, key);
-        if (!value.isEmpty()) attributes += attribute(QString::fromLatin1(key), value);
+        const QString name = QString::fromLatin1(key);
+        if (tag == "img" && (name == "width" || name == "height")) {
+          bool valid = false;
+          const uint size = value.toUInt(&valid);
+          // Rich text does not implement percentage image dimensions. Let the
+          // viewer fit those images to the pane using their actual dimensions.
+          if (!valid || size == 0 || size > 32768) continue;
+        }
+        if (!value.isEmpty()) attributes += attribute(name, value);
       }
       const QString style = safeStyle(attr(node, "style"));
       if (tag != "img" && !style.isEmpty()) attributes += attribute("style", style);
