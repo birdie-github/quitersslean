@@ -18,3 +18,56 @@ jobs:
           cd _build
           qmake-qt5 ../QuiteRSS.pro CONFIG+=release CONFIG-=debug_and_release QMAKE_CXX=${{ matrix.compiler }} QMAKE_LINK=${{ matrix.compiler }}
           make -j2
+
+  windows:
+    runs-on: windows-2022
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: true
+          install: >-
+            git
+            mingw-w64-ucrt-x86_64-gcc
+            mingw-w64-ucrt-x86_64-make
+            mingw-w64-ucrt-x86_64-python
+            mingw-w64-ucrt-x86_64-pkgconf
+            mingw-w64-ucrt-x86_64-qt5-base
+            mingw-w64-ucrt-x86_64-qt5-tools
+            mingw-w64-ucrt-x86_64-qt5-multimedia
+            mingw-w64-ucrt-x86_64-qt5-imageformats
+            mingw-w64-ucrt-x86_64-sqlite3
+            mingw-w64-ucrt-x86_64-libxml2
+            mingw-w64-ucrt-x86_64-openssl
+      - name: Prepare external QtSingleApplication and build
+        run: |
+          export PKG_CONFIG_PATH="$(cygpath -m /ucrt64/lib/pkgconfig)"
+          dep_work="$(cygpath -m "$RUNNER_TEMP/quitersslean-deps")"
+          /ucrt64/bin/python scripts/prepare-qtsingleapplication.py --work-dir "$dep_work" --qmake qmake --make mingw32-make
+          export QMAKEFEATURES="$dep_work/install/features"
+          mkdir _build
+          cd _build
+          qmake ../QuiteRSS.pro CONFIG+=release CONFIG-=debug_and_release
+          mingw32-make -j2
+
+  macos:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: brew install qt@5 sqlite libxml2 pkgconf python
+      - name: Prepare external QtSingleApplication and build
+        run: |
+          export PATH="$(brew --prefix qt@5)/bin:$PATH"
+          export PKG_CONFIG_PATH="$(brew --prefix sqlite)/lib/pkgconfig:$(brew --prefix libxml2)/lib/pkgconfig"
+          dep_work="$RUNNER_TEMP/quitersslean-deps"
+          python3 scripts/prepare-qtsingleapplication.py --work-dir "$dep_work"
+          export QMAKEFEATURES="$dep_work/install/features"
+          mkdir _build
+          cd _build
+          qmake ../QuiteRSS.pro CONFIG+=release CONFIG-=debug_and_release
+          make -j2

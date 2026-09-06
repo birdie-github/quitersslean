@@ -1,65 +1,147 @@
-Build depends:
-  GCC or Clang compiler
-  SQLite version 3.30.1 or newer
-  libxml2 development headers and pkg-config
-  Qt 5.15.x (development headers required)
-  QtSingleApplication built for Qt 5, including headers, library and
-    qtsingleapplication.prf (Fedora: qtsingleapplication-qt5-devel)
-  Required Qt development tools:
-    qmake
-    lrelease
-  Required Qt libraries:
-    QtCore
-    QtGui
-    QtWidgets
-    QtPrintSupport
-    QtMultimedia
-    QtNetwork
-    QtSql compiled with sqlite support
-    QtXml
+Build dependencies
+==================
+  GCC or Clang and make (Windows recipe: MSYS2 UCRT64 GCC)
+  SQLite 3.30.1 or newer, including development headers and sqlite3.pc
+  libxml2 development headers and libxml-2.0.pc
+  pkg-config (pkgconf is supported)
+  Qt 5.15.x development packages, qmake and lrelease
+  Qt modules: Core, Gui, Widgets, PrintSupport, Multimedia, Network, Sql, Xml
+  Qt's QSQLITE plugin (used for initialization and VACUUM)
+  QtSingleApplication for Qt 5: headers, library and qtsingleapplication.prf
 
-Runtime image support:
-  Full article image support requires Qt image-format plugins, including WebP.
-  On Fedora, install qt5-qtimageformats; packaged builds should depend on it at
-  runtime. This is not a compiler or development-header dependency.
-  Bundled distributions must deploy the matching Qt image-format plugins.
-  Without WebP support, the reader does not advertise WebP to image servers,
-  but images available only in WebP format still cannot be displayed.
+SQLite and libxml2 are required external libraries on EVERY platform. qmake
+uses pkg-config for include paths, library paths and transitive link flags.
+Set PKG_CONFIG_PATH to the directories containing sqlite3.pc and libxml-2.0.pc
+for a non-default installation. On Windows use native paths with forward
+slashes (C:/...) and the native UCRT64 pkg-config, not /usr/bin/pkg-config.
+Do not mix architectures, MSVC/MinGW, or MSYS2 environments in one build.
 
-Instructions for Linux and other UNIX-like systems:
-  mkdir _build && cd _build
-  qmake CONFIG+=release PREFIX=/usr ../QuiteRSS.pro
-  make -j3
-  make install
+SQLitex in 3rdparty/sqlitex remains the application's custom Qt SQL driver.
+It and the direct SQLite backup calls link to the same external SQLite engine.
+Do not substitute Qt's QSQLITE plugin for SQLitex. Use a normal thread-safe
+SQLite build with UTF-16, declared column types and the backup API enabled.
+The old SQLITE_OMIT_* defines applied only to the deleted engine sources;
+application compiler flags cannot configure a prebuilt SQLite library.
 
-Instead of -j3 make option you can use -j<number of your CPU cores + 1>.
-For making debug build use CONFIG+=debug instead of CONFIG+=release.
-By default qmake uses gcc, for using clang you need to alter qmake command:
-  qmake QMAKE_CC=clang QMAKE_CXX=clang++ QMAKE_LINK=clang++ QMAKE_LINK_C=clang CONFIG+=release PREFIX=/usr ../QuiteRSS.pro
+QtSingleApplication must be installed before application qmake runs. Fedora
+supplies the library AND qmake feature. Where a suitable package is unavailable,
+the explicit helper below builds a static QtSingleApplication library against
+your installed shared Qt 5 and installs headers and qtsingleapplication.prf.
+It fetches only qtproject/qt-solutions commit:
+  777e95ba69952f11eaec0adfb0cb987fabcdecb3
+Sources, temporary build files and installed outputs stay under --work-dir,
+which must be OUTSIDE the application source tree. The helper requires Python 3
+and Git. It is never invoked by application qmake/make and performs no package
+installation. A successful repeated run reuses the verified source checkout;
+a partial/modified checkout requires a fresh work directory.
 
-QtSingleApplication must be installed before running qmake on every platform.
-The bundled copy is no longer used; SYSTEMQTSA is no longer needed.
-On Fedora: sudo dnf install qtsingleapplication-qt5-devel
-The Qt 6 package cannot be used with this Qt 5 application.
-For a custom dependency installation, put its qtsingleapplication.prf directory
-on QMAKEFEATURES. The feature must set the installed include and library paths.
-Use a library built with a compatible Qt version, compiler and architecture.
-Distributors must also provide the QtSingleApplication shared library at runtime
-when linking dynamically.
+Use a separate work directory for each compiler/Qt installation/architecture.
+The helper defaults to release; pass --config debug to prepare the debug archive
+as well. Request only configurations supplied by your Qt package. Rebuild both
+archives after changing the toolchain. QMAKEFEATURES must point at the installed
+features directory, not the upstream .pri file. A .pri that adds source files
+is not an installed-library feature. SYSTEMQTSA is no longer needed.
 
-Instructions for Windows:
-  Use a Qt 5.15 toolchain.
-  From the compiler environment, run:
-    qmake CONFIG+=release CONFIG-=debug_and_release QuiteRSS.pro
-    nmake
-  For MinGW, use mingw32-make instead of nmake.
+Linux (Fedora 44)
+================
+  sudo dnf install gcc-c++ make pkgconf-pkg-config qt5-qtbase-devel \
+    qt5-qttools-devel qt5-qtmultimedia-devel qtsingleapplication-qt5-devel \
+    sqlite-devel libxml2-devel qt5-qtimageformats
+  mkdir _build
+  cd _build
+  qmake-qt5 ../QuiteRSS.pro CONFIG+=release CONFIG-=debug_and_release PREFIX=/usr
+  make -j2
+  sudo make install
 
-Instructions for Mac OS:
-  cd /path/to/build
-  qmake CONFIG+=release /path/to/quiterss/QuiteRSS.pro
-  make -j3
-  make install
-  cd /path/to/build/release/target
-  macdeployqt quiterss.app/ -dmg
+Other Linux distributions need the equivalent development packages and Qt 5
+QtSingleApplication feature. qmake may be named qmake or qmake-qt5. For Clang,
+add QMAKE_CC=clang QMAKE_CXX=clang++ QMAKE_LINK=clang++ QMAKE_LINK_C=clang.
 
-Instead of -j3 make option you can use -j<number of your CPU cores + 1>.
+Windows (MSYS2 UCRT64, x86-64)
+=============================
+Install MSYS2 from https://www.msys2.org/ and fully update it with pacman -Syu
+(follow its restart instructions). Use the UCRT64 shell for ALL commands below.
+The recipe uses package-managed Qt, SQLite, libxml2 and their runtime libraries;
+it does not use the Qt online installer's separate MinGW or an MSVC toolchain.
+
+  pacman -S --needed git \
+    mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-make \
+    mingw-w64-ucrt-x86_64-python mingw-w64-ucrt-x86_64-pkgconf \
+    mingw-w64-ucrt-x86_64-qt5-base mingw-w64-ucrt-x86_64-qt5-tools \
+    mingw-w64-ucrt-x86_64-qt5-multimedia mingw-w64-ucrt-x86_64-qt5-imageformats \
+    mingw-w64-ucrt-x86_64-sqlite3 mingw-w64-ucrt-x86_64-libxml2 \
+    mingw-w64-ucrt-x86_64-openssl
+
+From the application source directory:
+  export PKG_CONFIG_PATH="$(cygpath -m /ucrt64/lib/pkgconfig)"
+  dep_work="$(cygpath -m "$HOME/quitersslean-deps-ucrt64")"
+  /ucrt64/bin/python scripts/prepare-qtsingleapplication.py \
+    --work-dir "$dep_work" --qmake qmake --make mingw32-make
+  export QMAKEFEATURES="$dep_work/install/features"
+  mkdir _build
+  cd _build
+  qmake ../QuiteRSS.pro CONFIG+=release CONFIG-=debug_and_release
+  mingw32-make -j2
+  ./release/target/QuiteRSS.exe
+
+The UCRT64 shell supplies the dependency DLL paths for local testing. MSVC is
+not covered by this recipe or CI: it needs compatible external libraries and
+its own installed qtsingleapplication.prf; do not link the UCRT64 C++ archive
+into an MSVC application.
+
+macOS (Homebrew, native architecture)
+====================================
+Install Xcode Command Line Tools and Homebrew (https://brew.sh/) first.
+  brew install qt@5 sqlite libxml2 pkgconf python
+
+From the application source directory:
+  export PATH="$(brew --prefix qt@5)/bin:$PATH"
+  export PKG_CONFIG_PATH="$(brew --prefix sqlite)/lib/pkgconfig:$(brew --prefix libxml2)/lib/pkgconfig"
+  dep_work="$HOME/quitersslean-deps-macos"
+  python3 scripts/prepare-qtsingleapplication.py --work-dir "$dep_work"
+  export QMAKEFEATURES="$dep_work/install/features"
+  mkdir _build
+  cd _build
+  qmake ../QuiteRSS.pro CONFIG+=release CONFIG-=debug_and_release
+  make -j2
+  open release/target/QuiteRSS.app
+
+Use qt@5, not the unversioned Qt 6 formula. The explicit pkg-config paths select
+Homebrew SQLite/libxml2 rather than SDK libraries. Use one native Homebrew
+architecture consistently; this recipe does not produce a universal binary.
+
+Configuration and deployment notes
+==================================
+If qmake reports a missing dependency, verify in the SAME build environment:
+  qmake -query QT_VERSION
+  pkg-config --modversion sqlite3 libxml-2.0
+  pkg-config --cflags --libs sqlite3 libxml-2.0
+  pkg-config --atleast-version=3.30.1 sqlite3
+Also check QMAKEFEATURES and that its qtsingleapplication.prf refers to installed
+headers/libraries. An existing packaged feature may be used instead of the
+helper. Match the Qt version, compiler, architecture and debug/release ABI.
+No application configuration/build step downloads dependencies.
+
+These recipes and CI compile for local use; they do not create self-contained
+release packages. For redistribution, use the matching windeployqt/macdeployqt
+on release/target/QuiteRSS.exe or release/target/QuiteRSS.app, then inspect and
+deploy non-Qt dependencies as well (SQLite, libxml2 and their dependencies,
+OpenSSL/TLS backend, compiler runtime where needed). Deployment tools alone
+must not be assumed to collect every non-Qt library. macOS bundles need their
+non-system dylib paths fixed and signing performed after all files are copied.
+Include the licenses of deployed dependencies, including the helper's installed
+share/licenses/qtsingleapplication directory. Packaged shared QtSingleApplication
+builds also require that shared library; the helper's static build does not.
+
+Keep the QSQLITE plugin, Qt platform plugin, multimedia plugins and image-format
+plugins, including WebP. Linux packages should depend on qt5-qtimageformats or
+its distribution equivalent at runtime. Without WebP support the reader does
+not advertise WebP but cannot display images available only in that format.
+Provide the matching TLS runtime and a usable certificate trust store; verify
+HTTPS feeds and article images on the target machine. Do not disable certificate
+verification to work around deployment mistakes.
+
+After a build, check database creation/reopening, in-memory database save/restore,
+Unicode sorting and REGEXP, a second-instance launch, HTTPS feeds and images,
+notifications, printing/export and translations. Windows/macOS builds still
+need these runtime checks; compilation alone cannot establish them.

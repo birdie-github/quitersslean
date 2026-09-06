@@ -4,7 +4,7 @@ QMAKE_DISTCLEAN += $$REVFILE
 exists(.git) {
   VERSION_REV = $$system(git rev-list master --count)
   count(VERSION_REV, 1) {
-    os2|win32|mac {
+    win32|mac {
       # FIXME
       VERSION_REV = $$VERSION_REV
     } else {
@@ -15,7 +15,7 @@ exists(.git) {
   }
   !build_pass:message(VCS revision: $$VERSION_REV)
 
-  os2|win32 {
+  win32 {
     system(echo $${LITERAL_HASH}define VCS_REVISION $$VERSION_REV > $$REVFILE)
   } else {
     system(echo \\$${LITERAL_HASH}define VCS_REVISION \\\"$$VERSION_REV\\\" > $$REVFILE)
@@ -24,7 +24,7 @@ exists(.git) {
   VERSION_REV = 0
   !build_pass:message(VCS revision: $$VERSION_REV)
 
-  os2|win32 {
+  win32 {
     system(echo $${LITERAL_HASH}define VCS_REVISION $$VERSION_REV > $$REVFILE)
   } else {
     system(echo \\$${LITERAL_HASH}define VCS_REVISION \\\"$$VERSION_REV\\\" > $$REVFILE)
@@ -35,6 +35,9 @@ exists(.git) {
 lessThan(QT_MINOR_VERSION, 15): error("QuiteRSS requires Qt 5.15 or newer within Qt 5")
 QT += widgets network xml printsupport sql multimedia
 CONFIG += c++11 link_pkgconfig
+!packagesExist(libxml-2.0) {
+  error("libxml2 development files and pkg-config are required. Set PKG_CONFIG_PATH to the directory containing libxml-2.0.pc. See INSTALL for Linux, MSYS2 and Homebrew setup.")
+}
 PKGCONFIG += libxml-2.0
 HEADERS += src/articleview/articlecontent.h src/articleview/articleimages.h
 SOURCES += src/articleview/articlecontent.cpp src/articleview/articleimages.cpp
@@ -165,7 +168,7 @@ INCLUDEPATH +=  $$PWD/src \
                 $$PWD/src/network \
                 $$PWD/src/articleview \
 
-CONFIG += debug_and_release
+# Use the toolchain/command-line choice of single or dual configuration.
 CONFIG(debug, debug|release) {
   BUILD_DIR = $$OUT_PWD/debug
 } else {
@@ -180,14 +183,14 @@ RCC_DIR = $${BUILD_DIR}/rcc
 
 # Require the installed Qt 5 QtSingleApplication library and qmake feature.
 !load(qtsingleapplication, true) {
-  error("QtSingleApplication for Qt 5 is required. Install its development package with qtsingleapplication.prf; on Fedora: qtsingleapplication-qt5-devel.")
+  error("QtSingleApplication for Qt 5 is required. Install its development package with qtsingleapplication.prf; on Fedora: qtsingleapplication-qt5-devel. For Windows/macOS and QMAKEFEATURES setup see INSTALL.")
 }
 include(3rdparty/qftp/qftp.pri)
 include(3rdparty/sqlite.pri)
 include(lang/lang.pri)
 include(3rdparty/qupzilla/qupzilla.pri)
 
-os2|win32|mac {
+win32|mac {
   TARGET = QuiteRSS
 }
 
@@ -196,8 +199,7 @@ win32 {
 }
 
 win32-g++ {
-  LIBS += libkernel32 \
-          libpsapi
+  LIBS += -lkernel32 -lpsapi -lshell32 -luser32
 }
 
 win32-msvc* {
@@ -207,10 +209,6 @@ win32-msvc* {
 
   QMAKE_CXXFLAGS += -D__PRETTY_FUNCTION__=__FUNCTION__
   QMAKE_CFLAGS += -D__PRETTY_FUNCTION__=__FUNCTION__
-}
-
-os2 {
-  RC_FILE = quiterss_os2.rc
 }
 
 DISTFILES += \

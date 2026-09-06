@@ -4,18 +4,16 @@
 INCLUDEPATH += $$PWD \
                $$PWD/sqlitex
 
-os2|win32|mac {
-  CONFIG(release, debug|release):DEFINES *= NDEBUG
-  DEFINES += SQLITE_OMIT_LOAD_EXTENSION SQLITE_OMIT_COMPLETE
-
-  HEADERS +=      $$PWD/sqlite/sqlite3.h
-  SOURCES +=      $$PWD/sqlite/sqlite3.c
-
-  INCLUDEPATH += $$PWD/sqlite
-} else {
-  CONFIG += link_pkgconfig
-  PKGCONFIG += sqlite3
+# SQLitex and the backup API must link to the same external SQLite library.
+# PKG_CONFIG_PATH selects non-default installations (see INSTALL).
+CONFIG += link_pkgconfig
+!packagesExist(sqlite3) {
+  error("SQLite development files are required. Install sqlite-devel / MSYS2 sqlite3 / Homebrew sqlite and set PKG_CONFIG_PATH to the directory containing sqlite3.pc. See INSTALL.")
 }
+!system($$pkgConfigExecutable() --atleast-version=3.30.1 sqlite3) {
+  error("SQLite 3.30.1 or newer is required; check the sqlite3.pc selected by pkg-config.")
+}
+PKGCONFIG += sqlite3
 
 HEADERS += $$PWD/sqlitex/sqlcachedresult.h \
            $$PWD/sqlitex/sqlitedriver.h \
