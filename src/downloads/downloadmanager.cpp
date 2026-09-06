@@ -19,7 +19,7 @@
 
 #include "mainapplication.h"
 #include "networkmanager.h"
-#include "authenticationdialog.h"
+#include "networkpolicy.h"
 #include "downloaditem.h"
 #include "settings.h"
 #include "common.h"
@@ -76,11 +76,23 @@ DownloadManager::~DownloadManager()
 
 void DownloadManager::download(const QNetworkRequest &request)
 {
-  handleUnsupportedContent(mainApp->networkManager()->get(request), true);
+  if (!NetworkPolicy::isHttpUrl(request.url())) {
+    QMessageBox::warning(this, tr("Download failed"), tr("Only HTTP and HTTPS downloads are supported."));
+    return;
+  }
+  QNetworkRequest downloadRequest(request);
+  downloadRequest.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::ManualRedirectPolicy);
+  handleUnsupportedContent(mainApp->networkManager()->get(downloadRequest), true);
 }
 
 void DownloadManager::handleUnsupportedContent(QNetworkReply* reply, bool askDownloadLocation)
 {
+  if (!NetworkPolicy::isHttpUrl(reply->url())) {
+    reply->abort();
+    reply->deleteLater();
+    QMessageBox::warning(this, tr("Download failed"), tr("Only HTTP and HTTPS downloads are supported."));
+    return;
+  }
   Settings settings;
   QString downloadLocation = mainApp->mainWindow()->downloadLocation_;
   if (askDownloadLocation || !QFile::exists(downloadLocation))
@@ -103,7 +115,7 @@ void DownloadManager::handleUnsupportedContent(QNetworkReply* reply, bool askDow
       settings.setValue("Settings/curDownloadLocation", fileInfo.absolutePath());
 
   }
-  if (fileName.isNull()) {
+  if (fileName.isEmpty()) {
     reply->abort();
     reply->deleteLater();
     return;
@@ -164,6 +176,10 @@ QString DownloadManager::getFileName(QNetworkReply* reply)
 
 void DownloadManager::startExternalApp(const QString &executable, const QUrl &url)
 {
+  if (!NetworkPolicy::isHttpUrl(url)) {
+    QMessageBox::warning(this, tr("Download failed"), tr("Only HTTP and HTTPS downloads are supported."));
+    return;
+  }
   QStringList arguments;
   arguments.append(url.toEncoded());
 
@@ -238,17 +254,6 @@ void DownloadManager::updateInfo()
     info = QString("%1 (%2)").arg(remaining.toString("mm:ss")).arg(remTimes.count());
 
   emit signalUpdateInfo(info);
-}
-
-void DownloadManager::ftpAuthentication(const QUrl &url, QAuthenticator *auth)
-{
-  AuthenticationDialog *authenticationDialog =
-      new AuthenticationDialog(url, auth);
-
-  if (!authenticationDialog->save_->isChecked())
-    authenticationDialog->exec();
-
-  delete authenticationDialog;
 }
 
 void DownloadManager::retranslateStrings()

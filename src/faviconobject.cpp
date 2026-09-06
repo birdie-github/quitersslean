@@ -16,6 +16,7 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 * ============================================================ */
 #include "faviconobject.h"
+#include "networkpolicy.h"
 #include "VersionNo.h"
 #include "mainapplication.h"
 #include "globals.h"
@@ -145,13 +146,9 @@ void FaviconObject::finished(QNetworkReply *reply)
       QUrl redirectionTarget = reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
       if (redirectionTarget.isValid()) {
         if ((cntRequests == 0) || (cntRequests == 1) || (cntRequests == 3)) {
-          if (redirectionTarget.host().isNull()) {
-            if (redirectionTarget.toString().left(1) == "/")
-              redirectionTarget.setUrl(url.scheme()+"://"+url.host()+redirectionTarget.toString());
-            else
-              redirectionTarget.setUrl(url.scheme()+"://"+url.host()+"/"+redirectionTarget.toString());
-          }
-          emit signalGet(redirectionTarget, feedUrl, cntRequests+2);
+          redirectionTarget = reply->url().resolved(redirectionTarget);
+          if (NetworkPolicy::isSafeRedirect(reply->url(), redirectionTarget))
+            emit signalGet(redirectionTarget, feedUrl, cntRequests+2);
         }
       } else {
         QByteArray data = reply->readAll();

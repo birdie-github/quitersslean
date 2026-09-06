@@ -964,14 +964,6 @@ Ancient news could reappear</source>
     </message>
 </context>
 <context>
-    <name>FtpDownloader</name>
-    <message>
-        <location filename="../src/downloads/downloaditem.cpp" line="473"/>
-        <source>Canceled!</source>
-        <translation>تم الالغاء</translation>
-    </message>
-</context>
-<context>
     <name>ItemAction</name>
     <message>
         <location filename="../src/newsfilters/itemaction.cpp" line="26"/>
@@ -3873,110 +3865,6 @@ Ancient news could reappear</source>
         <location filename="../src/application/mainwindow.cpp" line="5103"/>
         <source>&amp;No</source>
         <translation>&amp;لا</translation>
-    </message>
-</context>
-<context>
-    <name>QFtp</name>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="877"/>
-        <source>Not connected</source>
-        <translation>غير متّصِل</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="948"/>
-        <source>Host %1 not found</source>
-        <translation>لا يمكن العثور على المضيف %1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="953"/>
-        <source>Connection refused to host %1</source>
-        <translation>رفض الاتصال بالمضيف 1%</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="958"/>
-        <source>Connection timed out to host %1</source>
-        <translation>انتهاء وقت الاتصال بالمضيف 1%</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="1071"/>
-        <source>Connected to host %1</source>
-        <translation>تم الاتصال بالمضيف %1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="1312"/>
-        <source>Connection refused for data connection</source>
-        <translation>رفض الاتصال لبيانات الاتصال</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="1490"/>
-        <source>Unknown error</source>
-        <translation>خطأ غير معروف</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2419"/>
-        <source>Connecting to host failed:
-%1</source>
-        <translation>فشل الاتصال بالمضيف :
-%1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2423"/>
-        <source>Login failed:
-%1</source>
-        <translation>فشل الدخول:
-%1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2427"/>
-        <source>Listing directory failed:
-%1</source>
-        <translation>فشل ترتيب المجلدات:
-%1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2431"/>
-        <source>Changing directory failed:
-%1</source>
-        <translation>فشل تغيير المجلدات:
-%1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2435"/>
-        <source>Downloading file failed:
-%1</source>
-        <translation>فشل تحميل ملف:⏎
-%1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2439"/>
-        <source>Uploading file failed:
-%1</source>
-        <translation>فشل رفع ملف:</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2443"/>
-        <source>Removing file failed:
-%1</source>
-        <translation>فشل حذف ملف:</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2447"/>
-        <source>Creating directory failed:
-%1</source>
-        <translation>فشل انشاء المجلدات:
-%1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2451"/>
-        <source>Removing directory failed:
-%1</source>
-        <translation>فشل حذف المجلدات:
-%1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2481"/>
-        <source>Connection closed</source>
-        <translation>تمّ غلق الاتصال</translation>
     </message>
 </context>
 <context>

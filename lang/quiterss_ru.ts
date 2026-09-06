@@ -964,14 +964,6 @@ Ancient news could reappear</source>
     </message>
 </context>
 <context>
-    <name>FtpDownloader</name>
-    <message>
-        <location filename="../src/downloads/downloaditem.cpp" line="473"/>
-        <source>Canceled!</source>
-        <translation>Отменен!</translation>
-    </message>
-</context>
-<context>
     <name>ItemAction</name>
     <message>
         <location filename="../src/newsfilters/itemaction.cpp" line="26"/>
@@ -3873,112 +3865,6 @@ Ancient news could reappear</source>
         <location filename="../src/application/mainwindow.cpp" line="5103"/>
         <source>&amp;No</source>
         <translation>&amp;Нет</translation>
-    </message>
-</context>
-<context>
-    <name>QFtp</name>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="877"/>
-        <source>Not connected</source>
-        <translation>Соединение не установлено</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="948"/>
-        <source>Host %1 not found</source>
-        <translation>Узел %1 не найден</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="953"/>
-        <source>Connection refused to host %1</source>
-        <translation>В соединении с узлом %1 отказано</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="958"/>
-        <source>Connection timed out to host %1</source>
-        <translation>Время на соединение с узлом %1 истекло</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="1071"/>
-        <source>Connected to host %1</source>
-        <translation>Установлено соединение с узлом %1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="1312"/>
-        <source>Connection refused for data connection</source>
-        <translation>Отказ в соединении для передачи данных</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="1490"/>
-        <source>Unknown error</source>
-        <translation>Неизвестная ошибка</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2419"/>
-        <source>Connecting to host failed:
-%1</source>
-        <translation>Не удалось соединиться с узлом:
-%1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2423"/>
-        <source>Login failed:
-%1</source>
-        <translation>Не удалось авторизоваться:
-%1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2427"/>
-        <source>Listing directory failed:
-%1</source>
-        <translation>Не удалось прочитать каталог:
-%1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2431"/>
-        <source>Changing directory failed:
-%1</source>
-        <translation>Не удалось сменить каталог:
-%1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2435"/>
-        <source>Downloading file failed:
-%1</source>
-        <translation>Не удалось загрузить файл:
-%1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2439"/>
-        <source>Uploading file failed:
-%1</source>
-        <translation>Не удалось отгрузить файл:
-%1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2443"/>
-        <source>Removing file failed:
-%1</source>
-        <translation>Не удалось удалить файл:
-%1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2447"/>
-        <source>Creating directory failed:
-%1</source>
-        <translation>Не удалось создать каталог:
-%1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2451"/>
-        <source>Removing directory failed:
-%1</source>
-        <translation>Не удалось удалить каталог:
-%1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2481"/>
-        <source>Connection closed</source>
-        <translation>Соединение закрыто</translation>
     </message>
 </context>
 <context>

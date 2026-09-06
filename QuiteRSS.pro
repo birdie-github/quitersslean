@@ -39,7 +39,7 @@ CONFIG += c++11 link_pkgconfig
   error("libxml2 development files and pkg-config are required. Set PKG_CONFIG_PATH to the directory containing libxml-2.0.pc. See INSTALL for Linux, MSYS2 and Homebrew setup.")
 }
 PKGCONFIG += libxml-2.0
-HEADERS += src/articleview/articlecontent.h src/articleview/articleimages.h
+HEADERS += src/network/networkpolicy.h src/articleview/articlecontent.h src/articleview/articleimages.h
 SOURCES += src/articleview/articlecontent.cpp src/articleview/articleimages.cpp
 
 unix:!mac:DEFINES += HAVE_X11
@@ -185,7 +185,6 @@ RCC_DIR = $${BUILD_DIR}/rcc
 !load(qtsingleapplication, true) {
   error("QtSingleApplication for Qt 5 is required. Install its development package with qtsingleapplication.prf; on Fedora: qtsingleapplication-qt5-devel. For Windows/macOS and QMAKEFEATURES setup see INSTALL.")
 }
-include(3rdparty/qftp/qftp.pri)
 include(3rdparty/sqlite.pri)
 include(lang/lang.pri)
 include(3rdparty/qupzilla/qupzilla.pri)

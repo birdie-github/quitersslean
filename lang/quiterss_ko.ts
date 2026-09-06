@@ -964,14 +964,6 @@ Ancient news could reappear</source>
     </message>
 </context>
 <context>
-    <name>FtpDownloader</name>
-    <message>
-        <location filename="../src/downloads/downloaditem.cpp" line="473"/>
-        <source>Canceled!</source>
-        <translation>취소됨!</translation>
-    </message>
-</context>
-<context>
     <name>ItemAction</name>
     <message>
         <location filename="../src/newsfilters/itemaction.cpp" line="26"/>
@@ -3873,112 +3865,6 @@ Ancient news could reappear</source>
         <location filename="../src/application/mainwindow.cpp" line="5103"/>
         <source>&amp;No</source>
         <translation>아니요(&amp;N)</translation>
-    </message>
-</context>
-<context>
-    <name>QFtp</name>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="877"/>
-        <source>Not connected</source>
-        <translation>연결안됨</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="948"/>
-        <source>Host %1 not found</source>
-        <translation>호스트 %1을 찾을수 없습니다</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="953"/>
-        <source>Connection refused to host %1</source>
-        <translation>호스트 연결 거부 %1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="958"/>
-        <source>Connection timed out to host %1</source>
-        <translation>호스트 타임아웃 %1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="1071"/>
-        <source>Connected to host %1</source>
-        <translation>호스트 연결 %1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="1312"/>
-        <source>Connection refused for data connection</source>
-        <translation>데이터 연결 거부</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="1490"/>
-        <source>Unknown error</source>
-        <translation>알수없는 에러</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2419"/>
-        <source>Connecting to host failed:
-%1</source>
-        <translation>호스트 연결 실패:
-%1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2423"/>
-        <source>Login failed:
-%1</source>
-        <translation>로그인 실패:
-%1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2427"/>
-        <source>Listing directory failed:
-%1</source>
-        <translation>폴더 불러오기 실패:
-%1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2431"/>
-        <source>Changing directory failed:
-%1</source>
-        <translation>디렉토리 변경 실패:
-%1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2435"/>
-        <source>Downloading file failed:
-%1</source>
-        <translation>파일 다운로드 실패:
-%1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2439"/>
-        <source>Uploading file failed:
-%1</source>
-        <translation>파일 업데이트 실패:
-%1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2443"/>
-        <source>Removing file failed:
-%1</source>
-        <translation>파일삭제 실패:
-%1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2447"/>
-        <source>Creating directory failed:
-%1</source>
-        <translation>폴더 생성 실패:
-%1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2451"/>
-        <source>Removing directory failed:
-%1</source>
-        <translation>폴더 삭제 실패: 
-%1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2481"/>
-        <source>Connection closed</source>
-        <translation>연결 닫음</translation>
     </message>
 </context>
 <context>

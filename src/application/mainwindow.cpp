@@ -16,6 +16,7 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 * ============================================================ */
 #include "mainwindow.h"
+#include "articlecontent.h"
 
 #include "common.h"
 #include "mainapplication.h"
@@ -7529,7 +7530,7 @@ void MainWindow::slotOpenHomeFeed()
   index = feedsProxyModel_->mapToSource(index);
 
   QString homePage = feedsModel_->dataField(index, "htmlUrl").toString();
-  QDesktopServices::openUrl(homePage);
+  if (ArticleContent::isExternalLink(homePage)) QDesktopServices::openUrl(homePage);
 }
 
 /** @brief Sort feed and folders by title

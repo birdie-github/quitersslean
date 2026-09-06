@@ -16,6 +16,7 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 * ============================================================ */
 #include "requestfeed.h"
+#include "networkpolicy.h"
 #include "VersionNo.h"
 #include "mainapplication.h"
 #include "globals.h"
@@ -225,7 +226,9 @@ void RequestFeed::finished(QNetworkReply *reply)
 
     if (reply->error() != QNetworkReply::NoError) {
       qDebug() << "  error retrieving RSS feed:" << reply->error() << reply->errorString();
-      if (!headOk) {
+      if (reply->error() == QNetworkReply::ProtocolUnknownError) {
+        emit getUrlDone(-1, feedId, feedUrl, reply->errorString());
+      } else if (!headOk) {
         if (reply->error() == QNetworkReply::AuthenticationRequiredError)
           emit getUrlDone(-2, feedId, feedUrl, tr("Server requires authentication!"));
         else if (reply->error() == QNetworkReply::ContentNotFoundError)
@@ -249,25 +252,14 @@ void RequestFeed::finished(QNetworkReply *reply)
       }
     } else {
       QUrl redirectionTarget = reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
-      if (redirectionTarget.isValid()) {
-        if (count < (numberRepeats_ + 3)) {
+      if (!redirectionTarget.isEmpty()) {
+        redirectionTarget = replyUrl.resolved(redirectionTarget);
+        if (!NetworkPolicy::isSafeRedirect(replyUrl, redirectionTarget)) {
+          emit getUrlDone(-4, feedId, feedUrl, tr("Unsupported or unsafe redirect URL."));
+        } else if (count < (numberRepeats_ + 3)) {
           if (headOk && (reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() == 302)) {
             emit signalGet(replyUrl, feedId, feedUrl, feedDate);
           } else {
-            QString host(QUrl::fromEncoded(feedUrl.toUtf8()).host());
-            if (redirectionTarget.host().isEmpty()) {
-              if (redirectionTarget.path() == ".") {
-                if (redirectionTarget.hasQuery()) {
-                  QString query = redirectionTarget.query();
-                  redirectionTarget.setUrl(replyUrl.scheme() + "://" + host + replyUrl.path());
-                  redirectionTarget.setQuery(query);
-                }
-              } else {
-                redirectionTarget.setUrl(replyUrl.scheme() + "://" + host + redirectionTarget.toString());
-              }
-            }
-            if (redirectionTarget.scheme().isEmpty())
-              redirectionTarget.setScheme(QUrl(feedUrl).scheme());
             if (reply->operation() == QNetworkAccessManager::HeadOperation) {
               qDebug() << objectName() << "  head redirect..." << redirectionTarget.toString();
               emit signalHead(redirectionTarget, feedId, feedUrl, feedDate, count);

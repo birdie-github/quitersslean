@@ -33,6 +33,7 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 * ============================================================ */
 #include "networkmanagerproxy.h"
+#include "networkpolicy.h"
 #include "cookiejar.h"
 #include "mainapplication.h"
 
@@ -64,7 +65,23 @@ QNetworkReply* NetworkManagerProxy::createRequest(QNetworkAccessManager::Operati
                                                   const QNetworkRequest &request,
                                                   QIODevice* outgoingData)
 {
-  return QNetworkAccessManager::createRequest(op, request, outgoingData);
+  if (!NetworkPolicy::isHttpUrl(request.url()))
+    return new NetworkPolicy::RejectedReply(op, request, this);
+  QNetworkRequest checked(request);
+  checked.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::UserVerifiedRedirectPolicy);
+  checked.setMaximumRedirectsAllowed(10);
+  QNetworkReply *reply = QNetworkAccessManager::createRequest(op, checked, outgoingData);
+  QUrl initialUrl = request.url();
+  connect(reply, &QNetworkReply::redirected, reply, [reply, initialUrl](const QUrl &target) mutable {
+    const QUrl resolved = initialUrl.resolved(target);
+    if (NetworkPolicy::isSafeRedirect(initialUrl, resolved)) {
+      initialUrl = resolved;
+      emit reply->redirectAllowed();
+    } else {
+      reply->abort();
+    }
+  });
+  return reply;
 }
 
 void NetworkManagerProxy::disconnectObjects()

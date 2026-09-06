@@ -964,14 +964,6 @@ adlı dosya bulunamadı!</translation>
     </message>
 </context>
 <context>
-    <name>FtpDownloader</name>
-    <message>
-        <location filename="../src/downloads/downloaditem.cpp" line="473"/>
-        <source>Canceled!</source>
-        <translation>İptal Edildi!</translation>
-    </message>
-</context>
-<context>
     <name>ItemAction</name>
     <message>
         <location filename="../src/newsfilters/itemaction.cpp" line="26"/>
@@ -3873,103 +3865,6 @@ adlı dosya bulunamadı!</translation>
         <location filename="../src/application/mainwindow.cpp" line="5103"/>
         <source>&amp;No</source>
         <translation>&amp;Hayır</translation>
-    </message>
-</context>
-<context>
-    <name>QFtp</name>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="877"/>
-        <source>Not connected</source>
-        <translation>Bağlanılmadı</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="948"/>
-        <source>Host %1 not found</source>
-        <translation>Hostta %1 bulunamadı</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="953"/>
-        <source>Connection refused to host %1</source>
-        <translation>Host&apos;a bağlanma iptal edildi %1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="958"/>
-        <source>Connection timed out to host %1</source>
-        <translation>Bağlantı zaman aşımına uğradı %1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="1071"/>
-        <source>Connected to host %1</source>
-        <translation>Hosta bağlanıldı %1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="1312"/>
-        <source>Connection refused for data connection</source>
-        <translation>Veri bağlantısı için bağlantı iptal edildi</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="1490"/>
-        <source>Unknown error</source>
-        <translation>Bilinmeyen hata</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2419"/>
-        <source>Connecting to host failed:
-%1</source>
-        <translation>Hosta bağlantı iptal edildi : %1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2423"/>
-        <source>Login failed:
-%1</source>
-        <translation>Giriş iptal edildi: %1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2427"/>
-        <source>Listing directory failed:
-%1</source>
-        <translation>Dizinleme listesi iptal edildi: %1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2431"/>
-        <source>Changing directory failed:
-%1</source>
-        <translation>Dizin değişimi iptal edildi: %1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2435"/>
-        <source>Downloading file failed:
-%1</source>
-        <translation>Dosya indirimi iptal edildi: %1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2439"/>
-        <source>Uploading file failed:
-%1</source>
-        <translation>Dosya yükleme iptal edildi: %1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2443"/>
-        <source>Removing file failed:
-%1</source>
-        <translation>Dosya silinmesi iptal edildi: %1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2447"/>
-        <source>Creating directory failed:
-%1</source>
-        <translation>Dizin oluşumu iptal edildi: %1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2451"/>
-        <source>Removing directory failed:
-%1</source>
-        <translation>Dizin silimi iptal edildi: %1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2481"/>
-        <source>Connection closed</source>
-        <translation>Bağlantı kapatıldı</translation>
     </message>
 </context>
 <context>

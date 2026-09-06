@@ -964,14 +964,6 @@ Ancient news could reappear</source>
     </message>
 </context>
 <context>
-    <name>FtpDownloader</name>
-    <message>
-        <location filename="../src/downloads/downloaditem.cpp" line="473"/>
-        <source>Canceled!</source>
-        <translation>रद्द कर दिया!</translation>
-    </message>
-</context>
-<context>
     <name>ItemAction</name>
     <message>
         <location filename="../src/newsfilters/itemaction.cpp" line="26"/>
@@ -3873,112 +3865,6 @@ Ancient news could reappear</source>
         <location filename="../src/application/mainwindow.cpp" line="5103"/>
         <source>&amp;No</source>
         <translation>नहीं</translation>
-    </message>
-</context>
-<context>
-    <name>QFtp</name>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="877"/>
-        <source>Not connected</source>
-        <translation>कनेक्टेड नहीं</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="948"/>
-        <source>Host %1 not found</source>
-        <translation>होस्ट नहीं मिला %1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="953"/>
-        <source>Connection refused to host %1</source>
-        <translation>होस्ट ने कनेक्शन करने से इनकार कर दिया %1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="958"/>
-        <source>Connection timed out to host %1</source>
-        <translation>होस्ट से कनेक्शन करने के का समय समाप्त %1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="1071"/>
-        <source>Connected to host %1</source>
-        <translation>होस्ट से कनेक्टेड %1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="1312"/>
-        <source>Connection refused for data connection</source>
-        <translation>डेटा कनेक्शन के लिए मना कर दिया</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="1490"/>
-        <source>Unknown error</source>
-        <translation>अज्ञात त्रुटि</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2419"/>
-        <source>Connecting to host failed:
-%1</source>
-        <translation> होस्ट को कनेक्ट करना विफल रहा:
- % 1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2423"/>
-        <source>Login failed:
-%1</source>
-        <translation>लॉगिन विफल:
-% 1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2427"/>
-        <source>Listing directory failed:
-%1</source>
-        <translation>डायरेक्टरी  सूचीबद्ध करना विफल:
- % 1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2431"/>
-        <source>Changing directory failed:
-%1</source>
-        <translation>डायरेक्टरी बदलना विफल:
- % 1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2435"/>
-        <source>Downloading file failed:
-%1</source>
-        <translation>फ़ाइल डाउनलोडिंग विफल:
- % 1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2439"/>
-        <source>Uploading file failed:
-%1</source>
-        <translation>फ़ाइल अपलोड विफल:
- % 1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2443"/>
-        <source>Removing file failed:
-%1</source>
-        <translation>फ़ाइल  हटाना विफल:
-% 1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2447"/>
-        <source>Creating directory failed:
-%1</source>
-        <translation>डायरेक्टरी बनाना विफल:
- % 1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2451"/>
-        <source>Removing directory failed:
-%1</source>
-        <translation>डायरेक्टरी हटाना विफल: 
-% 1</translation>
-    </message>
-    <message>
-        <location filename="../3rdparty/qftp/qftp.cpp" line="2481"/>
-        <source>Connection closed</source>
-        <translation>कनेक्शन बंद</translation>
     </message>
 </context>
 <context>

@@ -16,6 +16,7 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 * ============================================================ */
 #include "networkmanager.h"
+#include "networkpolicy.h"
 
 #include "mainapplication.h"
 #include "common.h"
@@ -269,7 +270,12 @@ QNetworkReply *NetworkManager::createRequest(QNetworkAccessManager::Operation op
                                              const QNetworkRequest &request,
                                              QIODevice *outgoingData)
 {
-  return QNetworkAccessManager::createRequest(op, request, outgoingData);
+  if (!NetworkPolicy::isRequestUrl(request.url()))
+    return new NetworkPolicy::RejectedReply(op, request, this);
+  QNetworkRequest checked(request);
+  // Feed, favicon and download callers resolve and validate redirects themselves.
+  checked.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::ManualRedirectPolicy);
+  return QNetworkAccessManager::createRequest(op, checked, outgoingData);
 }
 
 void NetworkManager::addRejectedCerts(const QList<QSslCertificate> &certs)

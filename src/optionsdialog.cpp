@@ -16,6 +16,8 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 * ============================================================ */
 #include "optionsdialog.h"
+#include "articlecontent.h"
+#include <QDesktopServices>
 
 #include "mainapplication.h"
 #include "labeldialog.h"
@@ -1384,7 +1386,11 @@ void OptionsDialog::createLanguageWidget()
   QString linkWikiStr =
       QString("<a href='https://quiterss.org/en/development'>Link for translators</a>");
   QLabel *linkTranslators = new QLabel(linkWikiStr);
-  linkTranslators->setOpenExternalLinks(true);
+  linkTranslators->setOpenExternalLinks(false);
+  connect(linkTranslators, &QLabel::linkActivated, this, [](const QString &link) {
+    const QUrl url(link);
+    if (ArticleContent::isExternalLink(url)) QDesktopServices::openUrl(url);
+  });
 
   QVBoxLayout *languageLayout = new QVBoxLayout();
   languageLayout->setMargin(0);

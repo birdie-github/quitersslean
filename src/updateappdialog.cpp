@@ -16,6 +16,8 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 * ============================================================ */
 #include "updateappdialog.h"
+#include "articlecontent.h"
+#include <QDesktopServices>
 
 #include "mainapplication.h"
 #include "VersionNo.h"
@@ -42,12 +44,20 @@ UpdateAppDialog::UpdateAppDialog(const QString &lang, QWidget *parent, bool show
     resize(450, 350);
 
     infoLabel = new QLabel(tr("Checking for updates..."), this);
-    infoLabel->setOpenExternalLinks(true);
+    infoLabel->setOpenExternalLinks(false);
+    connect(infoLabel, &QLabel::linkActivated, this, [](const QString &link) {
+      const QUrl url(link);
+      if (ArticleContent::isExternalLink(url)) QDesktopServices::openUrl(url);
+    });
 
     history_ = new QTextBrowser(this);
     history_->setObjectName("history_");
     history_->setText(tr("Loading history..."));
-    history_->setOpenExternalLinks(true);
+    history_->setOpenExternalLinks(false);
+    history_->setOpenLinks(false);
+    connect(history_, &QTextBrowser::anchorClicked, this, [](const QUrl &url) {
+      if (ArticleContent::isExternalLink(url)) QDesktopServices::openUrl(url);
+    });
 
     remindAboutVersion_ = new QCheckBox(tr("Don't remind about this version"), this);
     remindAboutVersion_->setChecked(settings.value("remindAboutVersion", false).toBool());

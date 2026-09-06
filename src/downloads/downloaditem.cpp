@@ -36,6 +36,7 @@
 
 #include "mainapplication.h"
 #include "networkmanager.h"
+#include "networkpolicy.h"
 
 #if defined(Q_OS_WIN)
 #include <qt_windows.h>
@@ -48,21 +49,17 @@ DownloadItem::DownloadItem(QListWidgetItem *item,
   : QWidget()
   , item_(item)
   , reply_(reply)
-  , ftpDownloader_(0)
+  , redirectCount_(0)
   , fileName_(fileName)
   , downloadUrl_(reply->url())
   , downloading_(false)
   , openAfterFinish_(openAfterDownload)
   , downloadStopped_(false)
+  , curSpeed_(0)
   , received_(0)
   , total_(0)
 {
   downloadTimer_.start();
-
-  if (QFile::exists(fileName)) {
-    QFile::remove(fileName);
-  }
-  qApp->processEvents();
 
   outputFile_.setFileName(fileName);
 
@@ -114,146 +111,169 @@ DownloadItem::DownloadItem(QListWidgetItem *item,
 
 DownloadItem::~DownloadItem()
 {
+  discardReply();
   delete item_;
+}
+
+void DownloadItem::discardReply()
+{
+  if (!reply_) return;
+  QNetworkReply *old = reply_;
+  reply_ = nullptr;
+  disconnect(old, nullptr, this, nullptr);
+  if (!old->isFinished()) old->abort();
+  old->deleteLater();
+}
+
+void DownloadItem::fail(const QString &message)
+{
+  stop(false);
+  downloadInfo_->setText(tr("Error: ") + message);
 }
 
 void DownloadItem::startDownloading()
 {
-  QUrl locationHeader = reply_->header(QNetworkRequest::LocationHeader).toUrl();
-
-  bool hasFtpUrlInHeader = locationHeader.isValid() && (locationHeader.scheme() == "ftp");
-  if (reply_->url().scheme() == "ftp" || hasFtpUrlInHeader) {
-    QUrl url = hasFtpUrlInHeader ? locationHeader : reply_->url();
-    reply_->abort();
-    reply_->deleteLater();
-    reply_ = 0;
-
-    startDownloadingFromFtp(url);
-    return;
-  } else if (locationHeader.isValid()) {
-    reply_->abort();
-    reply_->deleteLater();
-
-    reply_ = mainApp->networkManager()->get(QNetworkRequest(locationHeader));
-  }
-
-  reply_->setParent(this);
-  connect(reply_, SIGNAL(readyRead()), this, SLOT(readyRead()));
-  connect(reply_, SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(downloadProgress(qint64,qint64)));
-  connect(reply_, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(error()));
-  connect(reply_, SIGNAL(metaDataChanged()), this, SLOT(metaDataChanged()));
-  connect(reply_, SIGNAL(finished()), this, SLOT(finished()));
-
+  if (!reply_ || downloadStopped_) return;
   downloading_ = true;
+  if (!NetworkPolicy::isHttpUrl(reply_->url())) {
+    fail(tr("Only HTTP and HTTPS downloads are supported."));
+    return;
+  }
+  reply_->setParent(this);
+  reply_->setProperty("downloadReply", true);
+  QNetworkReply *connectedReply = reply_;
+  connect(reply_, &QNetworkReply::readyRead, this, [this, connectedReply]() {
+    if (reply_ == connectedReply) readyRead();
+  });
+  connect(reply_, &QNetworkReply::downloadProgress, this,
+          [this, connectedReply](qint64 received, qint64 total) {
+    if (reply_ == connectedReply) downloadProgress(received, total);
+  });
+  connect(reply_, &QNetworkReply::errorOccurred, this, [this, connectedReply](QNetworkReply::NetworkError) {
+    if (reply_ == connectedReply) error();
+  });
+  connect(reply_, &QNetworkReply::metaDataChanged, this, [this, connectedReply]() {
+    if (reply_ == connectedReply) metaDataChanged();
+  });
+  connect(reply_, &QNetworkReply::finished, this, [this, connectedReply]() {
+    if (reply_ == connectedReply) finished();
+  });
   updateInfoTimer_.start(1000);
-  readyRead();
-  QTimer::singleShot(200, this, SLOT(updateDownload()));
-
   if (reply_->error() != QNetworkReply::NoError) {
-    stop(false);
     error();
+    return;
+  }
+  if (followRedirect()) return;
+  readyRead();
+  // A reply can finish while the save dialog is open, before we connect it.
+  QNetworkReply *current = reply_;
+  if (current && current->isFinished()) {
+    QTimer::singleShot(0, this, [this, current]() {
+      if (reply_ == current && downloading_) finished();
+    });
   }
 }
 
-void DownloadItem::startDownloadingFromFtp(const QUrl &url)
+bool DownloadItem::followRedirect()
 {
-  if (!outputFile_.isOpen() && !outputFile_.open(QIODevice::WriteOnly)) {
-    stop(false);
-    downloadInfo_->setText(tr("Error: Cannot write to file!"));
-    return;
+  if (!reply_ || !downloading_) return false;
+  const int status = reply_->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+  if (status != 301 && status != 302 && status != 303 && status != 307 && status != 308)
+    return false;
+  const QUrl location = reply_->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
+  const QUrl target = reply_->url().resolved(location);
+  if (location.isEmpty() || !NetworkPolicy::isHttpUrl(target)) {
+    fail(tr("Invalid redirect or unsupported redirect scheme; only HTTP and HTTPS are allowed."));
+    return true;
   }
-
-  ftpDownloader_ = new FtpDownloader(this);
-  connect(ftpDownloader_, SIGNAL(finished()), this, SLOT(finished()));
-  connect(ftpDownloader_, SIGNAL(dataTransferProgress(qint64, qint64)),
-          this, SLOT(downloadProgress(qint64, qint64)));
-  connect(ftpDownloader_, SIGNAL(errorOccured(QFtp::Error)), this, SLOT(error()));
-  connect(ftpDownloader_, SIGNAL(ftpAuthenticationRequierd(const QUrl &, QAuthenticator*)),
-          mainApp->networkManager(), SLOT(ftpAuthentication(const QUrl &, QAuthenticator*)));
-
-  ftpDownloader_->download(url, &outputFile_);
-  downloading_ = true;
-  updateInfoTimer_.start(1000);
-
-  QTimer::singleShot(200, this, SLOT(updateDownload()));
-
-  if (ftpDownloader_->error() != QFtp::NoError) {
-    error();
+  if (!NetworkPolicy::isSafeRedirect(reply_->url(), target)) {
+    fail(tr("Redirect from HTTPS to HTTP is not allowed."));
+    return true;
   }
+  if (++redirectCount_ > 10) {
+    fail(tr("Too many redirects."));
+    return true;
+  }
+  // A fresh request avoids forwarding credentials or sensitive headers across hosts.
+  QNetworkRequest request(target);
+  request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::ManualRedirectPolicy);
+  discardReply();
+  received_ = 0;
+  total_ = 0;
+  curSpeed_ = 0;
+  downloadTimer_.restart();
+  reply_ = mainApp->networkManager()->get(request);
+  startDownloading();
+  return true;
 }
 
 void DownloadItem::readyRead()
 {
+  if (!downloading_ || !reply_ || reply_->error() != QNetworkReply::NoError) return;
+  if (followRedirect()) return;
+  const int status = reply_->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+  // Never save a redirect/error response body as the requested file.
+  if (status < 200 || status >= 300) return;
   if (!outputFile_.isOpen() && !outputFile_.open(QIODevice::WriteOnly)) {
-    stop(false);
-    downloadInfo_->setText(tr("Error: Cannot write to file!"));
+    fail(tr("Cannot write to file!"));
     return;
   }
-  outputFile_.write(reply_->readAll());
+  const QByteArray data = reply_->readAll();
+  if (outputFile_.write(data) != data.size()) fail(tr("Cannot write to file!"));
 }
 
 void DownloadItem::downloadProgress(qint64 received, qint64 total)
 {
-  qint64 currentValue = 0;
-  qint64 totalValue = 0;
-  if (total > 0) {
-    currentValue = received * 100 / total;
-    totalValue = 100;
-    total_ = total;
-  }
-  progressBar_->setValue(currentValue);
-  progressBar_->setMaximum(totalValue);
-  curSpeed_ = received * 1000.0 / downloadTimer_.elapsed();
+  if (!downloading_ || !reply_) return;
+  if (followRedirect()) return;
+  progressBar_->setMaximum(total > 0 ? 100 : 0);
+  progressBar_->setValue(total > 0 ? received * 100 / total : 0);
+  total_ = total;
+  curSpeed_ = received * 1000.0 / qMax(1, downloadTimer_.elapsed());
   received_ = received;
-
-  if (reply_->isFinished())
-    finished();
 }
 
 void DownloadItem::metaDataChanged()
 {
-  QUrl locationHeader = reply_->header(QNetworkRequest::LocationHeader).toUrl();
-  if (locationHeader.isValid()) {
-    reply_->close();
-    reply_->deleteLater();
-
-    reply_ = mainApp->networkManager()->get(QNetworkRequest(locationHeader));
-    startDownloading();
-  }
+  if (downloading_) followRedirect();
 }
 
 void DownloadItem::error()
 {
-  if (reply_ && reply_->error() != QNetworkReply::NoError) {
-    stop(false);
-    downloadInfo_->setText(tr("Error: ") + reply_->errorString());
-  }
+  if (downloading_ && reply_ && reply_->error() != QNetworkReply::NoError)
+    fail(reply_->errorString());
 }
 
 void DownloadItem::finished()
 {
-  updateInfoTimer_.stop();
-
-  QString host = downloadUrl_.host();
-  QString fileSize = fileSizeToString(total_);
-
-  if (fileSize == tr("Unknown size")) {
-    fileSize = fileSizeToString(received_);
+  if (!downloading_ || !reply_) return;
+  if (reply_->error() != QNetworkReply::NoError) {
+    error();
+    return;
   }
-  downloadInfo_->setText(QString("%1 - %2 - %3").arg(fileSize, host, QDateTime::currentDateTime().time().toString()));
-
+  if (followRedirect()) return;
+  const int status = reply_->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+  if (status < 200 || status >= 300) {
+    fail(tr("Unexpected HTTP response: %1").arg(status));
+    return;
+  }
+  readyRead();
+  if (!downloading_) return;
+  if (!outputFile_.flush()) {
+    fail(tr("Cannot write to file!"));
+    return;
+  }
+  received_ = outputFile_.size();
+  total_ = received_;
+  outputFile_.close();
+  updateInfoTimer_.stop();
+  downloading_ = false;
+  discardReply();
+  downloadInfo_->setText(QString("%1 - %2 - %3").arg(fileSizeToString(received_), downloadUrl_.host(),
+                                                   QTime::currentTime().toString()));
   progressFrame_->hide();
   item_->setSizeHint(sizeHint());
-  outputFile_.close();
-
-  reply_->deleteLater();
-
-  downloading_ = false;
-
-  if (openAfterFinish_) {
-    openFile();
-  }
-
+  if (openAfterFinish_) openFile();
   emit downloadFinished(true);
 }
 
@@ -306,10 +326,11 @@ QString DownloadItem::currentSpeedToString(double speed)
 
 void DownloadItem::updateInfo()
 {
-  int estimatedTime = ((total_ - received_) / 1024) / (curSpeed_ / 1024);
+  int estimatedTime = curSpeed_ > 0 && total_ >= received_
+      ? qMin(double(24 * 60 * 60 - 1), (total_ - received_) / curSpeed_) : 0;
   QString speed = currentSpeedToString(curSpeed_);
 
-  QTime time;
+  QTime time(0, 0);
   time = time.addSecs(estimatedTime);
   QString remTime = remaingTimeToString(time);
   remTime_ = time;
@@ -326,7 +347,7 @@ void DownloadItem::updateInfo()
 
 void DownloadItem::stop(bool askForDeleteFile)
 {
-  if (downloadStopped_)
+  if (!downloading_ || downloadStopped_)
     return;
 
   downloadStopped_ = true;
@@ -334,20 +355,19 @@ void DownloadItem::stop(bool askForDeleteFile)
 
   openAfterFinish_ = false;
   updateInfoTimer_.stop();
-  reply_->abort();
-  reply_->deleteLater();
+  downloading_ = false;
+  discardReply();
 
+  const bool createdFile = outputFile_.isOpen();
   outputFile_.close();
   QString outputfile = QFileInfo(outputFile_).absoluteFilePath();
   downloadInfo_->setText(tr("Cancelled - %1").arg(host));
   progressFrame_->hide();
   item_->setSizeHint(sizeHint());
 
-  downloading_ = false;
-
   emit downloadFinished(false);
 
-  if (askForDeleteFile) {
+  if (askForDeleteFile && createdFile) {
     QMessageBox::StandardButton button =
         QMessageBox::question(item_->listWidget()->parentWidget(),
                               tr("Delete file"),
@@ -395,7 +415,7 @@ void DownloadItem::clear()
 
 void DownloadItem::openFile()
 {
-  if (downloading_) {
+  if (downloading_ || downloadStopped_) {
     return;
   }
   QFileInfo info(fileName_);
@@ -419,147 +439,4 @@ void DownloadItem::openFolder()
   QFileInfo info(fileName_);
   QDesktopServices::openUrl(QUrl::fromLocalFile(info.path()));
 #endif
-}
-
-void DownloadItem::updateDownload()
-{
-  if ((progressBar_->maximum() == 0) && outputFile_.isOpen() &&
-      (reply_ && reply_->isFinished())) {
-    downloadProgress(0, 0);
-    finished();
-  }
-}
-
-QHash<QString, QAuthenticator*> FtpDownloader::ftpAuthenticatorsCache_ = QHash<QString, QAuthenticator*>();
-
-FtpDownloader::FtpDownloader(QObject* parent)
-  : QFtp(parent)
-  , ftpLoginId_(-1)
-  , anonymousLoginChecked_(false)
-  , isFinished_(false)
-  , url_(QUrl())
-  , dev_(0)
-  , lastError_(QFtp::NoError)
-{
-  connect(this, SIGNAL(commandFinished(int, bool)), this, SLOT(processCommand(int, bool)));
-  connect(this, SIGNAL(done(bool)), this, SLOT(onDone(bool)));
-}
-
-void FtpDownloader::download(const QUrl &url, QIODevice* dev)
-{
-  url_ = url;
-  dev_ = dev;
-  QString server = url_.host();
-  if (server.isEmpty()) {
-    server = url_.toString();
-  }
-  int port = 21;
-  if (url_.port() != -1) {
-    port = url_.port();
-  }
-
-  connectToHost(server, port);
-}
-
-void FtpDownloader::setError(QFtp::Error err, const QString &errStr)
-{
-  lastError_ = err;
-  lastErrorString_ = errStr;
-}
-
-void FtpDownloader::abort()
-{
-  setError(QFtp::UnknownError, tr("Canceled!"));
-  QFtp::abort();
-}
-
-QFtp::Error FtpDownloader::error()
-{
-  if (lastError_ != QFtp::NoError && QFtp::error() == QFtp::NoError) {
-    return lastError_;
-  } else {
-    return QFtp::error();
-  }
-}
-
-QString FtpDownloader::errorString() const
-{
-  if (!lastErrorString_.isEmpty()
-      && lastError_ != QFtp::NoError
-      && QFtp::error() == QFtp::NoError) {
-    return lastErrorString_;
-  } else {
-    return QFtp::errorString();
-  }
-}
-
-void FtpDownloader::processCommand(int id, bool err)
-{
-  if (!url_.isValid() || url_.isEmpty() || !dev_) {
-    abort();
-    return;
-  }
-
-  if (err) {
-    if (ftpLoginId_ == id) {
-      if (!anonymousLoginChecked_) {
-        anonymousLoginChecked_ = true;
-        ftpAuthenticator(url_)->setUser(QString());
-        ftpAuthenticator(url_)->setPassword(QString());
-        ftpLoginId_ = login();
-        return;
-      }
-      emit ftpAuthenticationRequierd(url_, ftpAuthenticator(url_));
-      ftpLoginId_ = login(ftpAuthenticator(url_)->user(), ftpAuthenticator(url_)->password());
-      return;
-    }
-    abort();
-    return;
-  }
-
-  switch (currentCommand()) {
-  case QFtp::ConnectToHost:
-    if (!anonymousLoginChecked_) {
-      anonymousLoginChecked_ = ftpAuthenticator(url_)->user().isEmpty()
-          && ftpAuthenticator(url_)->password().isEmpty();
-    }
-    ftpLoginId_ = login(ftpAuthenticator(url_)->user(), ftpAuthenticator(url_)->password());
-    break;
-
-  case QFtp::Login:
-    get(url_.path(), dev_);
-    break;
-  default:
-    ;
-  }
-}
-
-void FtpDownloader::onDone(bool err)
-{
-  disconnect(this, SIGNAL(done(bool)), this, SLOT(onDone(bool)));
-  close();
-  ftpLoginId_ = -1;
-  if (err || lastError_ != QFtp::NoError) {
-    emit errorOccured(error());
-  }
-  else {
-    isFinished_ = true;
-    emit finished();
-  }
-}
-
-QAuthenticator *FtpDownloader::ftpAuthenticator(const QUrl &url)
-{
-  QString key = url.host();
-  if (key.isEmpty()) {
-    key = url.toString();
-  }
-  if (!ftpAuthenticatorsCache_.contains(key) || !ftpAuthenticatorsCache_.value(key, 0)) {
-    QAuthenticator* auth = new QAuthenticator();
-    auth->setUser(url.userName());
-    auth->setPassword(url.password());
-    ftpAuthenticatorsCache_.insert(key, auth);
-  }
-
-  return ftpAuthenticatorsCache_.value(key);
 }

@@ -16,6 +16,8 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 * ============================================================ */
 #include "aboutdialog.h"
+#include "articlecontent.h"
+#include <QDesktopServices>
 #include "mainapplication.h"
 #include "settings.h"
 #include "VersionNo.h"
@@ -56,7 +58,11 @@ AboutDialog::AboutDialog(const QString &lang, QWidget *parent) :
       + QString("<a href=\"%1\">E-mail</a>").arg("mailto:quiterssteam@gmail.com") + "</P>"
       "</CENTER></body></html>";
   QLabel *infoLabel = new QLabel(appInfo);
-  infoLabel->setOpenExternalLinks(true);
+  infoLabel->setOpenExternalLinks(false);
+  connect(infoLabel, &QLabel::linkActivated, this, [](const QString &link) {
+    const QUrl url(link);
+    if (ArticleContent::isExternalLink(url)) QDesktopServices::openUrl(url);
+  });
   infoLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
 
   QHBoxLayout *mainLayout = new QHBoxLayout();
@@ -78,7 +84,11 @@ AboutDialog::AboutDialog(const QString &lang, QWidget *parent) :
   authorsWidget->setLayout(authorsLayout);
 
   QTextBrowser *historyTextBrowser = new QTextBrowser();
-  historyTextBrowser->setOpenExternalLinks(true);
+  historyTextBrowser->setOpenExternalLinks(false);
+  historyTextBrowser->setOpenLinks(false);
+  connect(historyTextBrowser, &QTextBrowser::anchorClicked, this, [](const QUrl &url) {
+    if (ArticleContent::isExternalLink(url)) QDesktopServices::openUrl(url);
+  });
   if (lang.contains("ru", Qt::CaseInsensitive))
     file.setFileName(":/file/HISTORY_RU");
   else

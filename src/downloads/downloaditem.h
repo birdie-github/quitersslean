@@ -36,13 +36,10 @@
 #define DOWNLOADITEM_H
 
 #include <QtWidgets>
-#include "qftp.h"
 #include <QTimer>
 #include <QNetworkReply>
-#include <QAuthenticator>
 
 class QListWidgetItem;
-class FtpDownloader;
 
 class DownloadItem : public QWidget
 {
@@ -53,7 +50,6 @@ public:
   ~DownloadItem();
 
   void startDownloading();
-  void startDownloadingFromFtp(const QUrl &url);
   bool isDownloading() { return downloading_; }
   QTime remainingTime() { return remTime_; }
   static QString remaingTimeToString(QTime time);
@@ -76,7 +72,6 @@ private slots:
   void openFolder();
   void readyRead();
   void error();
-  void updateDownload();
   void customContextMenuRequested(const QPoint &pos);
   void clear();
 
@@ -84,10 +79,13 @@ private slots:
 
 private:
   QString fileSizeToString(qint64 size);
+  void discardReply();
+  bool followRedirect();
+  void fail(const QString &message);
 
   QListWidgetItem *item_;
   QNetworkReply *reply_;
-  FtpDownloader *ftpDownloader_;
+  int redirectCount_;
   QString fileName_;
   QTime downloadTimer_;
   QTime remTime_;
@@ -106,44 +104,6 @@ private:
   QProgressBar *progressBar_;
   QFrame *progressFrame_;
   QLabel *downloadInfo_;
-};
-
-class FtpDownloader : public QFtp
-{
-  Q_OBJECT
-
-public:
-  FtpDownloader(QObject* parent = 0);
-
-  void download(const QUrl &url, QIODevice* dev);
-  inline bool isFinished() {return isFinished_;}
-  inline QUrl url() const {return url_;}
-  inline QIODevice* device() const {return dev_;}
-  void setError(QFtp::Error err, const QString &errStr);
-  void abort();
-  QFtp::Error error();
-  QString errorString() const;
-
-private slots:
-  void processCommand(int id, bool err);
-  void onDone(bool err);
-
-private:
-  int ftpLoginId_;
-  bool anonymousLoginChecked_;
-  bool isFinished_;
-  QUrl url_;
-  QIODevice* dev_;
-  QFtp::Error lastError_;
-  QString lastErrorString_;
-
-  static QAuthenticator *ftpAuthenticator(const QUrl &url);
-  static QHash<QString, QAuthenticator*> ftpAuthenticatorsCache_;
-
-signals:
-  void ftpAuthenticationRequierd(const QUrl &, QAuthenticator*);
-  void finished();
-  void errorOccured(QFtp::Error);
 };
 
 #endif // DOWNLOADITEM_H

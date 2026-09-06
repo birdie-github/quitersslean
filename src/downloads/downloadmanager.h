@@ -37,7 +37,6 @@ public:
   void retranslateStrings();
 
 public slots:
-  void ftpAuthentication(const QUrl &url, QAuthenticator *auth);
 
 signals:
   void signalItemCreated(QListWidgetItem* item, DownloadItem* downItem);
