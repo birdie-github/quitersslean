@@ -25,7 +25,7 @@
 
 #include <QDomDocument>
 #include <QNetworkCookie>
-#include <qzregexp.h>
+#include <QRegularExpression>
 
 extern QString kCreateNewsTableQuery;
 
@@ -481,14 +481,17 @@ void AddFeedWizard::getUrlDone(int result, int feedId, QString feedUrlStr,
     if (!isFeed) {
       QString str = QString::fromUtf8(data);
 
-      QzRegExp rx("<link[^>]+(atom|rss)\\+xml[^>]+>", Qt::CaseInsensitive);
-      int pos = rx.indexIn(str);
+      QRegularExpression rx("<link[^>]+(atom|rss)\\+xml[^>]+>",
+          QRegularExpression::DotMatchesEverythingOption | QRegularExpression::CaseInsensitiveOption);
+      QRegularExpressionMatch match = rx.match(str);
+      int pos = match.capturedStart();
       if (pos > -1) {
-        str = rx.cap(0);
+        str = match.captured(0);
         rx.setPattern("href=\"([^\"]+)");
-        pos = rx.indexIn(str);
+        match = rx.match(str);
+        pos = match.capturedStart();
         if (pos > -1) {
-          QString linkFeedString = rx.cap(1);
+          QString linkFeedString = match.captured(1);
           linkFeedString.replace("&amp;", "&", Qt::CaseInsensitive);
           QUrl url(linkFeedString);
           QUrl feedUrl(feedUrlStr);

@@ -187,7 +187,6 @@ RCC_DIR = $${BUILD_DIR}/rcc
 }
 include(3rdparty/sqlite.pri)
 include(lang/lang.pri)
-include(3rdparty/qupzilla/qupzilla.pri)
 
 win32|mac {
   TARGET = QuiteRSS

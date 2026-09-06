@@ -24,7 +24,7 @@
 
 #include <QDebug>
 #include <QtSql>
-#include <qzregexp.h>
+#include <QRegularExpression>
 
 #define REPLY_MAX_COUNT 4
 #define REQUEST_TIMEOUT 30
@@ -157,24 +157,28 @@ void FaviconObject::finished(QNetworkReply *reply)
             QString linkFavicon;
             QString str = QString::fromUtf8(data);
             if (str.contains("<html", Qt::CaseInsensitive)) {
-              QzRegExp rx("<link[^>]+rel=['\"]shortcut icon['\"][^>]+>",
-                          Qt::CaseInsensitive);
-              int pos = rx.indexIn(str);
+              QRegularExpression rx("<link[^>]+rel=['\"]shortcut icon['\"][^>]+>",
+                  QRegularExpression::DotMatchesEverythingOption | QRegularExpression::CaseInsensitiveOption);
+              QRegularExpressionMatch match = rx.match(str);
+              int pos = match.capturedStart();
               if (pos == -1) {
-                rx = QzRegExp("<link[^>]+rel=['\"]icon['\"][^>]+>",
-                              Qt::CaseInsensitive);
-                pos = rx.indexIn(str);
+                rx = QRegularExpression("<link[^>]+rel=['\"]icon['\"][^>]+>",
+                    QRegularExpression::DotMatchesEverythingOption | QRegularExpression::CaseInsensitiveOption);
+                match = rx.match(str);
+                pos = match.capturedStart();
               }
               if (pos > -1) {
-                str = rx.cap(0);
+                str = match.captured(0);
                 rx.setPattern("href=\"([^\"]+)");
-                pos = rx.indexIn(str);
+                match = rx.match(str);
+                pos = match.capturedStart();
                 if (pos == -1) {
                   rx.setPattern("href='([^']+)");
-                  pos = rx.indexIn(str);
+                  match = rx.match(str);
+                  pos = match.capturedStart();
                 }
                 if (pos > -1) {
-                  linkFavicon = rx.cap(1).simplified();
+                  linkFavicon = match.captured(1).simplified();
                   QUrl urlFavicon(linkFavicon);
                   if (urlFavicon.host().isEmpty()) {
                     urlFavicon.setHost(url.host());

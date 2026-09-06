@@ -25,7 +25,7 @@
 #include <QDebug>
 
 #include <sqlite3.h>
-#include <qzregexp.h>
+#include <QRegularExpression>
 
 static int localeCompare( void* /*arg*/, int len1, const void* data1, int len2, const void* data2 )
 {
@@ -57,10 +57,11 @@ static void regexpFunction( sqlite3_context* context, int /*argc*/, sqlite3_valu
   QString string1 = QString::fromRawData( reinterpret_cast<const QChar*>( data1 ), len1 / sizeof( QChar ) );
   QString string2 = QString::fromRawData( reinterpret_cast<const QChar*>( data2 ), len2 / sizeof( QChar ) );
 
-  QzRegExp pattern( string1, Qt::CaseInsensitive);
-  int pos = pattern.indexIn( string2 );
+  QRegularExpression pattern(string1,
+      QRegularExpression::DotMatchesEverythingOption | QRegularExpression::CaseInsensitiveOption);
+  const QRegularExpressionMatch match = pattern.match(string2);
 
-  sqlite3_result_int( context, (pos > -1) ? 1 : 0 );
+  sqlite3_result_int( context, match.hasMatch() ? 1 : 0 );
 }
 
 static void upperFunction(sqlite3_context* context, int /*argc*/, sqlite3_value** argv)

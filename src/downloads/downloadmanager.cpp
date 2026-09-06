@@ -24,7 +24,7 @@
 #include "settings.h"
 #include "common.h"
 
-#include <qzregexp.h>
+#include <QRegularExpression>
 
 DownloadManager::DownloadManager(QWidget *parent)
   : QWidget(parent)
@@ -133,15 +133,19 @@ QString DownloadManager::getFileName(QNetworkReply* reply)
   if (reply->hasRawHeader("Content-Disposition")) {
     QString value = QString::fromUtf8(reply->rawHeader("Content-Disposition"));
 
-    if (value.contains(QzRegExp("filename\\s*\\*\\s*=\\s*UTF-8", Qt::CaseInsensitive))) {
-      QzRegExp reg("filename\\s*\\*\\s*=\\s*UTF-8''([^;]*)", Qt::CaseInsensitive);
-      reg.indexIn(value);
-      path = QUrl::fromPercentEncoding(reg.cap(1).toUtf8()).trimmed();
+    if (value.contains(QRegularExpression("filename\\s*\\*\\s*=\\s*UTF-8",
+        QRegularExpression::DotMatchesEverythingOption | QRegularExpression::CaseInsensitiveOption))) {
+      QRegularExpression reg("filename\\s*\\*\\s*=\\s*UTF-8''([^;]*)",
+          QRegularExpression::DotMatchesEverythingOption | QRegularExpression::CaseInsensitiveOption);
+      const QRegularExpressionMatch match = reg.match(value);
+      path = QUrl::fromPercentEncoding(match.captured(1).toUtf8()).trimmed();
     }
-    else if (value.contains(QzRegExp("filename\\s*=", Qt::CaseInsensitive))) {
-      QzRegExp reg("filename\\s*=([^;]*)", Qt::CaseInsensitive);
-      reg.indexIn(value);
-      path = QUrl::fromPercentEncoding(reg.cap(1).toUtf8()).trimmed();
+    else if (value.contains(QRegularExpression("filename\\s*=",
+        QRegularExpression::DotMatchesEverythingOption | QRegularExpression::CaseInsensitiveOption))) {
+      QRegularExpression reg("filename\\s*=([^;]*)",
+          QRegularExpression::DotMatchesEverythingOption | QRegularExpression::CaseInsensitiveOption);
+      const QRegularExpressionMatch match = reg.match(value);
+      path = QUrl::fromPercentEncoding(match.captured(1).toUtf8()).trimmed();
 
       if (path.startsWith(QLatin1Char('"')) && path.endsWith(QLatin1Char('"'))) {
         path = path.mid(1, path.length() - 2);
@@ -169,7 +173,7 @@ QString DownloadManager::getFileName(QNetworkReply* reply)
 
   QString name = baseName + endName;
 
-  name.replace(QzRegExp("[;:<>?\"]"), "_");
+  name.replace(QRegularExpression("[;:<>?\"]", QRegularExpression::DotMatchesEverythingOption), "_");
 
   return name;
 }

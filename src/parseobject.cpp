@@ -28,7 +28,7 @@
 #if defined(Q_OS_WIN)
 #include <windows.h>
 #endif
-#include <qzregexp.h>
+#include <QRegularExpression>
 
 ParseObject::ParseObject(QObject *parent)
   : QObject(parent)
@@ -152,14 +152,17 @@ void ParseObject::slotParse(const QByteArray &xmlData, const int &feedId,
   int errorLine;
   int errorColumn;
 
-  QzRegExp rx("encoding=\"([^\"]+)", Qt::CaseInsensitive);
-  int pos = rx.indexIn(xmlData);
+  QRegularExpression rx("encoding=\"([^\"]+)",
+      QRegularExpression::DotMatchesEverythingOption | QRegularExpression::CaseInsensitiveOption);
+  QRegularExpressionMatch match = rx.match(QString::fromUtf8(xmlData));
+  int pos = match.capturedStart();
   if (pos == -1) {
     rx.setPattern("encoding='([^']+)");
-    pos = rx.indexIn(xmlData);
+    match = rx.match(QString::fromUtf8(xmlData));
+    pos = match.capturedStart();
   }
   if (pos > -1) {
-    QString codecNameT = rx.cap(1);
+    QString codecNameT = match.captured(1);
     qDebug() << "Codec name (1):" << codecNameT;
     QTextCodec *codec = QTextCodec::codecForName(codecNameT.toUtf8());
     if (codec) {
@@ -168,7 +171,7 @@ void ParseObject::slotParse(const QByteArray &xmlData, const int &feedId,
       qWarning() << "Codec not found (1): " << codecNameT << feedUrl;
       if (codecNameT.contains("us-ascii", Qt::CaseInsensitive)) {
         QString str(xmlData);
-        convertData = str.remove(rx.cap(0)+"\"");
+        convertData = str.remove(match.captured(0)+"\"");
       }
     }
   } else {

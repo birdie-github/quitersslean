@@ -22,7 +22,7 @@
 #include "settings.h"
 
 #include <QDebug>
-#include <qzregexp.h>
+#include <QRegularExpression>
 
 #define UPDATE_INTERVAL 3000
 #define UPDATE_INTERVAL_MIN 500
@@ -367,18 +367,20 @@ void UpdateObject::slotImportFeeds(QByteArray xmlData)
   QString convertData;
   bool codecOk = false;
 
-  QzRegExp rx("&(?!([a-z0-9#]+;))", Qt::CaseInsensitive);
+  QRegularExpression rx("&(?!([a-z0-9#]+;))",
+      QRegularExpression::DotMatchesEverythingOption | QRegularExpression::CaseInsensitiveOption);
   int pos = 0;
-  while ((pos = rx.indexIn(QString::fromLatin1(xmlData), pos)) != -1) {
+  // Latin-1 keeps match offsets aligned with the QByteArray being edited.
+  while ((pos = rx.match(QString::fromLatin1(xmlData), pos).capturedStart()) != -1) {
     xmlData.replace(pos, 1, "&amp;");
     pos += 1;
   }
 
   rx.setPattern("encoding=\"([^\"]+)");
-  pos = rx.indexIn(xmlData);
+  pos = rx.match(QString::fromUtf8(xmlData)).capturedStart();
   if (pos == -1) {
     rx.setPattern("encoding='([^']+)");
-    pos = rx.indexIn(xmlData);
+    pos = rx.match(QString::fromUtf8(xmlData)).capturedStart();
   }
   if (pos == -1) {
     QStringList codecNameList;

@@ -37,7 +37,7 @@
 #endif
 #include <QMainWindow>
 #include <QStatusBar>
-#include <qzregexp.h>
+#include <QRegularExpression>
 
 // ---------------------------------------------------------------------------
 MainWindow::MainWindow(QWidget *parent)
@@ -7270,7 +7270,7 @@ void MainWindow::slotSavePageAs()
   QString title = fileName.trimmed();
 
   fileName = fileName.trimmed();
-  fileName = fileName.replace(QzRegExp("[:\"]"), "_");
+  fileName = fileName.replace(QRegularExpression("[:\"]", QRegularExpression::DotMatchesEverythingOption), "_");
   fileName = QDir::toNativeSeparators(QDir::homePath() + "/" + fileName);
   fileName = QFileDialog::getSaveFileName(this, tr("Save As"),
                                           fileName,
@@ -7288,7 +7288,8 @@ void MainWindow::slotSavePageAs()
     file.write(currentNewsTab->articleView_->toPlainText().toUtf8());
   } else {
     QString html = currentNewsTab->articleView_->exportHtml();
-    QzRegExp reg("news_descriptions", Qt::CaseInsensitive);
+    QRegularExpression reg("news_descriptions",
+        QRegularExpression::DotMatchesEverythingOption | QRegularExpression::CaseInsensitiveOption);
     html = html.replace(reg, title.toHtmlEscaped());
     reg.setPattern("<img class=\"quiterss-img\"[^>]+\\>");
     html = html.remove(reg);

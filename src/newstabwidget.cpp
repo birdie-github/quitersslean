@@ -26,7 +26,7 @@
 #if defined(Q_OS_WIN)
 #include <qt_windows.h>
 #endif
-#include <qzregexp.h>
+#include <QRegularExpression>
 
 NewsTabWidget::NewsTabWidget(QWidget *parent, TabType type, int feedId, int feedParId)
   : QWidget(parent)
@@ -1217,10 +1217,12 @@ void NewsTabWidget::updateArticleView(QModelIndex index, bool preservePosition)
       QString authorEmail = newsModel_->dataField(index.row(), "author_email").toString().toHtmlEscaped().replace(QChar(39), "&#39;");
       QString authorUri = newsModel_->dataField(index.row(), "author_uri").toString().toHtmlEscaped().replace(QChar(39), "&#39;");
 
-      QzRegExp reg("(^\\S+@\\S+\\.\\S+)", Qt::CaseInsensitive);
-      int pos = reg.indexIn(authorName);
+      QRegularExpression reg("(^\\S+@\\S+\\.\\S+)",
+          QRegularExpression::DotMatchesEverythingOption | QRegularExpression::CaseInsensitiveOption);
+      const QRegularExpressionMatch match = reg.match(authorName);
+      int pos = match.capturedStart();
       if (pos > -1) {
-        authorName.replace(reg.cap(1), QString(" <a href='mailto:%1'>%1</a>").arg(reg.cap(1)));
+        authorName.replace(match.captured(1), QString(" <a href='mailto:%1'>%1</a>").arg(match.captured(1)));
       }
 
       authorString = authorName;
@@ -1442,10 +1444,12 @@ void NewsTabWidget::loadNewspaper(int refresh)
       QString authorEmail = newsModel_->dataField(index.row(), "author_email").toString().toHtmlEscaped().replace(QChar(39), "&#39;");
       QString authorUri = newsModel_->dataField(index.row(), "author_uri").toString().toHtmlEscaped().replace(QChar(39), "&#39;");
 
-      QzRegExp reg("(^\\S+@\\S+\\.\\S+)", Qt::CaseInsensitive);
-      int pos = reg.indexIn(authorName);
+      QRegularExpression reg("(^\\S+@\\S+\\.\\S+)",
+          QRegularExpression::DotMatchesEverythingOption | QRegularExpression::CaseInsensitiveOption);
+      const QRegularExpressionMatch match = reg.match(authorName);
+      int pos = match.capturedStart();
       if (pos > -1) {
-        authorName.replace(reg.cap(1), QString(" <a href='mailto:%1'>%1</a>").arg(reg.cap(1)));
+        authorName.replace(match.captured(1), QString(" <a href='mailto:%1'>%1</a>").arg(match.captured(1)));
       }
       authorString = authorName;
 
@@ -2151,7 +2155,7 @@ int NewsTabWidget::getUnreadCount(QString countString)
 {
   if (countString.isEmpty()) return 0;
 
-  countString.remove(QzRegExp("[()]"));
+  countString.remove(QRegularExpression("[()]", QRegularExpression::DotMatchesEverythingOption));
   switch (type_) {
   case TabTypeUnread:
     return countString.toInt();

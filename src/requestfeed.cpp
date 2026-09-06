@@ -24,7 +24,7 @@
 
 #include <QDebug>
 #include <QtSql>
-#include <qzregexp.h>
+#include <QRegularExpression>
 
 #define REPLY_MAX_COUNT 10
 
@@ -285,10 +285,12 @@ void RequestFeed::finished(QNetworkReply *reply)
         }
         else {
           QString codecName;
-          QzRegExp rx("charset=([^\t]+)$", Qt::CaseInsensitive);
-          int pos = rx.indexIn(reply->header(QNetworkRequest::ContentTypeHeader).toString());
+          QRegularExpression rx("charset=([^\t]+)$",
+              QRegularExpression::DotMatchesEverythingOption | QRegularExpression::CaseInsensitiveOption);
+          QRegularExpressionMatch match = rx.match(reply->header(QNetworkRequest::ContentTypeHeader).toString());
+          int pos = match.capturedStart();
           if (pos > -1) {
-            codecName = rx.cap(1);
+            codecName = match.captured(1);
           }
 
           QByteArray data = reply->readAll();
@@ -296,7 +298,8 @@ void RequestFeed::finished(QNetworkReply *reply)
 
           rx.setPattern("&(?!([a-z0-9#]+;))");
           pos = 0;
-          while ((pos = rx.indexIn(QString::fromLatin1(data), pos)) != -1) {
+          // Latin-1 keeps match offsets aligned with the QByteArray being edited.
+          while ((pos = rx.match(QString::fromLatin1(data), pos).capturedStart()) != -1) {
             data.replace(pos, 1, "&amp;");
             pos += 1;
           }
