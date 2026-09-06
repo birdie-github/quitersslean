@@ -1,6 +1,7 @@
 /* ============================================================
 * QuiteRSS is a open-source cross-platform RSS/Atom news feeds reader
-* Copyright (C) 2011-2020 QuiteRSS Team <quiterssteam@gmail.com>
+* © 2011-2020 QuiteRSS Project
+* © 2026 Artem S. Tashkinov <aros@gmx.com> and ChatGPT
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -53,10 +54,10 @@ AboutDialog::AboutDialog(const QString &lang, QWidget *parent) :
       + QString(" Qt-%1, SQLite-%2").
       arg(QT_VERSION_STR).arg(SQLITE_VERSION)
       + "</P>"
-      + QString("<a href=\"%1\">%1</a>").arg("https://quiterss.org") +
-      "<P>Copyright &copy; 2011-2020 QuiteRSS Team "
-      + QString("<a href=\"%1\">E-mail</a>").arg("mailto:quiterssteam@gmail.com") + "</P>"
-      "</CENTER></body></html>";
+      + "<P>&copy; 2011-2020 QuiteRSS Project "
+      + "<P>&copy; 2026 Artem S. Tashkinov + ChatGPT "
+      + QString("<a href=\"%1\">E-mail</a>").arg("mailto:aros@gmx.com") + "</P>"
+      + "</CENTER></body></html>";
   QLabel *infoLabel = new QLabel(appInfo);
   infoLabel->setOpenExternalLinks(false);
   connect(infoLabel, &QLabel::linkActivated, this, [](const QString &link) {

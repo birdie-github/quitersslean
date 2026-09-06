@@ -749,6 +749,9 @@ Version 0.9.1 (31 May 2012)
   * Fixed: Hang while updating some feeds
   * Fixed: Duplicate news in RSS-feeds
 
+Version 0.90.0 (6 Sep 2026) unreleased
+  * See Git commit history
+
 Version 0.9.0 (22 May 2012)
   * Main: Database reconstruction (More...)
   * Added: Option: action on opening feed

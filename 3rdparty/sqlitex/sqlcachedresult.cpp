@@ -1,7 +1,8 @@
 /**************************************************************************
 * Extensible SQLite driver for Qt5
 * Copyright (C) 2011-2012 Michał Męciński
-* Copyright (C) 2011-2020 QuiteRSS Team <quiterssteam@gmail.com>
+* © 2011-2020 QuiteRSS Project
+* © 2026 Artem S. Tashkinov <aros@gmx.com> and ChatGPT
 *
 * This library is free software: you can redistribute it and/or modify
 * it under the terms of the GNU Lesser General Public License version 2.1
