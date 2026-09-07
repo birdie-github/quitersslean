@@ -135,20 +135,6 @@ public:
   QAction *findTextAct_;
   QAction *openHomeFeedAct_;
   QAction *shareMenuAct_;
-  QAction *emailShareAct_;
-  QAction *evernoteShareAct_;
-  QAction *facebookShareAct_;
-  QAction *livejournalShareAct_;
-  QAction *twitterShareAct_;
-  QAction *vkShareAct_;
-  QAction *linkedinShareAct_;
-  QAction *bloggerShareAct_;
-  QAction *printfriendlyShareAct_;
-  QAction *instapaperShareAct_;
-  QAction *redditShareAct_;
-  QAction *hackerNewsShareAct_;
-  QAction *telegramShareAct_;
-  QAction *viberShareAct_;
   QAction *copyLinkAct_;
   QAction *pageUpWebViewAct_;
   QAction *pageDownWebViewAct_;
@@ -502,6 +488,7 @@ private:
 
   QList<QAction *> listActions_;
   QStringList listDefaultShortcut_;
+  QString shareConfigurationMessage_;
 
   QAction *addAct_;
   QAction *addFeedAct_;

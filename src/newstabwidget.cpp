@@ -20,6 +20,7 @@
 
 #include "mainapplication.h"
 #include "settings.h"
+#include "shareservice.h"
 #include "articlecontent.h"
 #include <QNetworkRequest>
 #include <QRegularExpression>
@@ -27,7 +28,6 @@
 #if defined(Q_OS_WIN)
 #include <qt_windows.h>
 #endif
-#include <QRegularExpression>
 
 NewsTabWidget::NewsTabWidget(QWidget *parent, TabType type, int feedId, int feedParId)
   : QWidget(parent)
@@ -2021,8 +2021,6 @@ void NewsTabWidget::setTextTab(const QString &text)
  *----------------------------------------------------------------------------*/
 void NewsTabWidget::slotShareNews(QAction *action)
 {
-  bool externalApp = false;
-
   QList<QModelIndex> indexes;
   int cnt = 0;
   if (type_ < TabTypeDownloads) {
@@ -2034,121 +2032,20 @@ void NewsTabWidget::slotShareNews(QAction *action)
   for (int i = cnt-1; i >= 0; --i) {
     QString title;
     QString linkString;
-    QString content;
     if (type_ < TabTypeDownloads) {
       title = newsModel_->dataField(indexes.at(i).row(), "title").toString();
       linkString = getLinkNews(indexes.at(i).row());
-
-      content = newsModel_->dataField(indexes.at(i).row(), "content").toString();
-      QString description = newsModel_->dataField(indexes.at(i).row(), "description").toString();
-      if (content.isEmpty() || (description.length() > content.length())) {
-        content = description;
-      }
-      QTextDocumentFragment textDocument = QTextDocumentFragment::fromHtml(content);
-      content = textDocument.toPlainText();
-    }
-#if defined(Q_OS_WIN) || defined(Q_OS_OS2) || defined(Q_OS_MAC)
-    content = content.replace("\n", "%0A");
-    content = content.replace("\"", "%22");
-#endif
-
-    QUrl url;
-    if (action->objectName() == "emailShareAct") {
-      url.setUrl("mailto:");
-      QUrlQuery urlQuery;
-      urlQuery.addQueryItem("subject", title);
-      urlQuery.addQueryItem("body", linkString);
-      //#if defined(Q_OS_WIN) || defined(Q_OS_OS2) || defined(Q_OS_MAC)
-      //      urlQuery.addQueryItem("body", linkString + "%0A%0A" + content);
-      //#else
-      //      urlQuery.addQueryItem("body", linkString + "\n\n" + content);
-      //#endif
-      url.setQuery(urlQuery);
-      externalApp = true;
-    } else if (action->objectName() == "evernoteShareAct") {
-      url.setUrl("https://www.evernote.com/clip.action");
-      QUrlQuery urlQuery;
-      urlQuery.addQueryItem("url", linkString);
-      urlQuery.addQueryItem("title", title);
-      url.setQuery(urlQuery);
-    } else if (action->objectName() == "facebookShareAct") {
-      url.setUrl("https://www.facebook.com/sharer.php");
-      QUrlQuery urlQuery;
-      urlQuery.addQueryItem("u", linkString);
-      urlQuery.addQueryItem("t", title);
-      url.setQuery(urlQuery);
-    } else if (action->objectName() == "livejournalShareAct") {
-      url.setUrl("http://www.livejournal.com/update.bml");
-      QUrlQuery urlQuery;
-      urlQuery.addQueryItem("event", linkString);
-      urlQuery.addQueryItem("subject", title);
-      url.setQuery(urlQuery);
-    } else if (action->objectName() == "twitterShareAct") {
-      url.setUrl("https://twitter.com/share");
-      QUrlQuery urlQuery;
-      urlQuery.addQueryItem("url", linkString);
-      urlQuery.addQueryItem("text", title);
-      url.setQuery(urlQuery);
-    } else if (action->objectName() == "vkShareAct") {
-      url.setUrl("https://vk.com/share.php");
-      QUrlQuery urlQuery;
-      urlQuery.addQueryItem("url", linkString);
-      urlQuery.addQueryItem("title", title);
-      urlQuery.addQueryItem("description", "");
-      urlQuery.addQueryItem("image", "");
-      url.setQuery(urlQuery);
-    } else if (action->objectName() == "linkedinShareAct") {
-      url.setUrl("https://www.linkedin.com/shareArticle?mini=true");
-      QUrlQuery urlQuery;
-      urlQuery.addQueryItem("url", linkString);
-      urlQuery.addQueryItem("title", title);
-      url.setQuery(urlQuery);
-    } else if (action->objectName() == "bloggerShareAct") {
-      url.setUrl("https://www.blogger.com/blog_this.pyra?t");
-      QUrlQuery urlQuery;
-      urlQuery.addQueryItem("u", linkString);
-      urlQuery.addQueryItem("n", title);
-      url.setQuery(urlQuery);
-    } else if (action->objectName() == "printfriendlyShareAct") {
-      url.setUrl("https://www.printfriendly.com/print");
-      QUrlQuery urlQuery;
-      urlQuery.addQueryItem("url", linkString);
-      url.setQuery(urlQuery);
-    } else if (action->objectName() == "instapaperShareAct") {
-      url.setUrl("https://www.instapaper.com/hello2");
-      QUrlQuery urlQuery;
-      urlQuery.addQueryItem("url", linkString);
-      urlQuery.addQueryItem("title", title);
-      url.setQuery(urlQuery);
-    } else if (action->objectName() == "redditShareAct") {
-      url.setUrl("https://reddit.com/submit");
-      QUrlQuery urlQuery;
-      urlQuery.addQueryItem("url", linkString);
-      urlQuery.addQueryItem("title", title);
-      url.setQuery(urlQuery);
-    } else if (action->objectName() == "hackerNewsShareAct") {
-      url.setUrl("http://news.ycombinator.com/submitlink");
-      QUrlQuery urlQuery;
-      urlQuery.addQueryItem("u", linkString);
-      urlQuery.addQueryItem("t", title);
-      url.setQuery(urlQuery);
-    } else if (action->objectName() == "telegramShareAct") {
-      url.setUrl("tg://msg_url");
-      QUrlQuery urlQuery;
-      urlQuery.addQueryItem("url", linkString);
-      urlQuery.addQueryItem("text", title);
-      url.setQuery(urlQuery);
-      externalApp = true;
-    } else if (action->objectName() == "viberShareAct") {
-      url.setUrl("viber://forward");
-      QUrlQuery urlQuery;
-      urlQuery.addQueryItem("text", title + "%20" + linkString);
-      url.setQuery(urlQuery);
-      externalApp = true;
     }
 
-    if (externalApp) QDesktopServices::openUrl(url);
-    else openUrl(url);
+    QString error;
+    const QUrl url = ShareServiceLoader::createUrl(
+        action->data().toString(), title, linkString, &error);
+    if (url.isEmpty()) {
+      qWarning() << "Cannot create article sharing URL for"
+                 << action->objectName() << error;
+      continue;
+    }
+    openUrl(url);
   }
 }
 //-----------------------------------------------------------------------------

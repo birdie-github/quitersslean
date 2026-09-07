@@ -43,8 +43,8 @@ MainApplication::MainApplication(int &argc, char **argv)
   , diskCache_(0)
   , downloadManager_(0)
 {
-  setApplicationName("QuiteRss");
-  setOrganizationName("QuiteRss");
+  setApplicationName(STRAPPLICATIONNAME);
+  setOrganizationName(STRAPPLICATIONNAME);
   setApplicationVersion(STRPRODUCTVER);
   globals.init();
 

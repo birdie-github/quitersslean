@@ -13,6 +13,23 @@ listed below are retained for platform deployment utilities.
   Qt's QSQLITE plugin (used for initialization and VACUUM)
   QtSingleApplication for Qt 5: headers, library and qtsingleapplication.prf
 
+Article sharing data
+====================
+The installed application reads social-networks.ini from its resource directory
+and icons from the adjacent social-networks directory. On Linux with PREFIX=/usr,
+these are /usr/share/quiterss/social-networks.ini and
+/usr/share/quiterss/social-networks/. The qmake install target installs both.
+
+Only when the installed INI file does not exist, the application looks beside
+the user's QuiteRSS INI file for social-networks.ini and social-networks/. The
+user definition is then used in full; installed and user definitions are never
+merged. Startup diagnostics use the [article-sharing] prefix on stderr.
+
+The INI [services] order value lists service section names. Each section accepts
+name, icon, url, enabled and an optional action name used to retain shortcut and
+toolbar compatibility. URL templates support the percent-encoded placeholders
+{url} and {title}. Icons must be plain filenames within social-networks/.
+
 SQLite and libxml2 are required external libraries on EVERY platform. qmake
 uses pkg-config for include paths, library paths and transitive link flags.
 Set PKG_CONFIG_PATH to the directories containing sqlite3.pc and libxml-2.0.pc
@@ -87,12 +104,14 @@ From the application source directory:
   cd _build
   qmake-qt5 ../QuiteRSS.pro CONFIG+=release CONFIG-=debug_and_release
   mingw32-make -j2
+  mingw32-make install
   ./release/target/QuiteRSS.exe
 
-The UCRT64 shell supplies the dependency DLL paths for local testing. MSVC is
-not covered by this recipe or CI: it needs compatible external libraries and
-its own installed qtsingleapplication.prf; do not link the UCRT64 C++ archive
-into an MSVC application.
+The install target copies social-networks.ini and social-networks/ beside the
+executable. The UCRT64 shell supplies the dependency DLL paths for local
+testing. MSVC is not covered by this recipe or CI: it needs compatible external
+libraries and its own installed qtsingleapplication.prf; do not link the UCRT64
+C++ archive into an MSVC application.
 
 macOS (Homebrew, native architecture)
 ====================================

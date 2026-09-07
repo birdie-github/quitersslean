@@ -31,15 +31,18 @@
 #include "filterrulesdialog.h"
 #include "newsfiltersdialog.h"
 #include "settings.h"
+#include "shareservice.h"
 
 #if defined(Q_OS_WIN)
 #include <windows.h>
 #include <psapi.h>
 #endif
 #include <QMainWindow>
+#include <QFileInfo>
 #include <QStatusBar>
 #include <QRegularExpression>
 #include <QScreen>
+#include <QStyle>
 
 namespace {
 QSize virtualDesktopSize()
@@ -1336,89 +1339,37 @@ void MainWindow::createActions()
   shareGroup_ = new QActionGroup(this);
   shareGroup_->setExclusive(false);
 
-  emailShareAct_ = new QAction(this);
-  emailShareAct_->setObjectName("emailShareAct");
-  emailShareAct_->setText("Email");
-  emailShareAct_->setIcon(QIcon(":/images/images/email.png"));
-  shareGroup_->addAction(emailShareAct_);
+  Settings applicationSettings;
+  const QString userConfigurationDirectory =
+      QFileInfo(applicationSettings.fileName()).absolutePath();
+  const ShareServiceConfiguration shareConfiguration =
+      ShareServiceLoader::load(mainApp->resourcesDir(), userConfigurationDirectory);
+  for (const ShareService &service : shareConfiguration.services) {
+    QAction *action = new QAction(QIcon(service.iconPath), service.name, this);
+    action->setObjectName(service.actionName);
+    action->setData(service.urlTemplate);
+    shareGroup_->addAction(action);
+  }
 
-  evernoteShareAct_ = new QAction(this);
-  evernoteShareAct_->setObjectName("evernoteShareAct");
-  evernoteShareAct_->setText("Evernote");
-  evernoteShareAct_->setIcon(QIcon(":/share/images/share/evernote.png"));
-  shareGroup_->addAction(evernoteShareAct_);
+  if (shareGroup_->actions().isEmpty()) {
+    QAction *missingConfiguration = new QAction(
+        style()->standardIcon(QStyle::SP_MessageBoxCritical),
+        tr("Missing configuration!"), this);
+    missingConfiguration->setObjectName("missingShareConfigurationAct");
+    missingConfiguration->setProperty("missingShareConfiguration", true);
+    shareGroup_->addAction(missingConfiguration);
 
-  facebookShareAct_ = new QAction(this);
-  facebookShareAct_->setObjectName("facebookShareAct");
-  facebookShareAct_->setText("Facebook");
-  facebookShareAct_->setIcon(QIcon(":/share/images/share/facebook.png"));
-  shareGroup_->addAction(facebookShareAct_);
-
-  livejournalShareAct_ = new QAction(this);
-  livejournalShareAct_->setObjectName("livejournalShareAct");
-  livejournalShareAct_->setText("LiveJournal");
-  livejournalShareAct_->setIcon(QIcon(":/share/images/share/livejournal.png"));
-  shareGroup_->addAction(livejournalShareAct_);
-
-  twitterShareAct_ = new QAction(this);
-  twitterShareAct_->setObjectName("twitterShareAct");
-  twitterShareAct_->setText("Twitter");
-  twitterShareAct_->setIcon(QIcon(":/share/images/share/twitter.png"));
-  shareGroup_->addAction(twitterShareAct_);
-
-  vkShareAct_ = new QAction(this);
-  vkShareAct_->setObjectName("vkShareAct");
-  vkShareAct_->setText("VK");
-  vkShareAct_->setIcon(QIcon(":/share/images/share/vk.png"));
-  shareGroup_->addAction(vkShareAct_);
-
-  linkedinShareAct_ = new QAction(this);
-  linkedinShareAct_->setObjectName("linkedinShareAct");
-  linkedinShareAct_->setText("LinkedIn");
-  linkedinShareAct_->setIcon(QIcon(":/share/images/share/linkedin.png"));
-  shareGroup_->addAction(linkedinShareAct_);
-
-  bloggerShareAct_ = new QAction(this);
-  bloggerShareAct_->setObjectName("bloggerShareAct");
-  bloggerShareAct_->setText("Blogger");
-  bloggerShareAct_->setIcon(QIcon(":/share/images/share/blogger.png"));
-  shareGroup_->addAction(bloggerShareAct_);
-
-  printfriendlyShareAct_ = new QAction(this);
-  printfriendlyShareAct_->setObjectName("printfriendlyShareAct");
-  printfriendlyShareAct_->setText("PrintFriendly");
-  printfriendlyShareAct_->setIcon(QIcon(":/share/images/share/printfriendly.png"));
-  shareGroup_->addAction(printfriendlyShareAct_);
-
-  instapaperShareAct_ = new QAction(this);
-  instapaperShareAct_->setObjectName("instapaperShareAct");
-  instapaperShareAct_->setText("Instapaper");
-  instapaperShareAct_->setIcon(QIcon(":/share/images/share/instapaper.png"));
-  shareGroup_->addAction(instapaperShareAct_);
-
-  redditShareAct_ = new QAction(this);
-  redditShareAct_->setObjectName("redditShareAct");
-  redditShareAct_->setText("Reddit");
-  redditShareAct_->setIcon(QIcon(":/share/images/share/reddit.ico"));
-  shareGroup_->addAction(redditShareAct_);
-
-  hackerNewsShareAct_ = new QAction(this);
-  hackerNewsShareAct_->setObjectName("hackerNewsShareAct");
-  hackerNewsShareAct_->setText("HackerNews");
-  hackerNewsShareAct_->setIcon(QIcon(":/share/images/share/hackernews.png"));
-  shareGroup_->addAction(hackerNewsShareAct_);
-
-  telegramShareAct_ = new QAction(this);
-  telegramShareAct_->setObjectName("telegramShareAct");
-  telegramShareAct_->setText("Telegram");
-  telegramShareAct_->setIcon(QIcon(":/share/images/share/telegram.png"));
-  shareGroup_->addAction(telegramShareAct_);
-
-  viberShareAct_ = new QAction(this);
-  viberShareAct_->setObjectName("viberShareAct");
-  viberShareAct_->setText("Vider");
-  viberShareAct_->setIcon(QIcon(":/share/images/share/viber.png"));
-  shareGroup_->addAction(viberShareAct_);
+    shareConfigurationMessage_ =
+        tr("Article sharing configuration could not be loaded.\n\n"
+           "Install social-networks.ini and its social-networks image directory in:\n%1\n\n"
+           "If no installed definition is present, the complete user configuration may be placed in:\n%2")
+        .arg(QFileInfo(shareConfiguration.installedFile).absolutePath(),
+             QFileInfo(shareConfiguration.userFile).absolutePath());
+    if (!shareConfiguration.errors.isEmpty()) {
+      shareConfigurationMessage_.append(
+          tr("\n\nDetails:\n%1").arg(shareConfiguration.errors.join(QStringLiteral("\n"))));
+    }
+  }
 
   this->addActions(shareGroup_->actions());
   connect(shareGroup_, SIGNAL(triggered(QAction*)),
@@ -5580,7 +5531,7 @@ void MainWindow::slotPlaySound(const QString &path)
   }
 
   if (!playing) {
-#if defined(Q_OS_WIN) || defined(Q_OS_OS2)
+#if defined(Q_OS_WIN)
     QSound::play(soundPath);
 #else
     QProcess::startDetached(QStringLiteral("play"), QStringList() << soundPath);
@@ -7502,6 +7453,10 @@ void MainWindow::showCustomizeToolbarDlg(QAction *action)
  *---------------------------------------------------------------------------*/
 void MainWindow::slotShareNews(QAction *action)
 {
+  if (action->property("missingShareConfiguration").toBool()) {
+    QMessageBox::information(this, tr("Article sharing"), shareConfigurationMessage_);
+    return;
+  }
   currentNewsTab->slotShareNews(action);
 }
 // ----------------------------------------------------------------------------

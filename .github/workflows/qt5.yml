@@ -62,6 +62,7 @@ jobs:
           cd _build
           qmake-qt5 ../QuiteRSS.pro CONFIG+=release CONFIG-=debug_and_release
           mingw32-make -j2
+          mingw32-make install
 
       - name: Deploy with windeployqt
         run: |

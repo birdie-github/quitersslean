@@ -1,5 +1,6 @@
 #include "VersionRev.h"
 
+#define STRAPPLICATIONNAME "QuiteRss"
 #define STRDATE           "2026-09-06\0"
 #define STRPRODUCTVER     "0.90.0\0"
 

@@ -216,7 +216,7 @@ void ArticleImages::reset() {
 }
 QNetworkReply *ArticleImages::createRequest(Operation operation, const QNetworkRequest &request, QIODevice *) {
   const QUrl url = request.url();
-  const bool trustedIcon = url.scheme() == "qrc" && (url.path().startsWith("/images/") || url.path().startsWith("/share/"));
+  const bool trustedIcon = url.scheme() == "qrc" && url.path().startsWith("/images/");
   const bool allowed = operation == GetOperation &&
     (trustedIcon || ArticleContent::isInlineImage(url) ||
      (allowed_.contains(url) && ArticleContent::isRemoteImage(url)));

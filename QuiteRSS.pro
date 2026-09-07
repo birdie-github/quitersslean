@@ -58,8 +58,8 @@ CONFIG += c++11 link_pkgconfig
   error("libxml2 development files and pkg-config are required. Set PKG_CONFIG_PATH to the directory containing libxml-2.0.pc. See INSTALL for Linux, MSYS2 and Homebrew setup.")
 }
 PKGCONFIG += libxml-2.0
-HEADERS += src/network/networkpolicy.h src/articleview/articlecontent.h src/articleview/articleimages.h
-SOURCES += src/articleview/articlecontent.cpp src/articleview/articleimages.cpp
+HEADERS += src/network/networkpolicy.h src/articleview/articlecontent.h src/articleview/articleimages.h src/sharing/shareservice.h
+SOURCES += src/articleview/articlecontent.cpp src/articleview/articleimages.cpp src/sharing/shareservice.cpp
 
 unix:!mac:DEFINES += HAVE_X11
 
@@ -186,6 +186,7 @@ INCLUDEPATH +=  $$PWD/src \
                 $$PWD/src/notifications \
                 $$PWD/src/network \
                 $$PWD/src/articleview \
+                $$PWD/src/sharing \
 
 # Use the toolchain/command-line choice of single or dual configuration.
 CONFIG(debug, debug|release) {
@@ -272,9 +273,22 @@ unix:!mac {
   style.files = style
   style.path = $$quote($$DATA_DIR)
 
+  social_networks_config.files = social-networks.ini
+  social_networks_config.path = $$quote($$DATA_DIR)
+  social_networks_icons.files = social-networks
+  social_networks_icons.path = $$quote($$DATA_DIR)
+
   INSTALLS += target desktop target1
   INSTALLS += icon_16 icon_32 icon_48 icon_64 icon_128 icon_256
-  INSTALLS += sound style
+  INSTALLS += sound style social_networks_config social_networks_icons
+}
+
+win32 {
+  social_networks_config.files = social-networks.ini
+  social_networks_config.path = $$DESTDIR
+  social_networks_icons.files = social-networks
+  social_networks_icons.path = $$DESTDIR
+  INSTALLS += social_networks_config social_networks_icons
 }
 
 mac {
@@ -289,6 +303,8 @@ mac {
   bundle_target.files += README.md
   bundle_target.files += sound
   bundle_target.files += style
+  bundle_target.files += social-networks.ini
+  bundle_target.files += social-networks
   bundle_target.path = Contents/Resources
   QMAKE_BUNDLE_DATA += bundle_target
 
@@ -306,4 +322,5 @@ OTHER_FILES += \
     AUTHORS \
     CHANGELOG \
     INSTALL \
-    Info.plist
+    Info.plist \
+    social-networks.ini

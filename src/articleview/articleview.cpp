@@ -147,8 +147,7 @@ void ArticleView::setArticleHtml(const QString &html, bool preservePosition) {
 
 QVariant ArticleView::loadResource(int type, const QUrl &url) {
   if (type != QTextDocument::ImageResource) return QByteArray();
-  const bool icon = url.scheme() == "qrc" &&
-      (url.path().startsWith("/images/") || url.path().startsWith("/share/"));
+  const bool icon = url.scheme() == "qrc" && url.path().startsWith("/images/");
   const bool allowed = icon || ArticleContent::isInlineImage(url) ||
       (allowedImages_.contains(url) && ArticleContent::isRemoteImage(url));
   if (!allowed) return placeholder();
