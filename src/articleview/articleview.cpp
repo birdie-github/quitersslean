@@ -105,8 +105,8 @@ QString ArticleView::prepareArticle(const QString &html, const QUrl &base, const
 
 void ArticleView::setArticleHtml(const QString &html, bool preservePosition) {
   const ViewState state = saveView();
-  loading_ = true;
-  emit loadStarted();
+  // Replacing the document is synchronous, including clearing an empty feed.
+  // requestImage() starts progress only when resources actually need loading.
   QPointer<QTextDocument> old = document();
   ArticleDocument *doc = new ArticleDocument(this);
   doc->setDefaultFont(font());
