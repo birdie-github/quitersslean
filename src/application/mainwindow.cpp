@@ -1873,6 +1873,7 @@ void MainWindow::loadSettings()
   int fontSize = settings.value("feedsFontSize", qApp->font().pointSize()).toInt();
   feedsView_->setFont(QFont(fontFamily, fontSize));
   feedsModel_->font_ = feedsView_->font();
+  categoriesTree_->setFont(QFont(fontFamily, fontSize));
 
   newsListFontFamily_ = settings.value("newsFontFamily", qApp->font().family()).toString();
   newsListFontSize_ = settings.value("newsFontSize", qApp->font().pointSize()).toInt();
@@ -3609,6 +3610,7 @@ void MainWindow::showOptionDlg(int index)
         optionsDialog_->fontsTree_->topLevelItem(0)->text(2).section(", ", 1).toInt());
   feedsView_->setFont(font);
   feedsModel_->font_ = font;
+  categoriesTree_->setFont(font);
 
   newsListFontFamily_ = optionsDialog_->fontsTree_->topLevelItem(1)->text(2).section(", ", 0, 0);
   newsListFontSize_ = optionsDialog_->fontsTree_->topLevelItem(1)->text(2).section(", ", 1).toInt();
