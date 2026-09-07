@@ -38,6 +38,7 @@
 
 #include <QtWidgets>
 #include <QTimer>
+#include <QElapsedTimer>
 #include <QNetworkReply>
 
 class QListWidgetItem;
@@ -88,7 +89,7 @@ private:
   QNetworkReply *reply_;
   int redirectCount_;
   QString fileName_;
-  QTime downloadTimer_;
+  QElapsedTimer downloadTimer_;
   QTime remTime_;
   QTimer updateInfoTimer_;
   QFile outputFile_;

@@ -431,7 +431,7 @@ void NewsHeader::setColumns(const QModelIndex &indexFeed)
   MainWindow *mainWindow = mainApp->mainWindow();
   indexColumnsStr = mainWindow->feedsModel_->dataField(indexFeed, "columns").toString();
   if (!indexColumnsStr.isEmpty()) {
-    QStringList indexColumnsList = indexColumnsStr.split(",", QString::SkipEmptyParts);
+    QStringList indexColumnsList = indexColumnsStr.split(",", Qt::SkipEmptyParts);
     if (indexColumnsList.count()) {
       for (int i = 0; i < count(); ++i) {
         bool show = indexColumnsList.contains(QString::number(logicalIndex(i)));
@@ -446,7 +446,7 @@ void NewsHeader::setColumns(const QModelIndex &indexFeed)
     sortType = mainWindow->feedsModel_->dataField(indexFeed, "sortType").toInt();
   } else {
     indexColumnsStr = settings.value("columns").toString();
-    QStringList indexColumnsList = indexColumnsStr.split(",", QString::SkipEmptyParts);
+    QStringList indexColumnsList = indexColumnsStr.split(",", Qt::SkipEmptyParts);
     if (indexColumnsList.count()) {
       for (int i = 0; i < count(); ++i) {
         bool show = indexColumnsList.contains(QString::number(logicalIndex(i)));

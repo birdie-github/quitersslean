@@ -2111,9 +2111,9 @@ void OptionsDialog::loadLabels()
     QTreeWidgetItem *treeWidgetItem = new QTreeWidgetItem(strTreeItem);
     treeWidgetItem->setIcon(1, QIcon(imageLabel));
     if (!colorText.isEmpty())
-      treeWidgetItem->setTextColor(1, QColor(colorText));
+      treeWidgetItem->setForeground(1, QColor(colorText));
     if (!colorBg.isEmpty())
-      treeWidgetItem->setBackgroundColor(1, QColor(colorBg));
+      treeWidgetItem->setBackground(1, QColor(colorBg));
     labelsTree_->addTopLevelItem(treeWidgetItem);
   }
 }
@@ -2146,9 +2146,9 @@ void OptionsDialog::newLabel()
   QTreeWidgetItem *treeWidgetItem = new QTreeWidgetItem(itemStr);
   treeWidgetItem->setIcon(1, labelDialog->icon_);
   if (!colorText.isEmpty())
-    treeWidgetItem->setTextColor(1, QColor(colorText));
+    treeWidgetItem->setForeground(1, QColor(colorText));
   if (!colorBg.isEmpty())
-    treeWidgetItem->setBackgroundColor(1, QColor(colorBg));
+    treeWidgetItem->setBackground(1, QColor(colorBg));
   labelsTree_->addTopLevelItem(treeWidgetItem);
   addIdLabelList(treeWidgetItem->text(0));
 
@@ -2202,9 +2202,9 @@ void OptionsDialog::editLabel()
   treeWidgetItem->setText(3, colorBg);
   treeWidgetItem->setIcon(1, labelDialog->icon_);
   if (!colorText.isEmpty())
-    treeWidgetItem->setTextColor(1, QColor(colorText));
+    treeWidgetItem->setForeground(1, QColor(colorText));
   if (!colorBg.isEmpty())
-    treeWidgetItem->setBackgroundColor(1, QColor(colorBg));
+    treeWidgetItem->setBackground(1, QColor(colorBg));
   addIdLabelList(idLabelStr);
 
   QList<QStandardItem *> treeItems;
@@ -2522,7 +2522,7 @@ void OptionsDialog::applyPass()
   db_.transaction();
   QSqlQuery q;
   for (int i = 0; i < passTree_->topLevelItemCount(); i++) {
-    if (passTree_->isItemHidden(passTree_->topLevelItem(i))) {
+    if (passTree_->topLevelItem(i)->isHidden()) {
       QString id = passTree_->topLevelItem(i)->text(0);
       q.exec(QString("DELETE FROM passwords WHERE id=='%1'").arg(id));
     }

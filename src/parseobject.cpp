@@ -493,10 +493,10 @@ void ParseObject::addAtomNewsIntoBase(NewsItemStruct *newsItem)
   // Verify old news before a date to avoid adding them to base
   bool isOld = false;
   QDateTime pubDate_ = QDateTime::fromString(newsItem->updated, "yyyy-MM-ddTHH:mm:ss");
-  QDateTime avoidedDate_ = QDateTime(mainApp->mainWindow()->avoidedOldNewsDate_);
+  QDateTime avoidedDate_ = mainApp->mainWindow()->avoidedOldNewsDate_.startOfDay();
   if (!addSingleNewsAnyDate_) {      //
     if (avoidedOldSingleNews_ ) {     // avoid adding old single news
-      if (QDateTime(avoidedOldSingleNewsDate_) > pubDate_)
+      if (avoidedOldSingleNewsDate_.startOfDay() > pubDate_)
         isOld = true;
       } else if (mainApp->mainWindow()->avoidOldNews_ && avoidedDate_ > pubDate_) {   // avoid adding old news
         isOld = true;
@@ -805,10 +805,10 @@ void ParseObject::addRssNewsIntoBase(NewsItemStruct *newsItem)
   // Verify old news before a date to avoid adding them to base
   bool isOld = false;
   QDateTime pubDate_ = QDateTime::fromString(newsItem->updated, "yyyy-MM-ddTHH:mm:ss");
-  QDateTime avoidedDate_ = QDateTime(mainApp->mainWindow()->avoidedOldNewsDate_);
+  QDateTime avoidedDate_ = mainApp->mainWindow()->avoidedOldNewsDate_.startOfDay();
   if (!addSingleNewsAnyDate_) {      //
     if (avoidedOldSingleNews_ ) {     // avoid adding old single news
-      if (QDateTime(avoidedOldSingleNewsDate_) > pubDate_)
+      if (avoidedOldSingleNewsDate_.startOfDay() > pubDate_)
         isOld = true;
       } else if (mainApp->mainWindow()->avoidOldNews_ && avoidedDate_ > pubDate_) {   // avoid adding old news
               isOld = true;

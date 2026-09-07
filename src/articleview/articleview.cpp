@@ -74,7 +74,8 @@ ArticleView::ArticleView(QWidget *parent) : QTextBrowser(parent), images_(new Ar
   setUndoRedoEnabled(false);
   setDocument(new ArticleDocument(this));
   connect(this, &QTextBrowser::anchorClicked, this, &ArticleView::linkClicked);
-  connect(this, QOverload<const QString &>::of(&QTextBrowser::highlighted), this, &ArticleView::linkHovered);
+  connect(this, QOverload<const QUrl &>::of(&QTextBrowser::highlighted), this,
+          [this](const QUrl &url) { emit linkHovered(url.toString()); });
 }
 
 void ArticleView::disconnectObjects() {

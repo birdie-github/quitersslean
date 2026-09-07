@@ -359,7 +359,6 @@ void UpdateObject::slotGetAllFeeds()
  *---------------------------------------------------------------------------*/
 void UpdateObject::slotImportFeeds(QByteArray xmlData)
 {
-  int elementCount = 0;
   int outlineCount = 0;
   QSqlQuery q(db_);
   QList<int> idsList;
@@ -489,7 +488,6 @@ void UpdateObject::slotImportFeeds(QByteArray xmlData)
         parentIdsStack.pop();
         ++outlineCount;
       }
-      ++elementCount;
     }
     qDebug() << parentIdsStack;
   }

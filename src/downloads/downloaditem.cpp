@@ -230,7 +230,7 @@ void DownloadItem::downloadProgress(qint64 received, qint64 total)
   progressBar_->setMaximum(total > 0 ? 100 : 0);
   progressBar_->setValue(total > 0 ? received * 100 / total : 0);
   total_ = total;
-  curSpeed_ = received * 1000.0 / qMax(1, downloadTimer_.elapsed());
+  curSpeed_ = received * 1000.0 / qMax<qint64>(1, downloadTimer_.elapsed());
   received_ = received;
 }
 

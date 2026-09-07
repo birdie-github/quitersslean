@@ -272,7 +272,7 @@ QVariant FeedsModel::data(const QModelIndex &index, int role) const
         font.setBold(true);
       QFontMetrics fontMetrics(font);
 
-      if (width < fontMetrics.width(title))
+      if (width < fontMetrics.horizontalAdvance(title))
         return title;
     }
     return QString("");

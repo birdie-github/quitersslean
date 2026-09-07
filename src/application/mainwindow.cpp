@@ -691,7 +691,7 @@ void MainWindow::createCentralWidget()
         QString("QSplitter::handle {background: qlineargradient("
                 "x1: 0, y1: 0, x2: 0, y2: 1,"
                 "stop: 0 %1, stop: 0.07 %2);}").
-        arg(feedsPanel_->palette().background().color().name()).
+        arg(feedsPanel_->palette().window().color().name()).
         arg(qApp->palette().color(QPalette::Dark).name()));
   mainSplitter_->setChildrenCollapsible(false);
   mainSplitter_->addWidget(feedsWidget_);
@@ -2005,7 +2005,7 @@ void MainWindow::loadSettings()
                                "newAct,Separator,updateFeedAct,updateAllFeedsAct,"
                                "Separator,markFeedRead,Separator,autoLoadImagesToggle").toString();
 
-  foreach (QString actionStr, str.split(",", QString::SkipEmptyParts)) {
+  foreach (QString actionStr, str.split(",", Qt::SkipEmptyParts)) {
     if (actionStr == "Separator") {
       mainToolbar_->addSeparator();
     } else {
@@ -2026,7 +2026,7 @@ void MainWindow::loadSettings()
                                "newAct,Separator,updateAllFeedsAct,markFeedRead,"
                                "Separator,feedsFilter,findFeedAct").toString();
 
-  foreach (QString actionStr, str.split(",", QString::SkipEmptyParts)) {
+  foreach (QString actionStr, str.split(",", Qt::SkipEmptyParts)) {
     if (actionStr == "Separator") {
       feedsToolBar_->addSeparator();
     } else {
@@ -2825,7 +2825,7 @@ void MainWindow::slotRecountCategoryCounts(QList<int> deletedList, QList<int> st
       }
       QString idString = labelList.at(i);
       if (!idString.isEmpty() && idString != ",") {
-        QStringList idList = idString.split(",", QString::SkipEmptyParts);
+        QStringList idList = idString.split(",", Qt::SkipEmptyParts);
         foreach (QString idStr, idList) {
           int id = idStr.toInt();
           if (allCountList.contains(id)) {
@@ -3409,8 +3409,6 @@ void MainWindow::showOptionDlg(int index)
   pixmapColor.fill(notifierBackgroundColor_);
   optionsDialog_->colorsTree_->topLevelItem(22)->setIcon(0, pixmapColor);
   optionsDialog_->colorsTree_->topLevelItem(22)->setText(1, notifierBackgroundColor_);
-
-  NewsTabWidget *widget = (NewsTabWidget*)stackedWidget_->widget(TAB_WIDGET_PERMANENT);
 
   optionsDialog_->loadActionShortcut(listActions_, &listDefaultShortcut_);
 
@@ -4971,7 +4969,7 @@ void MainWindow::showFeedPropertiesDlg()
   Settings settings;
   settings.beginGroup("NewsHeader");
   QString indexColumnsStr = settings.value("columns").toString();
-  QStringList indexColumnsList = indexColumnsStr.split(",", QString::SkipEmptyParts);
+  QStringList indexColumnsList = indexColumnsStr.split(",", Qt::SkipEmptyParts);
   foreach (QString indexStr, indexColumnsList) {
     properties.columnDefault.columns.append(indexStr.toInt());
   }
@@ -5008,7 +5006,7 @@ void MainWindow::showFeedPropertiesDlg()
       properties.column.nameList.append(nextAction->text());
     }
     indexColumnsStr = feedsModel_->dataField(index, "columns").toString();
-    indexColumnsList = indexColumnsStr.split(",", QString::SkipEmptyParts);
+    indexColumnsList = indexColumnsStr.split(",", Qt::SkipEmptyParts);
     foreach (QString indexStr, indexColumnsList) {
       properties.column.columns.append(indexStr.toInt());
     }
@@ -5464,9 +5462,9 @@ void MainWindow::slotRefreshInfoTray(int newCount, int unreadCount)
       QRect rectangle(0, 0, 128, 128);
       QLinearGradient gradient(rectangle.bottomLeft(), rectangle.topLeft());
       QColor color("#117C04");
-      gradient.setColorAt(0, color.light());
+      gradient.setColorAt(0, color.lighter());
       gradient.setColorAt(0.5, color);
-      gradient.setColorAt(1, color.light());
+      gradient.setColorAt(1, color.lighter());
       trayPainter.setBrush(gradient);
       trayPainter.drawRoundedRect(rectangle, 20, 20);
       trayPainter.setFont(font);
@@ -5576,7 +5574,7 @@ void MainWindow::slotPlaySound(const QString &path)
 #if defined(Q_OS_WIN) || defined(Q_OS_OS2)
     QSound::play(soundPath);
 #else
-    QProcess::startDetached(QString("play %1").arg(soundPath));
+    QProcess::startDetached(QStringLiteral("play"), QStringList() << soundPath);
 #endif
   }
 }
@@ -5884,7 +5882,7 @@ void MainWindow::setStyleApp(QAction *pAct)
         QString("QSplitter::handle {background: qlineargradient("
                 "x1: 0, y1: 0, x2: 0, y2: 1,"
                 "stop: 0 %1, stop: 0.07 %2);}").
-        arg(feedsPanel_->palette().background().color().name()).
+        arg(feedsPanel_->palette().window().color().name()).
         arg(qApp->palette().color(QPalette::Dark).name()));
 
   if (currentNewsTab != NULL) {
@@ -7191,7 +7189,7 @@ void MainWindow::getLabelNews()
 
   if (indexes.count() == 1) {
     QModelIndex index = indexes.at(0);
-    QStringList strLabelIdList = index.data(Qt::EditRole).toString().split(",", QString::SkipEmptyParts);
+    QStringList strLabelIdList = index.data(Qt::EditRole).toString().split(",", Qt::SkipEmptyParts);
     foreach (QString strLabelId, strLabelIdList) {
       for (int i = 0; i < newsLabelGroup_->actions().count(); i++) {
         if (newsLabelGroup_->actions().at(i)->data().toString() == strLabelId)

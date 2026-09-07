@@ -240,7 +240,7 @@ void FilterRulesDialog::setData()
     matchComboBox_->setCurrentIndex(q.value(1).toInt());
 
     itemNotChecked_ = true;
-    QStringList strIdFeeds = q.value(2).toString().split(",", QString::SkipEmptyParts);
+    QStringList strIdFeeds = q.value(2).toString().split(",", Qt::SkipEmptyParts);
     foreach (QString strIdFeed, strIdFeeds) {
       QList<QTreeWidgetItem *> treeItems =
           feedsTree_->findItems(strIdFeed,

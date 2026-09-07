@@ -124,7 +124,7 @@ NewsTabWidget::NewsTabWidget(QWidget *parent, TabType type, int feedId, int feed
             QString("QSplitter::handle {background: qlineargradient("
                     "x1: 0, y1: 0, x2: 0, y2: 1,"
                     "stop: 0 %1, stop: 0.07 %2);}").
-            arg(newsPanelWidget_->palette().background().color().name()).
+            arg(newsPanelWidget_->palette().window().color().name()).
             arg(qApp->palette().color(QPalette::Dark).name()));
     } else {
       newsTabWidgetSplitter_->setOrientation(Qt::Vertical);
@@ -182,7 +182,7 @@ void NewsTabWidget::createNewsList()
                           "newsFilter,Separator,deleteNewsAct";
   QString str = settings.value("Settings/newsToolBar", actionListStr).toString();
 
-  foreach (QString actionStr, str.split(",", QString::SkipEmptyParts)) {
+  foreach (QString actionStr, str.split(",", Qt::SkipEmptyParts)) {
     if (actionStr == "Separator") {
       newsToolBar_->addSeparator();
     } else {
@@ -1710,7 +1710,7 @@ void NewsTabWidget::setBrowserPosition()
           QString("QSplitter::handle {background: qlineargradient("
                   "x1: 0, y1: 0, x2: 0, y2: 1,"
                   "stop: 0 %1, stop: 0.07 %2);}").
-          arg(newsPanelWidget_->palette().background().color().name()).
+          arg(newsPanelWidget_->palette().window().color().name()).
           arg(qApp->palette().color(QPalette::Dark).name()));
     break;
   default:
@@ -2192,7 +2192,7 @@ QString NewsTabWidget::getLinkNews(int row)
 QString NewsTabWidget::getHtmlLabels(int row)
 {
   QStringList strLabelIdList = newsModel_->dataField(row, "label").toString().
-      split(",", QString::SkipEmptyParts);
+      split(",", Qt::SkipEmptyParts);
   QString labelsString;
   QList<QTreeWidgetItem *> labelListItems = mainWindow_->categoriesTree_->getLabelListItems();
   foreach (QTreeWidgetItem *item, labelListItems) {

@@ -50,7 +50,7 @@ NewsFiltersDialog::NewsFiltersDialog(QWidget *parent)
     QSqlQuery q1;
     bool isFolder = false;
     QString strNameFeeds;
-    QStringList strIdFeeds = q.value(2).toString().split(",", QString::SkipEmptyParts);
+    QStringList strIdFeeds = q.value(2).toString().split(",", Qt::SkipEmptyParts);
     foreach (QString strIdFeed, strIdFeeds) {
       if (isFolder) strNameFeeds.append("; ");
       qStr = QString("SELECT text FROM feeds WHERE id==%1 AND xmlUrl!=''").
@@ -167,7 +167,7 @@ void NewsFiltersDialog::newFilter()
     QSqlQuery q1;
     bool isFolder = false;
     QString strNameFeeds;
-    QStringList strIdFeeds = q.value(1).toString().split(",", QString::SkipEmptyParts);
+    QStringList strIdFeeds = q.value(1).toString().split(",", Qt::SkipEmptyParts);
     foreach (QString strIdFeed, strIdFeeds) {
       if (isFolder) strNameFeeds.append("; ");
       qStr = QString("SELECT text FROM feeds WHERE id==%1 AND xmlUrl!=''").
@@ -228,7 +228,7 @@ void NewsFiltersDialog::editFilter()
     QSqlQuery q1;
     bool isFolder = false;
     QString strNameFeeds;
-    QStringList strIdFeeds = q.value(1).toString().split(",", QString::SkipEmptyParts);
+    QStringList strIdFeeds = q.value(1).toString().split(",", Qt::SkipEmptyParts);
     foreach (QString strIdFeed, strIdFeeds) {
       if (isFolder) strNameFeeds.append("; ");
       qStr = QString("SELECT text FROM feeds WHERE id==%1 AND xmlUrl!=''").
@@ -378,7 +378,7 @@ void NewsFiltersDialog::applyFilter()
       arg(filterId);
   q.exec(qStr);
   if (q.first()) {
-    QStringList strIdFeeds = q.value(0).toString().split(",", QString::SkipEmptyParts);
+    QStringList strIdFeeds = q.value(0).toString().split(",", Qt::SkipEmptyParts);
     q.finish();
     foreach (QString strIdFeed, strIdFeeds) {
       mainApp->runUserFilter(strIdFeed.toInt(), filterId);

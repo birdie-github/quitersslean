@@ -52,7 +52,7 @@ void FeedItem::setIcon(const QPixmap &icon)
 
 void FeedItem::setTitle(const QString &text, int cntNews)
 {
-  int wight = titleLabel_->fontMetrics().width(QString(" (%1)").arg(cntNews));
+  int wight = titleLabel_->fontMetrics().horizontalAdvance(QString(" (%1)").arg(cntNews));
   QString titleStr = titleLabel_->fontMetrics().elidedText(
         text, Qt::ElideRight, titleLabel_->sizeHint().width() - wight);
   titleLabel_->setText(QString("%1 (%2)").arg(titleStr).arg(cntNews));

@@ -88,7 +88,7 @@ QVariant NewsModel::data(const QModelIndex &index, int role) const
       return mainWindow->feedsModel_->dataField(feedIndex, "text").toString();
     } else if (QSqlTableModel::fieldIndex("title") == index.column()) {
       QString title = index.data(Qt::EditRole).toString();
-      if ((view_->header()->sectionSize(index.column()) - 14) < view_->header()->fontMetrics().width(title))
+      if ((view_->header()->sectionSize(index.column()) - 14) < view_->header()->fontMetrics().horizontalAdvance(title))
         return title;
     }
     return QString("");
