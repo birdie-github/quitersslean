@@ -192,6 +192,11 @@ QUrl ShareServiceLoader::createUrl(const QString &urlTemplate, const QString &ti
   return url;
 }
 
+void ShareServiceLoader::writeDiagnostic(const QString &message)
+{
+  log(message);
+}
+
 void ShareServiceLoader::log(const QString &message)
 {
   const QByteArray line = QStringLiteral("[article-sharing] %1\n").arg(message).toLocal8Bit();

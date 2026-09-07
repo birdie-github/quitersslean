@@ -42,6 +42,7 @@ public:
                                         const QString &userDirectory);
   static QUrl createUrl(const QString &urlTemplate, const QString &title,
                         const QString &articleUrl, QString *error = 0);
+  static void writeDiagnostic(const QString &message);
 
 private:
   static void log(const QString &message);

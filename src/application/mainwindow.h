@@ -68,6 +68,7 @@ public:
 
   void loadSettings();
   void saveSettings();
+  void updateNewsActionStates(bool hasSelection, bool hasNews, bool hasArticle);
 
   bool showSplashScreen_;
   bool showTrayIcon_;

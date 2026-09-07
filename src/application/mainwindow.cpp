@@ -1372,8 +1372,8 @@ void MainWindow::createActions()
   }
 
   this->addActions(shareGroup_->actions());
-  connect(shareGroup_, SIGNAL(triggered(QAction*)),
-          this, SLOT(slotShareNews(QAction*)));
+  connect(shareGroup_, &QActionGroup::triggered,
+          this, &MainWindow::slotShareNews);
 
   connect(markNewsRead_, SIGNAL(triggered()),
           this, SLOT(markNewsRead()));
@@ -6031,6 +6031,7 @@ void MainWindow::slotTabCurrentChanged(int index)
   }
 
   setTextTitle(widget->newsTitleLabel_->toolTip(), widget);
+  currentNewsTab->updateActionStates();
 }
 
 /** @brief Process tab moving
@@ -6247,6 +6248,39 @@ void MainWindow::openInExternalBrowserNews()
 void MainWindow::slotCopyLinkNews()
 {
   currentNewsTab->slotCopyLinkNews();
+}
+
+void MainWindow::updateNewsActionStates(bool hasSelection, bool hasNews,
+                                        bool hasArticle)
+{
+  openDescriptionNewsAct_->setEnabled(hasSelection);
+  openInExternalBrowserAct_->setEnabled(hasSelection);
+  markNewsRead_->setEnabled(hasSelection);
+  markStarAct_->setEnabled(hasSelection);
+  newsLabelAction_->setEnabled(hasSelection);
+  newsLabelMenuAction_->setEnabled(hasSelection);
+  shareMenuAct_->setEnabled(hasSelection);
+  deleteNewsAct_->setEnabled(hasSelection);
+  restoreNewsAct_->setEnabled(hasSelection);
+  copyLinkAct_->setEnabled(hasSelection);
+
+  for (QAction *action : newsLabelGroup_->actions())
+    action->setEnabled(hasSelection);
+  for (QAction *action : shareGroup_->actions())
+    action->setEnabled(hasSelection);
+
+  markAllNewsRead_->setEnabled(hasNews);
+  deleteAllNewsAct_->setEnabled(hasNews);
+
+  autoLoadImagesToggle_->setEnabled(hasArticle);
+  browserZoomMenu_->setEnabled(hasArticle);
+  for (QAction *action : browserZoomGroup_->actions())
+    action->setEnabled(hasArticle);
+  printAct_->setEnabled(hasArticle);
+  printPreviewAct_->setEnabled(hasArticle);
+  savePageAsAct_->setEnabled(hasArticle);
+  pageUpWebViewAct_->setEnabled(hasArticle);
+  pageDownWebViewAct_->setEnabled(hasArticle);
 }
 
 void MainWindow::slotShowLabelsMenu()

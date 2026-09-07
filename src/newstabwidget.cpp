@@ -136,6 +136,21 @@ NewsTabWidget::NewsTabWidget(QWidget *parent, TabType type, int feedId, int feed
 
   connect(this, SIGNAL(signalSetTextTab(QString,NewsTabWidget*)),
           mainWindow_, SLOT(setTextTitle(QString,NewsTabWidget*)));
+
+  if (type_ < TabTypeDownloads) {
+    connect(newsView_->selectionModel(), &QItemSelectionModel::selectionChanged,
+            this, [this](const QItemSelection &, const QItemSelection &) {
+              updateActionStates();
+            });
+    connect(newsModel_, &QAbstractItemModel::modelReset,
+            this, &NewsTabWidget::updateActionStates);
+    connect(newsModel_, &QAbstractItemModel::rowsInserted,
+            this, [this](const QModelIndex &, int, int) { updateActionStates(); });
+    connect(newsModel_, &QAbstractItemModel::rowsRemoved,
+            this, [this](const QModelIndex &, int, int) { updateActionStates(); });
+    connect(articleView_->document(), &QTextDocument::contentsChanged,
+            this, &NewsTabWidget::updateActionStates);
+  }
 }
 
 NewsTabWidget::~NewsTabWidget()
@@ -2022,14 +2037,21 @@ void NewsTabWidget::setTextTab(const QString &text)
 void NewsTabWidget::slotShareNews(QAction *action)
 {
   QList<QModelIndex> indexes;
-  int cnt = 0;
   if (type_ < TabTypeDownloads) {
     indexes = newsView_->selectionModel()->selectedRows(0);
-    cnt = indexes.count();
   }
-  if (cnt == 0) return;
+  if (indexes.isEmpty()) {
+    ShareServiceLoader::writeDiagnostic(
+        QStringLiteral("service '%1' not opened: no article is selected")
+        .arg(action->objectName()));
+    return;
+  }
 
-  for (int i = cnt-1; i >= 0; --i) {
+  ShareServiceLoader::writeDiagnostic(
+      QStringLiteral("triggered service '%1' for %2 article(s)")
+      .arg(action->objectName()).arg(indexes.count()));
+
+  for (int i = indexes.count()-1; i >= 0; --i) {
     QString title;
     QString linkString;
     if (type_ < TabTypeDownloads) {
@@ -2041,12 +2063,32 @@ void NewsTabWidget::slotShareNews(QAction *action)
     const QUrl url = ShareServiceLoader::createUrl(
         action->data().toString(), title, linkString, &error);
     if (url.isEmpty()) {
-      qWarning() << "Cannot create article sharing URL for"
-                 << action->objectName() << error;
+      const QString message = tr("Cannot create the sharing URL for %1:\n%2")
+          .arg(action->text(), error);
+      ShareServiceLoader::writeDiagnostic(message);
+      QMessageBox::warning(mainWindow_, tr("Article sharing"), message);
       continue;
     }
-    openUrl(url);
+    if (!openUrl(url)) {
+      const QString message = tr("The system could not open the sharing URL for %1.")
+          .arg(action->text());
+      ShareServiceLoader::writeDiagnostic(message);
+      QMessageBox::warning(mainWindow_, tr("Article sharing"), message);
+    }
   }
+}
+//-----------------------------------------------------------------------------
+void NewsTabWidget::updateActionStates()
+{
+  if (mainWindow_->currentNewsTab != this) return;
+
+  const bool supportsArticles = type_ < TabTypeDownloads;
+  const bool hasSelection = supportsArticles &&
+      !newsView_->selectionModel()->selectedRows(0).isEmpty();
+  const bool hasNews = supportsArticles && newsModel_->rowCount() > 0;
+  const bool hasArticle = supportsArticles &&
+      articleView_ && !articleView_->document()->isEmpty();
+  mainWindow_->updateNewsActionStates(hasSelection, hasNews, hasArticle);
 }
 //-----------------------------------------------------------------------------
 int NewsTabWidget::getUnreadCount(QString countString)
