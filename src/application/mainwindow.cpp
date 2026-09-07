@@ -93,7 +93,7 @@ MainWindow::MainWindow(QWidget *parent)
 
   loadSettings();
 
-  addOurFeed();
+  addDefaultFeed();
 
   initUpdateFeeds();
 
@@ -7736,28 +7736,26 @@ void MainWindow::setStatusFeed(int feedId, QString status)
   }
 }
 
-void MainWindow::addOurFeed()
+void MainWindow::addDefaultFeed()
 {
   if (mainApp->dbFileExists()) return;
 
-  QPixmap icon(":/images/quiterss16");
+  QPixmap icon(":/images/ycombinator256");
   QByteArray iconData;
   QBuffer buffer(&iconData);
   buffer.open(QIODevice::WriteOnly);
   icon.save(&buffer, "PNG");
   buffer.close();
 
-  QString xmlUrl = "https://quiterss.org/en/rss.xml";
-  if (mainApp->language() == "ru")
-    xmlUrl = "https://quiterss.org/ru/rss.xml";
+  QString xmlUrl = "https://hnrss.org/best";
 
   QSqlQuery q;
   q.prepare("INSERT INTO feeds(text, title, xmlUrl, htmlUrl, created, parentId, rowToParent, image) "
             "VALUES(?, ?, ?, ?, ?, ?, ?, ?)");
-  q.addBindValue("QuiteRSS");
-  q.addBindValue("QuiteRSS");
+  q.addBindValue("Hacker News: Best");
+  q.addBindValue("Hacker News: Best");
   q.addBindValue(xmlUrl);
-  q.addBindValue("https://quiterss.org");
+  q.addBindValue("https://news.ycombinator.com/best");
   q.addBindValue(QDateTime::currentDateTimeUtc().toString(Qt::ISODate));
   q.addBindValue(0);
   q.addBindValue(0);
