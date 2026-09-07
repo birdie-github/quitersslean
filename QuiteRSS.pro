@@ -1,5 +1,5 @@
 # Apply architecture optimization safely
-x86_64 {
+contains(QT_ARCH, x86_64) {
     QMAKE_CXXFLAGS += -march=x86-64-v2
 }
 
@@ -205,7 +205,6 @@ RCC_DIR = $${BUILD_DIR}/rcc
   error("QtSingleApplication for Qt 5 is required. Install its development package with qtsingleapplication.prf; on Fedora: qtsingleapplication-qt5-devel. For Windows/macOS and QMAKEFEATURES setup see INSTALL.")
 }
 include(3rdparty/sqlite.pri)
-#include(lang/lang.pri)
 
 win32|mac {
   TARGET = QuiteRSS
@@ -266,9 +265,6 @@ unix:!mac {
   icon_128.path = $$quote($$PREFIX/share/icons/hicolor/128x128/apps)
   icon_256.path = $$quote($$PREFIX/share/icons/hicolor/256x256/apps)
 
-#  translations.files = $$quote($$DESTDIR/lang)
-#  translations.path =  $$quote($$DATA_DIR)
-#  translations.CONFIG += no_check_exist
 
   sound.files = sound
   sound.path = $$quote($$DATA_DIR)
@@ -278,7 +274,7 @@ unix:!mac {
 
   INSTALLS += target desktop target1
   INSTALLS += icon_16 icon_32 icon_48 icon_64 icon_128 icon_256
-  INSTALLS += translations sound style
+  INSTALLS += sound style
 }
 
 mac {
@@ -296,11 +292,8 @@ mac {
   bundle_target.path = Contents/Resources
   QMAKE_BUNDLE_DATA += bundle_target
 
-#  translations.files = $$quote($$DESTDIR/lang)
-#  translations.path =  Contents/Resources
-#  QMAKE_BUNDLE_DATA += translations
 
-  INSTALLS += bundle_target translations
+  INSTALLS += bundle_target
 }
 
 RESOURCES += \

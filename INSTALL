@@ -1,10 +1,14 @@
 Build dependencies
 ==================
+Application translation catalogs have been removed. Building/installing the
+application does not require lrelease or a lang directory. Qt tools packages
+listed below are retained for platform deployment utilities.
+
   GCC or Clang and make (Windows recipe: MSYS2 UCRT64 GCC)
   SQLite 3.30.1 or newer, including development headers and sqlite3.pc
   libxml2 development headers and libxml-2.0.pc
   pkg-config (pkgconf is supported)
-  Qt 5.15.x development packages, qmake and lrelease
+  Qt 5.15.x development packages and qmake
   Qt modules: Core, Gui, Widgets, PrintSupport, Multimedia, Network, Sql, Xml
   Qt's QSQLITE plugin (used for initialization and VACUUM)
   QtSingleApplication for Qt 5: headers, library and qtsingleapplication.prf
@@ -54,8 +58,9 @@ Linux (Fedora 44)
   sudo make install
 
 Other Linux distributions need the equivalent development packages and Qt 5
-QtSingleApplication feature. qmake may be named qmake or qmake-qt5. For Clang,
-add QMAKE_CC=clang QMAKE_CXX=clang++ QMAKE_LINK=clang++ QMAKE_LINK_C=clang.
+QtSingleApplication feature. qmake may be named qmake or qmake-qt5. For Clang on Linux,
+install clang and lld, then pass -spec linux-clang and QMAKE_LFLAGS+=-fuse-ld=lld
+to qmake so compiler-specific LTO flags match the compiler and linker.
 
 Windows (MSYS2 UCRT64, x86-64)
 =============================
@@ -76,11 +81,11 @@ From the application source directory:
   export PKG_CONFIG_PATH="$(cygpath -m /ucrt64/lib/pkgconfig)"
   dep_work="$(cygpath -m "$HOME/quitersslean-deps-ucrt64")"
   /ucrt64/bin/python scripts/prepare-qtsingleapplication.py \
-    --work-dir "$dep_work" --qmake qmake --make mingw32-make
+    --work-dir "$dep_work" --qmake qmake-qt5 --make mingw32-make
   export QMAKEFEATURES="$dep_work/install/features"
   mkdir _build
   cd _build
-  qmake ../QuiteRSS.pro CONFIG+=release CONFIG-=debug_and_release
+  qmake-qt5 ../QuiteRSS.pro CONFIG+=release CONFIG-=debug_and_release
   mingw32-make -j2
   ./release/target/QuiteRSS.exe
 
@@ -143,5 +148,5 @@ verification to work around deployment mistakes.
 
 After a build, check database creation/reopening, in-memory database save/restore,
 Unicode sorting and REGEXP, a second-instance launch, HTTPS feeds and images,
-notifications, printing/export and translations. Windows/macOS builds still
+notifications and printing/export. Windows/macOS builds still
 need these runtime checks; compilation alone cannot establish them.

@@ -6,17 +6,25 @@ jobs:
     container: fedora:44
     strategy:
       matrix:
-        compiler: [g++, clang++]
+        include:
+          - compiler: g++
+            spec: linux-g++
+          - compiler: clang++
+            spec: linux-clang
     steps:
       - name: Install dependencies
         run: |
-          dnf install -y git gcc-c++ clang make pkgconf-pkg-config qt5-qtbase-devel qt5-qttools-devel qt5-qtmultimedia-devel qtsingleapplication-qt5-devel sqlite-devel libxml2-devel
+          dnf install -y git gcc-c++ clang lld make pkgconf-pkg-config qt5-qtbase-devel qt5-qttools-devel qt5-qtmultimedia-devel qtsingleapplication-qt5-devel sqlite-devel libxml2-devel
       - uses: actions/checkout@v4
       - name: Build
         run: |
           mkdir _build
           cd _build
-          qmake-qt5 ../QuiteRSS.pro CONFIG+=release CONFIG-=debug_and_release QMAKE_CXX=${{ matrix.compiler }} QMAKE_LINK=${{ matrix.compiler }}
+          if [ "${{ matrix.compiler }}" = "clang++" ]; then
+            qmake-qt5 -spec ${{ matrix.spec }} ../QuiteRSS.pro CONFIG+=release CONFIG-=debug_and_release QMAKE_LFLAGS+=-fuse-ld=lld
+          else
+            qmake-qt5 -spec ${{ matrix.spec }} ../QuiteRSS.pro CONFIG+=release CONFIG-=debug_and_release
+          fi
           make -j2
 
   windows:
@@ -51,7 +59,7 @@ jobs:
           export QMAKEFEATURES="$dep_work/install/features"
           mkdir _build
           cd _build
-          qmake-qt5 ../QuiteRSS.pro CONFIG+=release CONFIG-=debug_and_release QMAKE_LRELEASE=lrelease-qt5
+          qmake-qt5 ../QuiteRSS.pro CONFIG+=release CONFIG-=debug_and_release
           mingw32-make -j2
 
   macos:
