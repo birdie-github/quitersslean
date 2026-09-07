@@ -17,6 +17,7 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 * ============================================================ */
 #include "notificationswidget.h"
+#include <QScreen>
 
 #include "mainapplication.h"
 #include "notificationsfeeditem.h"
@@ -108,7 +109,7 @@ NotificationWidget::NotificationWidget(QList<int> idFeedList,
   }
 
   if (screen_ == -1) {
-    screen_ = QApplication::desktop()->screenNumber(mainApp->mainWindow());
+    screen_ = QGuiApplication::screens().indexOf(mainApp->mainWindow()->screen());
   }
 
   int transparency = 255*(100-transparency_)/100;
@@ -400,23 +401,25 @@ NotificationWidget::~NotificationWidget()
 
 void NotificationWidget::showEvent(QShowEvent*)
 {
+  const QList<QScreen *> screens = QGuiApplication::screens();
+  // Fall back if the main window has no screen or a saved monitor was removed.
+  QScreen *screen = screen_ >= 0 && screen_ < screens.size()
+      ? screens.at(screen_) : QGuiApplication::primaryScreen();
+  if (!screen) return;
+  const QRect available = screen->availableGeometry();
   QPoint point;
   switch (position_) {
   case 0:
-    point = QPoint(QApplication::desktop()->availableGeometry(screen_).topLeft().x(),
-                   QApplication::desktop()->availableGeometry(screen_).topLeft().y());
+    point = available.topLeft();
     break;
   case 1:
-    point = QPoint(QApplication::desktop()->availableGeometry(screen_).topRight().x()-width(),
-                   QApplication::desktop()->availableGeometry(screen_).topRight().y());
+    point = available.topRight() - QPoint(width(), 0);
     break;
   case 2:
-    point = QPoint(QApplication::desktop()->availableGeometry(screen_).bottomLeft().x(),
-                   QApplication::desktop()->availableGeometry(screen_).bottomLeft().y()-height());
+    point = available.bottomLeft() - QPoint(0, height());
     break;
   default:
-    point = QPoint(QApplication::desktop()->availableGeometry(screen_).bottomRight().x()-width(),
-                   QApplication::desktop()->availableGeometry(screen_).bottomRight().y()-height());
+    point = available.bottomRight() - QPoint(width(), height());
     break;
   }
   move(point);

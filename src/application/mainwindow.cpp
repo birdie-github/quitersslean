@@ -39,6 +39,15 @@
 #include <QMainWindow>
 #include <QStatusBar>
 #include <QRegularExpression>
+#include <QScreen>
+
+namespace {
+QSize virtualDesktopSize()
+{
+  QScreen *screen = QGuiApplication::primaryScreen();
+  return screen ? screen->virtualGeometry().size() : QSize();
+}
+}
 
 // ---------------------------------------------------------------------------
 MainWindow::MainWindow(QWidget *parent)
@@ -487,7 +496,7 @@ void MainWindow::createFeedsWidget()
 
 #define CATEGORIES_HEIGHT 210
   QList <int> sizes;
-  sizes << QApplication::desktop()->height() << CATEGORIES_HEIGHT;
+  sizes << virtualDesktopSize().height() << CATEGORIES_HEIGHT;
   feedsSplitter_->setSizes(sizes);
 
   QVBoxLayout *feedsLayout = new QVBoxLayout();
@@ -700,7 +709,7 @@ void MainWindow::createCentralWidget()
 
 #define FEEDS_WIDTH 180
   QList <int> sizes;
-  sizes << FEEDS_WIDTH << QApplication::desktop()->width();
+  sizes << FEEDS_WIDTH << virtualDesktopSize().width();
   mainSplitter_->setSizes(sizes);
 
   QHBoxLayout *mainLayout1 = new QHBoxLayout();
@@ -2170,7 +2179,7 @@ void MainWindow::loadSettings()
     showCategoriesButton_->setIcon(QIcon(":/images/images/panel_show.png"));
     showCategoriesButton_->setToolTip(tr("Show Categories"));
     QList <int> sizes;
-    sizes << QApplication::desktop()->height() << 20;
+    sizes << virtualDesktopSize().height() << 20;
     feedsSplitter_->setSizes(sizes);
   }
   bool expandCategories = settings.value("categoriesTreeExpanded", true).toBool();

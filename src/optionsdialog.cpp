@@ -17,6 +17,7 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 * ============================================================ */
 #include "optionsdialog.h"
+#include <QScreen>
 #include "articlecontent.h"
 #include <QDesktopServices>
 
@@ -167,17 +168,12 @@ OptionsDialog::OptionsDialog(QWidget *parent)
 
 void OptionsDialog::showEvent(QShowEvent*event)
 {
-  int desktopWidth = QApplication::desktop()->availableGeometry().width();
-  int desktopHeight = QApplication::desktop()->availableGeometry().height();
-  int maxWidth = desktopWidth - (frameSize().width() - width());
-  int maxHeight = desktopHeight - (frameSize().height() - height());
-
-  setMaximumSize(maxWidth, maxHeight);
-
-  if (frameSize().height() >= desktopHeight) {
-    QPoint point = QPoint(QApplication::desktop()->availableGeometry().topLeft().x(),
-                          QApplication::desktop()->availableGeometry().topLeft().y());
-    move(point);
+  if (QScreen *screen = QGuiApplication::primaryScreen()) {
+    const QRect available = screen->availableGeometry();
+    const int maxWidth = available.width() - (frameSize().width() - width());
+    const int maxHeight = available.height() - (frameSize().height() - height());
+    setMaximumSize(maxWidth, maxHeight);
+    if (frameSize().height() >= available.height()) move(available.topLeft());
   }
 
   Dialog::showEvent(event);
@@ -883,7 +879,7 @@ void OptionsDialog::createNotifierWidget()
 
   screenNotify_ = new QComboBox();
   screenNotify_->addItem("-1");
-  for (int i = 0; i < QApplication::desktop()->screenCount(); ++i) {
+  for (int i = 0; i < QGuiApplication::screens().size(); ++i) {
     screenNotify_->addItem(QString::number(i));
   }
   screenNotify_->setCurrentIndex(1);
