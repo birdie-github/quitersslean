@@ -51,6 +51,7 @@ jobs:
             mingw-w64-ucrt-x86_64-sqlite3
             mingw-w64-ucrt-x86_64-libxml2
             mingw-w64-ucrt-x86_64-openssl
+            mingw-w64-ucrt-x86_64-ntldd
       - name: Prepare external QtSingleApplication and build
         run: |
           export PKG_CONFIG_PATH="$(cygpath -m /ucrt64/lib/pkgconfig)"
@@ -61,6 +62,66 @@ jobs:
           cd _build
           qmake-qt5 ../QuiteRSS.pro CONFIG+=release CONFIG-=debug_and_release
           mingw32-make -j2
+
+      - name: Deploy with windeployqt
+        run: |
+          # Workaround for MSYS2 Qt5 packages: windeployqt looks for "qmake"
+          ln -sf /ucrt64/bin/qmake-qt5.exe /ucrt64/bin/qmake.exe || true
+
+          DEPLOY_DIR=release/target
+          EXE="$DEPLOY_DIR/QuiteRSS.exe"
+
+          cd _build
+          # Deploy into the same folder that contains QuiteRSS.exe
+          # --release          → only release DLLs
+          # --compiler-runtime → copy MinGW/UCRT runtime DLLs
+          # --verbose 1        → useful log in the Actions output
+          windeployqt-qt5 \
+            --release \
+            --compiler-runtime \
+            --no-opengl-sw \
+            --no-angle \
+            --no-translations \
+            --verbose 1 \
+            "$EXE"
+
+          echo "=== Collecting MSYS2 runtime dependencies ==="
+
+          find "$DEPLOY_DIR" \
+            \( -iname '*.exe' -o -iname '*.dll' \) \
+            -print0 |
+          while IFS= read -r -d '' binary; do
+            ntldd -R "$binary" 2>/dev/null || true
+          done |
+          awk '$2 == "=>" {
+            name=$1
+            path=$3
+            gsub(/\\/, "/", path)
+
+            if (tolower(path) ~ /\/ucrt64\/bin\//)
+              print name
+          }' |
+          sort -fu |
+          while IFS= read -r dll; do
+            src="/ucrt64/bin/$dll"
+
+            if [ -f "$src" ]; then
+              if [ ! -f "$DEPLOY_DIR/$dll" ]; then
+                cp "$src" "$DEPLOY_DIR/"
+                echo "Copied $dll"
+              fi
+            else
+              echo "WARNING: unresolved MSYS2 dependency: $dll"
+            fi
+          done
+
+      - name: Upload Windows build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: QuiteRSS-Windows-${{ github.sha }}
+          path: _build/release/target/
+          if-no-files-found: error
+          retention-days: 14
 
   macos:
     runs-on: macos-15
