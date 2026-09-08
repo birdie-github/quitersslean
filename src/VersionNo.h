@@ -1,10 +1,10 @@
 #include "VersionRev.h"
 
 #define STRAPPLICATIONNAME "QuiteRss"
-#define STRDATE           "2026-09-06\0"
-#define STRPRODUCTVER     "0.90.0\0"
+#define STRDATE           "2026-09-08\0"
+#define STRPRODUCTVER     "0.90.1\0"
 
-#define VERSION           0,90,0
+#define VERSION           0,90,1
 #define PRODUCTVER        VERSION,0
 #define FILEVER           VERSION,VCS_REVISION
 

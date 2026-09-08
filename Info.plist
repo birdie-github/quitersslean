@@ -21,9 +21,9 @@
     <key>CFBundleDisplayName</key>
     <string>@EXECUTABLE@</string>
     <key>CFBundleShortVersionString</key>
-    <string>0.90.0</string>
+    <string>0.90.1</string>
     <key>NSHumanReadableCopyright</key>
-    <string>(C) 2011-2020 QuiteRSS Project</string>
+    <string>(C) 2011-2020 QuiteRSS Project; (C) 2026 Artem S. Tashkinov and ChatGPT</string>
     <key>NSPrincipalClass</key>
     <string>NSApplication</string>
     <key>NSHighResolutionCapable</key>

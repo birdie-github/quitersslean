@@ -1,3 +1,29 @@
+Version 0.90.1 (8 Sep 2026) unreleased
+
+  * Fix unwanted in-memory database saves when moving to tray.
+  * Fix application menu behavior on the news article state.
+  * Fix unbounded cleanup history with publication-age retention; feeds database (feeds.db) is now properly cleaned up on exit and respects your article retention settings.
+
+Version 0.90.0 (6 Sep 2026) unreleased
+  * Transforms into a pure Qt5 application.
+  * Removes browser behavior, browser tabs/navigation/preferences and ad blocking.
+  * Replaces `QtWebKit` with `QTextBrowser`/`QTextDocument` (articles can still be read in the app!).
+  * Articles display sanitized feed-provided content; web links open externally.
+  * Retains reader tabs, newspaper mode, search within articles, selection/copy, zoom, printing/export, and article actions.
+  * Implements controlled image fetching, TLS certificate verification, supported-format negotiation and optional image diagnostics.
+  * Requires installed Qt5 `QtSingleApplication` instead of the bundled copy.
+  * Updates Linux CI to use a Fedora 44 container and packaged dependencies.
+  * Updates Windows CI to actually make it work.
+  * Removes the bundled `3rdparty/qtsingleapplication` directory.
+  * Drops the `3rdparty/sqlite` directory, without changing its build rules.
+  * Fixes Windows and MacOS builds (now that we've dropped built-in SQLite)
+  * Removes FTP support and drops `3rdparty/qftp`.
+  * Replaces `QzRegExp` uses with `QRegularExpression`/`QRegularExpressionMatch`, and drops `3rdparty/qupzilla`.
+  * Applies certain functional patches past version 0.19.4.
+  * Sharing methods are now dynamic and moved to an ini file, `social-networks.ini`.
+  * Adds Link Time Optimization (LTO) by default for all targets.
+  * All compilation warnings fixed.
+
 Version 0.19.4 (21 Apr 2020)
   * Added: Share. Viber, Telegram
   * Added: Support Media-RSS
@@ -749,8 +775,6 @@ Version 0.9.1 (31 May 2012)
   * Fixed: Hang while updating some feeds
   * Fixed: Duplicate news in RSS-feeds
 
-Version 0.90.0 (6 Sep 2026) unreleased
-  * See Git commit history
 
 Version 0.9.0 (22 May 2012)
   * Main: Database reconstruction (More...)
