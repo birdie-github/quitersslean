@@ -13,6 +13,22 @@ listed below are retained for platform deployment utilities.
   Qt's QSQLITE plugin (used for initialization and VACUUM)
   QtSingleApplication for Qt 5: headers, library and qtsingleapplication.prf
 
+Article age retention
+=====================
+With shutdown cleanup and its maximum-age option enabled, ordinary RSS/Atom
+updates ignore entries older than the publication-age cutoff. The first
+successful fetch of a new feed is exempt; emptying an existing feed is not.
+On shutdown, expired dated articles are physically removed, including old
+duplicate records. Existing unread/starred/labeled protections still apply
+to articles that have not already been cleaned up.
+
+Count-based cleanup keeps duplicate records until they expire by age. Entries
+without a usable publisher date retain receipt-age cleanup and duplicate
+records. Legacy synthetic receipt timestamps are treated conservatively as
+undated. The manual cleanup wizard retains its independent receipt-age rules.
+Changing the age window later cannot restore already removed articles, but a
+subsequent feed update can import entries allowed by the new window.
+
 Article sharing data
 ====================
 The installed application reads social-networks.ini from its resource directory

@@ -22,6 +22,8 @@
 #include "database.h"
 #include "VersionNo.h"
 #include "common.h"
+#include "newsretention.h"
+#include "settings.h"
 
 #include <QDebug>
 #include <QDesktopServices>
@@ -121,7 +123,8 @@ void ParseObject::slotParse(const QByteArray &xmlData, const int &feedId,
   avoidedOldSingleNewsDate_ = QDate::currentDate();
   QSqlQuery q(db_);
   q.setForwardOnly(true);
-  q.exec(QString("SELECT duplicateNewsMode, xmlUrl, addSingleNewsAnyDateOn, avoidedOldSingleNewsDateOn, avoidedOldSingleNewsDate"
+  retentionCutoff_ = QDateTime();
+  q.exec(QString("SELECT duplicateNewsMode, xmlUrl, addSingleNewsAnyDateOn, avoidedOldSingleNewsDateOn, avoidedOldSingleNewsDate, updated"
                  " FROM feeds WHERE id=='%1'").arg(parseFeedId_));
   if (q.first()) {
     duplicateNewsMode_ = q.value(0).toBool();
@@ -129,6 +132,15 @@ void ParseObject::slotParse(const QByteArray &xmlData, const int &feedId,
     addSingleNewsAnyDate_ = q.value(2).toBool();
     avoidedOldSingleNews_ = q.value(3).toBool();
     avoidedOldSingleNewsDate_ = q.value(4).toDate();
+    // An actual new feed gets its initial history, even if every entry is old.
+    // An emptied existing feed still has an update timestamp.
+    Settings settings;
+    if (!q.value(5).toString().isEmpty() &&
+        settings.value("Settings/cleanupOnShutdown", true).toBool() &&
+        settings.value("Settings/dayClearUpOn", true).toBool()) {
+      retentionCutoff_ = NewsRetention::cutoff(
+          settings.value("Settings/maxDayClearUp", 30).toInt());
+    }
   }
 
   // id not found (ex. feed deleted while updating)
@@ -247,6 +259,15 @@ void ParseObject::slotParse(const QByteArray &xmlData, const int &feedId,
     titleList_.clear();
     publishedList_.clear();
     linkList_.clear();
+  }
+
+  // A failed/unsupported first response must not consume the initial-fetch
+  // exception by recording a successful update timestamp.
+  if (feedType != "feed" && feedType != "rss" && feedType != "rdf:RDF") {
+    q.finish();
+    db_.rollback();
+    emit signalFinishUpdate(parseFeedId_, false, 0, tr("Unsupported or invalid feed"));
+    return;
   }
 
   // Set feed update time and receive data from server time
@@ -452,6 +473,7 @@ void ParseObject::parseAtom(const QString &feedUrl, const QDomDocument &doc)
 
 void ParseObject::addAtomNewsIntoBase(NewsItemStruct *newsItem)
 {
+  if (NewsRetention::expired(newsItem->updated, retentionCutoff_)) return;
   Common::sleep(5);
 
   // search news duplicates in base
@@ -716,6 +738,7 @@ void ParseObject::parseRss(const QString &feedUrl, const QDomDocument &doc)
 
 void ParseObject::addRssNewsIntoBase(NewsItemStruct *newsItem)
 {
+  if (NewsRetention::expired(newsItem->updated, retentionCutoff_)) return;
   Common::sleep(5);
 
   // search news duplicates in base

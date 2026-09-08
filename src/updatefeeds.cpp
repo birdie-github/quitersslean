@@ -28,6 +28,8 @@
 #define UPDATE_INTERVAL 3000
 #define UPDATE_INTERVAL_MIN 500
 
+#include "newsretention.h"
+
 UpdateFeeds::UpdateFeeds(QObject *parent, bool addFeed)
   : QObject(parent)
   , updateObject_(NULL)
@@ -1227,6 +1229,11 @@ void UpdateObject::startCleanUp(bool isShutdown, QStringList feedsIdList, QList<
   QSqlQuery q(db_);
   QString qStr;
 
+  // Only the automatic maximum-age policy also filters incoming entries.
+  // The manual wizard must not purge identities using its independent limits.
+  const QDateTime retentionCutoff = isShutdown && cleanupOn && dayCleanUpOn
+      ? NewsRetention::cutoff(maxDayCleanUp) : QDateTime();
+
   if (isShutdown) {
     q.exec("UPDATE news SET new=0 WHERE new==1");
     q.exec("UPDATE news SET read=2 WHERE read==1");
@@ -1244,7 +1251,37 @@ void UpdateObject::startCleanUp(bool isShutdown, QStringList feedsIdList, QList<
       int countDelNews = 0;
       int countAllNews = 0;
 
-      qStr = QString("SELECT undeleteCount FROM feeds WHERE id=='%1'").arg(feedId);
+      if (retentionCutoff.isValid()) {
+        QString eligible = QStringLiteral("deleted>=2 OR (deleted<2");
+        if (neverUnreadCleanUp) eligible += QStringLiteral(" AND read!=0");
+        if (neverStarCleanUp) eligible += QStringLiteral(" AND starred==0");
+        if (neverLabelCleanUp)
+          eligible += QStringLiteral(" AND (label=='' OR label==',' OR label IS NULL)");
+        eligible += QLatin1Char(')');
+        q.prepare("SELECT id, published FROM news WHERE feedId=? AND (" + eligible + ")");
+        q.addBindValue(feedId);
+        QList<int> expiredIds;
+        if (q.exec()) {
+          while (q.next()) {
+            if (NewsRetention::expired(q.value(1).toString(), retentionCutoff))
+              expiredIds.append(q.value(0).toInt());
+          }
+        } else {
+          qWarning() << "Age cleanup selection failed:" << q.lastError().text();
+        }
+        q.finish();
+        // Finish the SELECT before modifying the table it traverses.
+        QSqlQuery remove(db_);
+        remove.prepare("DELETE FROM news WHERE id=? AND feedId=?");
+        for (int id : expiredIds) {
+          remove.bindValue(0, id);
+          remove.bindValue(1, feedId);
+          if (!remove.exec())
+            qWarning() << "Age cleanup deletion failed:" << remove.lastError().text();
+        }
+      }
+
+      qStr = QString("SELECT count(*) FROM news WHERE feedId=='%1' AND deleted==0").arg(feedId);
       q.exec(qStr);
       if (q.next()) countAllNews = q.value(0).toInt();
 
@@ -1256,7 +1293,7 @@ void UpdateObject::startCleanUp(bool isShutdown, QStringList feedsIdList, QList<
                               "category='', new='', read='', starred='', label='', "
                               "deleteDate='', feedParentId='', deleted=2");
 
-      qStr = QString("SELECT id, received FROM news WHERE feedId=='%1' AND deleted == 0").
+      qStr = QString("SELECT id, received, published FROM news WHERE feedId=='%1' AND deleted == 0").
           arg(feedId);
       if (neverUnreadCleanUp) qStr.append(" AND read!=0");
       if (neverStarCleanUp) qStr.append(" AND starred==0");
@@ -1278,7 +1315,11 @@ void UpdateObject::startCleanUp(bool isShutdown, QStringList feedsIdList, QList<
         }
 
         QDateTime dateTime = QDateTime::fromString(q.value(1).toString(), Qt::ISODate);
-        if (dayCleanUpOn &&
+        // Dated entries were handled above using publication age. Undated
+        // entries retain receipt-age cleanup and their duplicate identities.
+        const bool useReceiptAge = !isShutdown ||
+            !NewsRetention::publicationDate(q.value(2).toString()).isValid();
+        if (dayCleanUpOn && useReceiptAge &&
             (dateTime.daysTo(QDateTime::currentDateTime()) > maxDayCleanUp)) {
           if (fullCleanUp)
             qStr = QString("DELETE FROM news WHERE id='%1'").arg(newsId);

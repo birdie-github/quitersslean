@@ -132,6 +132,7 @@ private:
   QStringList publishedList_;
 
   QDateTime lastBuildDate_;
+  QDateTime retentionCutoff_;
 
 };
 

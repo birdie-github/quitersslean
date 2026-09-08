@@ -761,7 +761,12 @@ void OptionsDialog::createFeedsWidget()
   cleanupOnShutdownBox_ = new QGroupBox(tr("Enable cleanup on shutdown"));
   cleanupOnShutdownBox_->setCheckable(true);
 
-  dayCleanUpOn_ = new QCheckBox(tr("Maximum age of news in days to keep:"));
+  dayCleanUpOn_ = new QCheckBox(tr("Maximum publication age in days to keep:"));
+  dayCleanUpOn_->setToolTip(tr(
+      "Removes expired articles on shutdown and ignores expired incoming articles on later updates. "
+      "The first successful fetch of a new feed is exempt. Unread, starred and labeled articles "
+      "are preserved according to the options below. Articles without a usable publication date "
+      "use their received date for cleanup and retain a record to prevent reappearance."));
   maxDayCleanUp_ = new QSpinBox();
   maxDayCleanUp_->setEnabled(false);
   maxDayCleanUp_->setRange(0, 9999);
