@@ -316,8 +316,6 @@ void MainWindow::slotPlaceToTray()
 
   saveSettings();
 
-  mainApp->updateFeeds()->saveMemoryDatabase();
-
   isMinimizeToTray_ = false;
 }
 

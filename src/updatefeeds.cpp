@@ -1422,10 +1422,14 @@ void UpdateObject::startCleanUp(bool isShutdown, QStringList feedsIdList, QList<
   if (!mainApp->storeDBMemory()) {
     if ((cleanupOn && optimizeDB) || !isShutdown)
       db_.exec("VACUUM");
-  } else {
+  } else if (isShutdown) {
+    // Persist on actual exit, even when shutdown cleanup is disabled.
     saveMemoryDatabase();
-    if ((cleanupOn && optimizeDB) || !isShutdown)
+    if (cleanupOn && optimizeDB)
       Database::setVacuum();
+  } else {
+    // Manual cleanup stays in memory until the save timer or actual exit.
+    db_.exec("VACUUM");
   }
 
   emit signalFinishCleanUp(countDeleted);
