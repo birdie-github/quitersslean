@@ -65,6 +65,11 @@ constexpr Setting<bool> openNewsWebViewOn = {"Settings/openNewsWebViewOn", true}
 constexpr Setting<int> timeoutRequest = {"Settings/timeoutRequest", 15};
 constexpr Setting<int> numberRequest = {"Settings/numberRequest", 10};
 constexpr Setting<int> numberRepeats = {"Settings/numberRepeats", 2};
+
+extern const Setting<QString> toolBarStyle;
+extern const Setting<QString> toolBarIconSize;
+extern const Setting<QString> feedsToolBarIconSize;
+extern const Setting<QString> newsToolBarIconSize;
 } // namespace AppSettings
 
 #endif // SETTINGS_H

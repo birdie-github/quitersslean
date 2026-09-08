@@ -82,3 +82,10 @@ bool Settings::contains(const QString &key)
 {
   return storage()->contains(fullKey(key));
 }
+
+namespace AppSettings {
+const Setting<QString> toolBarStyle = {"Settings/toolBarStyle", QStringLiteral("toolBarStyleTuI_")};
+const Setting<QString> toolBarIconSize = {"Settings/toolBarIconSize", QStringLiteral("toolBarIconNormal_")};
+const Setting<QString> feedsToolBarIconSize = {"Settings/feedsToolBarIconSize", QStringLiteral("toolBarIconSmall_")};
+const Setting<QString> newsToolBarIconSize = {"Settings/newsToolBarIconSize", QStringLiteral("toolBarIconSmall_")};
+} // namespace AppSettings

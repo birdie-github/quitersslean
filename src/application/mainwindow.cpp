@@ -1995,10 +1995,10 @@ void MainWindow::loadSettings()
     }
   }
 
-  setToolBarStyle(settings.value("toolBarStyle", "toolBarStyleTuI_").toString());
-  QString iconStr = settings.value("toolBarIconSize", "toolBarIconNormal_").toString();
+  setToolBarStyle(AppSettings::toolBarStyle.get());
+  QString iconStr = AppSettings::toolBarIconSize.get();
   setToolBarIconSize(mainToolbar_, iconStr);
-  iconStr = settings.value("feedsToolBarIconSize", "toolBarIconSmall_").toString();
+  iconStr = AppSettings::feedsToolBarIconSize.get();
   setToolBarIconSize(feedsToolBar_, iconStr);
 
   str = settings.value("styleApplication", "defaultStyle_").toString();

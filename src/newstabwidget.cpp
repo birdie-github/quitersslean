@@ -385,7 +385,7 @@ void NewsTabWidget::setSettings(bool init, bool newTab)
   if (newTab) {
     if (type_ < TabTypeDownloads) {
       newsTabWidgetSplitter_->restoreState(settings.value("NewsTabSplitterState").toByteArray());
-      QString iconStr = settings.value("Settings/newsToolBarIconSize", "toolBarIconSmall_").toString();
+      QString iconStr = AppSettings::newsToolBarIconSize.get();
       mainWindow_->setToolBarIconSize(newsToolBar_, iconStr);
 
       newsView_->setFont(
