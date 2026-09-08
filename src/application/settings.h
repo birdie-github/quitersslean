@@ -20,16 +20,13 @@
 #define SETTINGS_H
 
 #include <QSettings>
+#include <QStringList>
 #include <QVariant>
 
 class Settings
 {
 public:
-  explicit Settings();
-  ~Settings();
-
   static void createSettings(const QString &fileName = QString());
-  static QSettings* getSettings();
   static void syncSettings();
   QString fileName();
 
@@ -41,7 +38,9 @@ public:
   bool contains(const QString &key);
 
 private:
-  static QSettings* settings_;
+  static QSettings *storage();
+  QString fullKey(const QString &key) const;
+  QStringList groups_;
 
 };
 

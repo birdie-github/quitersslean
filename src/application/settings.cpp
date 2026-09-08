@@ -19,69 +19,77 @@
 #include "settings.h"
 
 #include <QCoreApplication>
+#include <memory>
 
-QSettings *Settings::settings_ = 0;
-
-Settings::Settings()
-{
-  if (!settings_->group().isEmpty())
-    settings_->endGroup();
-}
-
-Settings::~Settings()
-{
-  if (!settings_->group().isEmpty())
-    settings_->endGroup();
+namespace {
+// Initialized once on the main thread, before any workers are started.
+QString settingsFileName;
+QString settingsOrganization;
+QString settingsApplication;
+bool settingsCreated = false;
 }
 
 void Settings::createSettings(const QString &fileName)
 {
-  if (!fileName.isEmpty()) {
-    settings_ = new QSettings(fileName, QSettings::IniFormat);
-  } else {
-    settings_ = new QSettings(QSettings::IniFormat,
-                              QSettings::UserScope,
-                              QCoreApplication::organizationName(),
-                              QCoreApplication::applicationName());
-  }
+  Q_ASSERT(!settingsCreated);
+  settingsFileName = fileName;
+  settingsOrganization = QCoreApplication::organizationName();
+  settingsApplication = QCoreApplication::applicationName();
+  settingsCreated = true;
+  storage();
 }
 
-QSettings* Settings::getSettings()
+QSettings *Settings::storage()
 {
-    return settings_;
+  Q_ASSERT(settingsCreated);
+  // Distinct objects per thread, kept alive across temporary Settings wrappers.
+  // QSettings shares changes to the same location within this process.
+  static thread_local std::unique_ptr<QSettings> settings(
+      settingsFileName.isEmpty()
+      ? new QSettings(QSettings::IniFormat, QSettings::UserScope,
+                      settingsOrganization, settingsApplication)
+      : new QSettings(settingsFileName, QSettings::IniFormat));
+  return settings.get();
 }
 
 void Settings::syncSettings()
 {
-  settings_->sync();
+  storage()->sync();
 }
 
 QString Settings::fileName()
 {
-  return settings_->fileName();
+  return storage()->fileName();
 }
 
 void Settings::beginGroup(const QString &prefix)
 {
-  settings_->beginGroup(prefix);
+  groups_.append(prefix);
 }
 
 void Settings::endGroup()
 {
-  settings_->endGroup();
+  if (!groups_.isEmpty())
+    groups_.removeLast();
+}
+
+QString Settings::fullKey(const QString &key) const
+{
+  // Leave slash normalization to QSettings, including legacy shortcut keys.
+  return groups_.isEmpty() ? key : groups_.join('/') + '/' + key;
 }
 
 void Settings::setValue(const QString &key, const QVariant &defaultValue)
 {
-  settings_->setValue(key, defaultValue);
+  storage()->setValue(fullKey(key), defaultValue);
 }
 
 QVariant Settings::value(const QString &key, const QVariant &defaultValue)
 {
-  return settings_->value(key, defaultValue);
+  return storage()->value(fullKey(key), defaultValue);
 }
 
 bool Settings::contains(const QString &key)
 {
-  return settings_->contains(key);
+  return storage()->contains(fullKey(key));
 }
