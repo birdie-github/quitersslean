@@ -57,7 +57,6 @@ MainWindow::MainWindow(QWidget *parent)
   : QMainWindow(parent)
   , isMinimizeToTray_(true)
   , currentNewsTab(NULL)
-  , isOpeningLink_(false)
   , feedsFilterAction_(NULL)
   , newsFilterAction_(NULL)
   , newsView_(NULL)
@@ -107,9 +106,6 @@ MainWindow::MainWindow(QWidget *parent)
   connect(this, SIGNAL(signalPlaySoundNewNews()),
           SLOT(slotPlaySoundNewNews()), Qt::QueuedConnection);
 
-  connect(&timerLinkOpening_, SIGNAL(timeout()),
-          this, SLOT(slotTimerLinkOpening()));
-
   connect(mainApp->downloadManager(), SIGNAL(signalShowDownloads(bool)),
           this, SLOT(showDownloadManager(bool)));
   connect(mainApp->downloadManager(), SIGNAL(signalUpdateInfo(QString)),
@@ -137,7 +133,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
   if (closingTray_ && showTrayIcon_) {
     event->ignore();
-    isOpeningLink_ = false;
 
     oldState = windowState();
     emit signalPlaceToTray();
@@ -184,8 +179,6 @@ void MainWindow::quitApp()
 // ---------------------------------------------------------------------------
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 {
-  static int deactivateState = 0;
-
   if (obj == this) {
     if (event->type() == QEvent::KeyPress) {
       QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
@@ -229,32 +222,8 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
   else if (event->type() == QEvent::WindowActivate) {
     activationStateChangedTime_ = QDateTime::currentMSecsSinceEpoch();
   }
-  // Process  open link in browser in background
   else if (event->type() == QEvent::WindowDeactivate) {
-    if (isOpeningLink_ && openLinkInBackground_) {
-      isOpeningLink_ = false;
-      timerLinkOpening_.start(openingLinkTimeout_);
-      deactivateState = 1;
-    }
     activationStateChangedTime_ = QDateTime::currentMSecsSinceEpoch();
-  }
-  // deactivation has painted
-  else if ((event->type() == QEvent::Paint) && (deactivateState == 1)) {
-    deactivateState = 2;
-  }
-  // deactivation in done. Reactivating
-  else if ((deactivateState == 2) && timerLinkOpening_.isActive()) {
-    deactivateState = 3;
-    if (!isActiveWindow()) {
-      setWindowState(windowState() & ~Qt::WindowActive);
-      show();
-      raise();
-      activateWindow();
-    }
-  }
-  // activating had painted
-  else if ((deactivateState == 3) && (event->type() == QEvent::Paint)) {
-    deactivateState = 0;
   } else if (event->type() == QEvent::Hide) {
     if (minimizingTray_  && showTrayIcon_ && !isMinimizeToTray_) {
       emit signalPlaceToTray();
@@ -265,25 +234,11 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
   return QMainWindow::eventFilter(obj, event);
 }
 
-/** @brief Process send link to external browser in background
- *---------------------------------------------------------------------------*/
-void MainWindow::slotTimerLinkOpening()
-{
-  timerLinkOpening_.stop();
-  if (!isActiveWindow()) {
-    setWindowState(windowState() & ~Qt::WindowActive);
-    show();
-    raise();
-    activateWindow();
-  }
-}
-
 /** @brief Process changing window state
  *---------------------------------------------------------------------------*/
 void MainWindow::changeEvent(QEvent *event)
 {
   if (event->type() == QEvent::WindowStateChange) {
-    isOpeningLink_ = false;
     if (isMinimized()) {
       oldState = ((QWindowStateChangeEvent*)event)->oldState();
     } else {
@@ -2041,9 +1996,6 @@ void MainWindow::loadSettings()
   default: bottomBrowserPositionAct_->setChecked(true);
   }
 
-  openLinkInBackground_ = settings.value("openLinkInBackground", true).toBool();
-  openingLinkTimeout_ = settings.value("openingLinkTimeout", 1000).toInt();
-
   stayOnTopAct_->setChecked(settings.value("stayOnTop", false).toBool());
   if (stayOnTopAct_->isChecked())
     setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
@@ -2253,9 +2205,6 @@ void MainWindow::saveSettings()
 
   settings.setValue("newsLayout", newsLayout_);
   settings.setValue("browserPosition", browserPosition_);
-
-  settings.setValue("openLinkInBackground", openLinkInBackground_);
-  settings.setValue("openingLinkTimeout", openingLinkTimeout_);
 
   settings.setValue("stayOnTop", stayOnTopAct_->isChecked());
 
@@ -3161,7 +3110,9 @@ void MainWindow::showOptionDlg(int index)
 
   optionsDialog_->autoLoadImages_->setChecked(autoLoadImages_);
   optionsDialog_->defaultZoomPages_->setValue(defaultZoomPages_);
-  optionsDialog_->openLinkInBackground_->setChecked(openLinkInBackground_);
+  const int browserMode = AppSettings::externalBrowserOn.get();
+  optionsDialog_->customExternalBrowser_->setChecked(browserMode == 2 || browserMode == -1);
+  optionsDialog_->externalBrowser_->setText(AppSettings::externalBrowser.get());
 
   optionsDialog_->downloadLocationEdit_->setText(downloadLocation_);
   optionsDialog_->askDownloadLocation_->setChecked(askDownloadLocation_);
@@ -3495,7 +3446,8 @@ void MainWindow::showOptionDlg(int index)
   AppSettings::numberRepeats.set(numberRepeats);
 
   autoLoadImages_ = optionsDialog_->autoLoadImages_->isChecked();
-  openLinkInBackground_ = optionsDialog_->openLinkInBackground_->isChecked();
+  AppSettings::externalBrowserOn.set(optionsDialog_->customExternalBrowser_->isChecked() ? 2 : 1);
+  AppSettings::externalBrowser.set(optionsDialog_->externalBrowser_->text());
   defaultZoomPages_ = optionsDialog_->defaultZoomPages_->value();
 
   downloadLocation_ = optionsDialog_->downloadLocationEdit_->text();
@@ -4524,8 +4476,8 @@ void MainWindow::retranslateStrings()
 
   openDescriptionNewsAct_->setText(tr("Open News"));
   openDescriptionNewsAct_->setToolTip(tr("Open News Description"));
-  openInExternalBrowserAct_->setText(tr("Open in External Browser"));
-  openInExternalBrowserAct_->setToolTip(tr("Open News in External Browser"));
+  openInExternalBrowserAct_->setText(tr("Open"));
+  openInExternalBrowserAct_->setToolTip(tr("Open"));
   markStarAct_->setText(tr("Star"));
   markStarAct_->setToolTip(tr("Mark News Star"));
   deleteNewsAct_->setText(tr("Delete"));
@@ -5516,6 +5468,7 @@ void MainWindow::slotPlaySound(const QString &path)
 #if defined(Q_OS_WIN)
     QSound::play(soundPath);
 #else
+    qInfo() << "Launching" << QStringLiteral("play") << "arguments:" << (QStringList() << soundPath);
     QProcess::startDetached(QStringLiteral("play"), QStringList() << soundPath);
 #endif
   }
@@ -6669,7 +6622,7 @@ void MainWindow::browserZoom(QAction *action)
  *---------------------------------------------------------------------------*/
 void MainWindow::slotReportProblem()
 {
-  QDesktopServices::openUrl(QUrl("https://github.com/QuiteRSS/quiterss/issues"));
+  mainApp->openExternalUrl(QUrl("https://github.com/QuiteRSS/quiterss/issues"));
 }
 
 /** @brief Print browser page
@@ -7504,7 +7457,7 @@ void MainWindow::slotOpenHomeFeed()
   index = feedsProxyModel_->mapToSource(index);
 
   QString homePage = feedsModel_->dataField(index, "htmlUrl").toString();
-  if (ArticleContent::isExternalLink(homePage)) QDesktopServices::openUrl(homePage);
+  if (ArticleContent::isExternalLink(homePage)) mainApp->openExternalUrl(homePage);
 }
 
 /** @brief Sort feed and folders by title

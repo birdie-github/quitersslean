@@ -84,6 +84,7 @@ bool Settings::contains(const QString &key)
 }
 
 namespace AppSettings {
+const Setting<QString> externalBrowser = {"Settings/externalBrowser", QString()};
 const Setting<QString> toolBarStyle = {"Settings/toolBarStyle", QStringLiteral("toolBarStyleTuI_")};
 const Setting<QString> toolBarIconSize = {"Settings/toolBarIconSize", QStringLiteral("toolBarIconNormal_")};
 const Setting<QString> feedsToolBarIconSize = {"Settings/feedsToolBarIconSize", QStringLiteral("toolBarIconSmall_")};

@@ -48,7 +48,7 @@ UpdateAppDialog::UpdateAppDialog(const QString &lang, QWidget *parent, bool show
     infoLabel->setOpenExternalLinks(false);
     connect(infoLabel, &QLabel::linkActivated, this, [](const QString &link) {
       const QUrl url(link);
-      if (ArticleContent::isExternalLink(url)) QDesktopServices::openUrl(url);
+      if (ArticleContent::isExternalLink(url)) mainApp->openExternalUrl(url);
     });
 
     history_ = new QTextBrowser(this);
@@ -57,7 +57,7 @@ UpdateAppDialog::UpdateAppDialog(const QString &lang, QWidget *parent, bool show
     history_->setOpenExternalLinks(false);
     history_->setOpenLinks(false);
     connect(history_, &QTextBrowser::anchorClicked, this, [](const QUrl &url) {
-      if (ArticleContent::isExternalLink(url)) QDesktopServices::openUrl(url);
+      if (ArticleContent::isExternalLink(url)) mainApp->openExternalUrl(url);
     });
 
     remindAboutVersion_ = new QCheckBox(tr("Don't remind about this version"), this);
@@ -213,6 +213,7 @@ void UpdateAppDialog::updaterRun()
   close();
 #if defined(Q_OS_WIN)
   QString updaterFile = QCoreApplication::applicationDirPath() + "/Updater.exe";
+  qInfo() << "Launching" << updaterFile;
   ShellExecute(0, 0, (wchar_t *)updaterFile.utf16(), 0, 0, SW_SHOWNORMAL);
 #endif
 }

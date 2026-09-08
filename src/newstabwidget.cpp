@@ -1567,7 +1567,7 @@ void NewsTabWidget::loadNewspaper(int refresh)
       QString openBrowserAction = QString("<span class=\"open-browser\">"
                                           "<a href=\"quiterss://open.browser.ui?#%1\" title='%2'>"
                                           "<img width='16' height='16' class='quiterss-img' id=\"openBrowser%1\" src=\"qrc:/images/openBrowser\"/></a></span>").
-          arg(newsId).arg(tr("Open News in External Browser"));
+          arg(newsId).arg(tr("Open"));
       QString deleteAction = QString("<span class=\"delete-action\">"
                                      "<a href=\"quiterss://delete.action.ui?#%1\" title='%2'>"
                                      "<img width='16' height='16' class='quiterss-img' id=\"deleteAction%1\" src=\"qrc:/images/delete\"/></a></span>").
@@ -1752,8 +1752,7 @@ void NewsTabWidget::slotTabClose()
 bool NewsTabWidget::openUrl(const QUrl &url)
 {
   if (!ArticleContent::isExternalLink(url)) return false;
-  mainWindow_->isOpeningLink_ = true;
-  return QDesktopServices::openUrl(url);
+  return mainApp->openExternalUrl(url);
 }
 //----------------------------------------------------------------------------
 void NewsTabWidget::slotFindText(const QString &text)
@@ -1833,7 +1832,7 @@ void NewsTabWidget::showArticleContextMenu(const QPoint &p)
   const QUrl link(articleView_->anchorAt(p));
   if (ArticleContent::isExternalLink(link)) {
     linkUrl_ = link;
-    menu.addAction(tr("Open Link in External Browser"), this, SLOT(openUrlInExternalBrowser()));
+    menu.addAction(tr("Open"), this, SLOT(openUrlInExternalBrowser()));
     menu.addAction(tr("Copy Link"), [link]() { QApplication::clipboard()->setText(link.toString()); });
     if (ArticleContent::isRemoteImage(link)) {
       menu.addAction(tr("Save Link..."), [link]() {

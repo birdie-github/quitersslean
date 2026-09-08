@@ -19,7 +19,7 @@
 /*This file is prepared for Doxygen automatic documentation generation.*/
 #include "feedpropertiesdialog.h"
 #include "articlecontent.h"
-#include <QDesktopServices>
+#include "mainapplication.h"
 
 FeedPropertiesDialog::FeedPropertiesDialog(bool isFeed, QWidget *parent)
   : Dialog(parent)
@@ -128,7 +128,7 @@ QWidget *FeedPropertiesDialog::createGeneralTab()
   labelHomepage->setOpenExternalLinks(false);
   connect(labelHomepage, &QLabel::linkActivated, this, [](const QString &link) {
     const QUrl url(link);
-    if (ArticleContent::isExternalLink(url)) QDesktopServices::openUrl(url);
+    if (ArticleContent::isExternalLink(url)) mainApp->openExternalUrl(url);
   });
   layoutGeneralHomepage->addWidget(labelHomepageCapt);
   layoutGeneralHomepage->addWidget(labelHomepage, 1);

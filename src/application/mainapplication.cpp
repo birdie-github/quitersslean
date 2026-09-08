@@ -29,6 +29,9 @@
 #include "VersionNo.h"
 
 #include <QScreen>
+#include <QDesktopServices>
+#include <QProcess>
+#include "articlecontent.h"
 
 MainApplication::MainApplication(int &argc, char **argv)
   : QtSingleApplication(argc, argv)
@@ -520,4 +523,48 @@ void MainApplication::setProxy()
     QNetworkProxyFactory::setUseSystemConfiguration(true);
   else
     QNetworkProxy::setApplicationProxy(networkProxy_);
+}
+
+bool MainApplication::openExternalUrl(const QUrl &url)
+{
+  if (!ArticleContent::isExternalLink(url)) return false;
+  const int mode = AppSettings::externalBrowserOn.get();
+  if (url.scheme() == QLatin1String("mailto") || (mode != 2 && mode != -1)) {
+    qInfo() << "Opening" << QString::fromUtf8(url.toEncoded())
+            << (url.scheme() == QLatin1String("mailto")
+                ? "using default email application (system URL handler)"
+                : "using default web browser (system URL handler)");
+    const bool opened = QDesktopServices::openUrl(url);
+    if (!opened) qInfo() << "Failed to hand off" << QString::fromUtf8(url.toEncoded());
+    return opened;
+  }
+
+  const QString command = AppSettings::externalBrowser.get().trimmed();
+  const QString link = QString::fromUtf8(url.toEncoded());
+  bool started = false;
+  if (!command.isEmpty()) {
+#ifdef Q_OS_MAC
+    // Preserve the legacy macOS application-name/application-bundle behavior.
+    const QStringList arguments = QStringList() << "-a" << command << link;
+    qInfo() << "Launching" << QStringLiteral("open") << "arguments:" << arguments;
+    started = QProcess::startDetached(QStringLiteral("open"), arguments);
+#else
+    // Preserve command arguments without passing article URLs through a shell.
+    // Also accept an unquoted executable path containing spaces.
+    QStringList arguments = QFileInfo(command).isFile()
+        ? QStringList(command) : QProcess::splitCommand(command);
+    if (!arguments.isEmpty()) {
+      const QString program = arguments.takeFirst();
+      arguments.append(link);
+      qInfo() << "Launching" << program << "arguments:" << arguments;
+      started = QProcess::startDetached(program, arguments);
+    }
+#endif
+  }
+  if (!started) {
+    qInfo() << "Failed to launch custom browser" << command << "for" << link;
+    QMessageBox::warning(mainWindow_, tr("External Browser"),
+                         tr("Could not start the configured browser. Check the custom browser setting in Article View."));
+  }
+  return started;
 }

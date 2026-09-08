@@ -75,7 +75,8 @@ public:
   // browser
   QCheckBox *autoLoadImages_;
   QSpinBox *defaultZoomPages_;
-  QCheckBox *openLinkInBackground_;
+  QRadioButton *customExternalBrowser_;
+  LineEdit *externalBrowser_;
 
   LineEdit *downloadLocationEdit_;
   QCheckBox *askDownloadLocation_;

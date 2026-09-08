@@ -62,7 +62,7 @@ AboutDialog::AboutDialog(const QString &lang, QWidget *parent) :
   infoLabel->setOpenExternalLinks(false);
   connect(infoLabel, &QLabel::linkActivated, this, [](const QString &link) {
     const QUrl url(link);
-    if (ArticleContent::isExternalLink(url)) QDesktopServices::openUrl(url);
+    if (ArticleContent::isExternalLink(url)) mainApp->openExternalUrl(url);
   });
   infoLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
 
@@ -88,7 +88,7 @@ AboutDialog::AboutDialog(const QString &lang, QWidget *parent) :
   historyTextBrowser->setOpenExternalLinks(false);
   historyTextBrowser->setOpenLinks(false);
   connect(historyTextBrowser, &QTextBrowser::anchorClicked, this, [](const QUrl &url) {
-    if (ArticleContent::isExternalLink(url)) QDesktopServices::openUrl(url);
+    if (ArticleContent::isExternalLink(url)) mainApp->openExternalUrl(url);
   });
   if (lang.contains("ru", Qt::CaseInsensitive))
     file.setFileName(":/file/HISTORY_RU");

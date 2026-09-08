@@ -198,8 +198,6 @@ public:
   QDate avoidedOldNewsDate_;
 
   bool autoLoadImages_;
-  bool openLinkInBackground_;
-  bool isOpeningLink_;  //!< Flag - link is being opened
 
   QString downloadLocation_;
   bool askDownloadLocation_;
@@ -300,7 +298,6 @@ signals:
 
 private slots:
   void showMainMenu();
-  void slotTimerLinkOpening();
   void slotVisibledFeedsWidget();
   void updateIconToolBarNull(bool feedsWidgetVisible);
   void setFeedRead(int type, int feedId, FeedReedType feedReadType,
@@ -701,8 +698,6 @@ private:
 
   int feedIdOld_;
 
-  int  openingLinkTimeout_;  //!< During this time we'll trying swithing back to apllication
-  QTimer timerLinkOpening_;
 
   QWidget *categoriesPanel_;
   QLabel *categoriesLabel_;

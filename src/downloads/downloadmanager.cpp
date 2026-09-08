@@ -188,6 +188,7 @@ void DownloadManager::startExternalApp(const QString &executable, const QUrl &ur
   QStringList arguments;
   arguments.append(url.toEncoded());
 
+  qInfo() << "Opening" << QString::fromUtf8(url.toEncoded()) << "using" << executable << "arguments:" << arguments;
   bool success = QProcess::startDetached(executable, arguments);
 
   if (!success) {

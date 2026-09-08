@@ -72,6 +72,7 @@ public:
   UpdateFeeds *updateFeeds();
   void runUserFilter(int feedId, int filterId);
   DownloadManager *downloadManager();
+  bool openExternalUrl(const QUrl &url);
 
   void setTranslateApplication();
   QString language() const { return langFileName_; }

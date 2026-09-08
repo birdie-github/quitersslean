@@ -181,6 +181,11 @@ void OptionsDialog::showEvent(QShowEvent*event)
 
 void OptionsDialog::acceptDialog()
 {
+  if (customExternalBrowser_->isChecked() && externalBrowser_->text().trimmed().isEmpty()) {
+    QMessageBox::warning(this, tr("External Browser"), tr("Enter a custom browser or select the system default browser."));
+    return;
+  }
+
 #if defined(Q_OS_WIN)
   if (mainApp->isPortableAppsCom()) {
     if (autoRunEnabled_->isChecked()) {
@@ -493,11 +498,40 @@ void OptionsDialog::createNetworkConnectionsWidget()
  *----------------------------------------------------------------------------*/
 void OptionsDialog::createBrowserWidget()
 {
+  QRadioButton *systemBrowser = new QRadioButton(tr("System default web browser"));
+  customExternalBrowser_ = new QRadioButton(tr("Custom web browser"));
+  QButtonGroup *browserGroup = new QButtonGroup(this);
+  browserGroup->addButton(systemBrowser);
+  browserGroup->addButton(customExternalBrowser_);
+  systemBrowser->setChecked(true);
+  externalBrowser_ = new LineEdit();
+#ifdef Q_OS_MAC
+  externalBrowser_->setPlaceholderText(tr("Application name or application bundle path"));
+#else
+  externalBrowser_->setPlaceholderText(tr("Browser command, including any arguments"));
+  externalBrowser_->setToolTip(tr("Use double quotes around paths containing spaces. The article URL is appended automatically."));
+#endif
+  QPushButton *browseBrowser = new QPushButton(tr("Browse..."));
+  externalBrowser_->setEnabled(false);
+  browseBrowser->setEnabled(false);
+  connect(customExternalBrowser_, &QRadioButton::toggled,
+          externalBrowser_, &QWidget::setEnabled);
+  connect(customExternalBrowser_, &QRadioButton::toggled,
+          browseBrowser, &QWidget::setEnabled);
+  connect(browseBrowser, &QPushButton::clicked, this, [this]() {
+    const QString file = QFileDialog::getOpenFileName(
+        this, tr("Select Browser"), QString(), tr("All files (*)"),
+        nullptr, QFileDialog::DontResolveSymlinks);
+    if (!file.isEmpty()) externalBrowser_->setText(QDir::toNativeSeparators(file));
+  });
+  QHBoxLayout *browserCommandLayout = new QHBoxLayout();
+  browserCommandLayout->addWidget(externalBrowser_, 1);
+  browserCommandLayout->addWidget(browseBrowser);
+
   autoLoadImages_ = new QCheckBox(tr("Load images"));
   defaultZoomPages_ = new QSpinBox();
   defaultZoomPages_->setRange(30, 300);
   defaultZoomPages_->setSuffix(" %");
-  openLinkInBackground_ = new QCheckBox(tr("Open links in external browser in background (experimental)"));
   QHBoxLayout *zoomLayout = new QHBoxLayout();
   zoomLayout->addWidget(new QLabel(tr("Default article zoom:")));
   zoomLayout->addWidget(defaultZoomPages_);
@@ -505,7 +539,11 @@ void OptionsDialog::createBrowserWidget()
   QVBoxLayout *articleLayout = new QVBoxLayout();
   articleLayout->addWidget(autoLoadImages_);
   articleLayout->addLayout(zoomLayout);
-  articleLayout->addWidget(openLinkInBackground_);
+  articleLayout->addSpacing(12);
+  articleLayout->addWidget(new QLabel(tr("Open links in:")));
+  articleLayout->addWidget(systemBrowser);
+  articleLayout->addWidget(customExternalBrowser_);
+  articleLayout->addLayout(browserCommandLayout);
   articleLayout->addStretch();
   QWidget *articleWidget = new QWidget();
   articleWidget->setLayout(articleLayout);
@@ -1391,7 +1429,7 @@ void OptionsDialog::createLanguageWidget()
   linkTranslators->setOpenExternalLinks(false);
   connect(linkTranslators, &QLabel::linkActivated, this, [](const QString &link) {
     const QUrl url(link);
-    if (ArticleContent::isExternalLink(url)) QDesktopServices::openUrl(url);
+    if (ArticleContent::isExternalLink(url)) mainApp->openExternalUrl(url);
   });
 
   QVBoxLayout *languageLayout = new QVBoxLayout();

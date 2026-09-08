@@ -421,6 +421,7 @@ void DownloadItem::openFile()
   }
   QFileInfo info(fileName_);
   if (info.exists()) {
+    qInfo() << "Opening" << info.absoluteFilePath() << "using system file handler";
     QDesktopServices::openUrl(QUrl::fromLocalFile(info.absoluteFilePath()));
   } else {
     QMessageBox::warning(item_->listWidget()->parentWidget(),
@@ -435,9 +436,11 @@ void DownloadItem::openFolder()
   QString winFileName = fileName_;
   winFileName.replace(QLatin1Char('/'), "\\");
   QString shExArg = "/e,/select,\"" + winFileName + "\"";
+  qInfo() << "Launching" << QStringLiteral("explorer.exe") << "arguments:" << shExArg;
   ShellExecute(NULL, NULL, TEXT("explorer.exe"), (wchar_t*)shExArg.utf16(), NULL, SW_SHOW);
 #else
   QFileInfo info(fileName_);
+  qInfo() << "Opening" << info.path() << "using system folder handler";
   QDesktopServices::openUrl(QUrl::fromLocalFile(info.path()));
 #endif
 }

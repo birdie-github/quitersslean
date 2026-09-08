@@ -20,6 +20,7 @@
 
 #include <QStandardPaths>
 #include <QDir>
+#include <cstdio>
 
 #include "globals.h"
 #include "settings.h"
@@ -30,6 +31,12 @@ LogFile::LogFile()
 
 void LogFile::msgHandler(QtMsgType type, const QMessageLogContext &, const QString &msg)
 {
+  // Launch diagnostics must reach the console even when file logging is enabled.
+  if (type == QtInfoMsg) {
+    const QByteArray text = msg.toLocal8Bit();
+    std::fprintf(stderr, "%s\n", text.constData());
+    std::fflush(stderr);
+  }
   if (!globals.isInit_)
     return;
   if (msg.startsWith("libpng warning: iCCP"))
@@ -57,6 +64,9 @@ void LogFile::msgHandler(QtMsgType type, const QMessageLogContext &, const QStri
   if (file.isOpen()) {
     QString currentDateTime = QDateTime::currentDateTime().toString("dd.MM.yyyy hh:mm:ss.zzz");
     switch (type) {
+    case QtInfoMsg:
+      stream << currentDateTime << " INFO: " << msg << "\n";
+      break;
     case QtDebugMsg:
       stream << currentDateTime << " DEBUG: " << msg << "\n";
       break;

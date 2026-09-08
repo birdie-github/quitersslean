@@ -66,6 +66,9 @@ constexpr Setting<int> timeoutRequest = {"Settings/timeoutRequest", 15};
 constexpr Setting<int> numberRequest = {"Settings/numberRequest", 10};
 constexpr Setting<int> numberRepeats = {"Settings/numberRepeats", 2};
 
+constexpr Setting<int> externalBrowserOn = {"Settings/externalBrowserOn", 1};
+extern const Setting<QString> externalBrowser;
+
 extern const Setting<QString> toolBarStyle;
 extern const Setting<QString> toolBarIconSize;
 extern const Setting<QString> feedsToolBarIconSize;
