@@ -198,7 +198,7 @@ QWizardPage *CleanUpWizard::createCleanUpOptionsPage()
   maxNewsCleanUp_->setValue(settings.value("maxNewsClearUp", 200).toInt());
   dayCleanUpOn_->setChecked(settings.value("dayClearUpOn", true).toBool());
   newsCleanUpOn_->setChecked(settings.value("newsClearUpOn", true).toBool());
-  readCleanUp_->setChecked(settings.value("readCleanUp", false).toBool());
+  readCleanUp_->setChecked(settings.value("readClearUp", false).toBool());
   neverUnreadCleanUp_->setChecked(settings.value("neverUnreadClearUp", true).toBool());
   neverStarCleanUp_->setChecked(settings.value("neverStarClearUp", true).toBool());
   neverLabelCleanUp_->setChecked(settings.value("neverLabelClearUp", true).toBool());
