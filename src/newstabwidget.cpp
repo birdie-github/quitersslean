@@ -148,7 +148,7 @@ NewsTabWidget::NewsTabWidget(QWidget *parent, TabType type, int feedId, int feed
             this, [this](const QModelIndex &, int, int) { updateActionStates(); });
     connect(newsModel_, &QAbstractItemModel::rowsRemoved,
             this, [this](const QModelIndex &, int, int) { updateActionStates(); });
-    connect(articleView_->document(), &QTextDocument::contentsChanged,
+    connect(articleView_, &ArticleView::articleContentChanged,
             this, &NewsTabWidget::updateActionStates);
   }
 }

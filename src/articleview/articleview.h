@@ -49,6 +49,7 @@ public:
   void disconnectObjects();
 
 signals:
+  void articleContentChanged();
   void linkClicked(const QUrl &url);
   void linkHovered(const QString &url);
   void showContextMenu(const QPoint &pos);

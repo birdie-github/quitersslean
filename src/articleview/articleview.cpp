@@ -143,6 +143,9 @@ void ArticleView::setArticleHtml(const QString &html, bool preservePosition) {
   if (preservePosition) restoreView(state);
   else { moveCursor(QTextCursor::Start); verticalScrollBar()->setValue(0); }
   updateProgress();
+  // Notify after replacement is complete. Connections to the old document
+  // cannot observe subsequent article replacements or empty-feed clears.
+  emit articleContentChanged();
 }
 
 QVariant ArticleView::loadResource(int type, const QUrl &url) {
