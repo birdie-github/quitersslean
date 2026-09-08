@@ -192,8 +192,7 @@ QWizardPage *CleanUpWizard::createCleanUpOptionsPage()
   progressBar_->setMaximum(0);
   progressBar_->setVisible(false);
 
-  Settings settings;
-  settings.beginGroup("CleanUpWizard");
+  Settings settings("CleanUpWizard");
   maxDayCleanUp_->setValue(settings.value("maxDayClearUp", 30).toInt());
   maxNewsCleanUp_->setValue(settings.value("maxNewsClearUp", 200).toInt());
   dayCleanUpOn_->setChecked(settings.value("dayClearUpOn", true).toBool());
@@ -204,7 +203,6 @@ QWizardPage *CleanUpWizard::createCleanUpOptionsPage()
   neverLabelCleanUp_->setChecked(settings.value("neverLabelClearUp", true).toBool());
   cleanUpDeleted_->setChecked(settings.value("cleanUpDeleted", true).toBool());
   fullCleanUp_->setChecked(settings.value("fullCleanUp", false).toBool());
-  settings.endGroup();
 
   QVBoxLayout *layout = new QVBoxLayout(page);
   layout->addLayout(cleanUpFeedsLayout);
@@ -285,8 +283,7 @@ void CleanUpWizard::finishButtonClicked()
     treeItem = feedsTree_->itemBelow(treeItem);
   }
 
-  Settings settings;
-  settings.beginGroup("CleanUpWizard");
+  Settings settings("CleanUpWizard");
   settings.setValue("feedsIdList", feedsIdList);
   settings.setValue("maxDayClearUp", maxDayCleanUp_->value());
   settings.setValue("maxNewsClearUp", maxNewsCleanUp_->value());
@@ -298,7 +295,6 @@ void CleanUpWizard::finishButtonClicked()
   settings.setValue("neverLabelClearUp", neverLabelCleanUp_->isChecked());
   settings.setValue("cleanUpDeleted", cleanUpDeleted_->isChecked());
   settings.setValue("fullCleanUp", fullCleanUp_->isChecked());
-  settings.endGroup();
 
   connect(this, SIGNAL(signalStartCleanUp(bool, QStringList, QList<int>)),
           mainApp->updateFeeds()->updateObject_, SLOT(startCleanUp(bool, QStringList, QList<int>)));

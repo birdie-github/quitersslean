@@ -62,21 +62,10 @@ QString Settings::fileName()
   return storage()->fileName();
 }
 
-void Settings::beginGroup(const QString &prefix)
-{
-  groups_.append(prefix);
-}
-
-void Settings::endGroup()
-{
-  if (!groups_.isEmpty())
-    groups_.removeLast();
-}
-
 QString Settings::fullKey(const QString &key) const
 {
   // Leave slash normalization to QSettings, including legacy shortcut keys.
-  return groups_.isEmpty() ? key : groups_.join('/') + '/' + key;
+  return prefix_.isEmpty() ? key : prefix_ + '/' + key;
 }
 
 void Settings::setValue(const QString &key, const QVariant &defaultValue)

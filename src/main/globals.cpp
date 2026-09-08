@@ -83,8 +83,7 @@ void Globals::init()
     settingsFileName = dataDir_ % "/" % QCoreApplication::applicationName() % ".ini";
   Settings::createSettings(settingsFileName);
 
-  Settings settings;
-  settings.beginGroup("Settings");
+  Settings settings("Settings");
   noDebugOutput_ = settings.value("noDebugOutput", true).toBool();
   userAgent_ = settings.value("userAgent", "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36").toString();
 

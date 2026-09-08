@@ -412,8 +412,7 @@ void NewsHeader::setColumns(const QModelIndex &indexFeed)
   if (count() == 0) return;
 
   move_ = false;
-  Settings settings;
-  settings.beginGroup("NewsHeader");
+  Settings settings("NewsHeader");
 
   QByteArray state = settings.value("state").toByteArray();
   QString indexColumnsStr = settings.value("columns").toString();
@@ -460,7 +459,6 @@ void NewsHeader::setColumns(const QModelIndex &indexFeed)
     sortBy = settings.value("sortBy", model_->fieldIndex("published")).toInt();
     sortType = settings.value("sortOrder", Qt::DescendingOrder).toInt();
   }
-  settings.endGroup();
 
   if ((sortBy != sortIndicatorSection()) || (sortType != sortIndicatorOrder()))
     setSortIndicator(sortBy, Qt::SortOrder(sortType));
@@ -504,13 +502,11 @@ void NewsHeader::saveStateColumns(NewsTabWidget *newsTabWidget)
   MainWindow *mainWindow = mainApp->mainWindow();
   QModelIndex indexOld = mainWindow->feedsModel_->indexById(feedId);
 
-  Settings settings;
-  settings.beginGroup("NewsHeader");
+  Settings settings("NewsHeader");
   settings.setValue("state", saveState());
   if (mainWindow->feedsModel_->dataField(indexOld, "columns").toString().isEmpty()) {
     settings.setValue("columns", columnsList());
     settings.setValue("sortBy", sortIndicatorSection());
     settings.setValue("sortOrder", sortIndicatorOrder());
   }
-  settings.endGroup();
 }

@@ -89,11 +89,9 @@ void NetworkManager::loadSettings()
 
 void NetworkManager::loadCertificates()
 {
-  Settings settings;
-  settings.beginGroup("SSL-Configuration");
+  Settings settings("SSL-Configuration");
   certPaths_ = settings.value("CACertPaths", QStringList()).toStringList();
   ignoreAllWarnings_ = settings.value("IgnoreAllSSLWarnings", false).toBool();
-  settings.endGroup();
 
   localCerts_.clear();
 

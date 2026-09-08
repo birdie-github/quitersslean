@@ -1204,13 +1204,11 @@ void UpdateObject::startCleanUp(bool isShutdown, QStringList feedsIdList, QList<
   bool fullCleanUp = false;
   int countDeleted = 0;
 
-  Settings settings;
+  Settings settings(isShutdown ? "Settings" : "CleanUpWizard");
   if (isShutdown) {
-    settings.beginGroup("Settings");
     cleanupOn = settings.value("cleanupOnShutdown", true).toBool();
     optimizeDB = settings.value("optimizeDB", false).toBool();
   } else {
-    settings.beginGroup("CleanUpWizard");
     fullCleanUp = settings.value("fullCleanUp", false).toBool();
   }
   int maxDayCleanUp = settings.value("maxDayClearUp", 30).toInt();
@@ -1222,7 +1220,6 @@ void UpdateObject::startCleanUp(bool isShutdown, QStringList feedsIdList, QList<
   bool neverStarCleanUp = settings.value("neverStarClearUp", true).toBool();
   bool neverLabelCleanUp = settings.value("neverLabelClearUp", true).toBool();
   bool cleanUpDeleted = settings.value("cleanUpDeleted", false).toBool();
-  settings.endGroup();
 
   db_.transaction();
 

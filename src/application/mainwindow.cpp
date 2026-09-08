@@ -1532,8 +1532,7 @@ void MainWindow::createShortcut()
 // ---------------------------------------------------------------------------
 void MainWindow::loadActionShortcuts()
 {
-  Settings settings;
-  settings.beginGroup("/Shortcuts");
+  Settings settings("/Shortcuts");
 
   QListIterator<QAction *> iter(listActions_);
   while (iter.hasNext()) {
@@ -1547,14 +1546,11 @@ void MainWindow::loadActionShortcuts()
     const QString& sValue = settings.value('/' + sKey, pAction->shortcut().toString()).toString();
     pAction->setShortcut(QKeySequence(sValue));
   }
-
-  settings.endGroup();
 }
 // ---------------------------------------------------------------------------
 void MainWindow::saveActionShortcuts()
 {
-  Settings settings;
-  settings.beginGroup("/Shortcuts/");
+  Settings settings("/Shortcuts/");
 
   QListIterator<QAction *> iter(listActions_);
   while (iter.hasNext()) {
@@ -1566,8 +1562,6 @@ void MainWindow::saveActionShortcuts()
     const QString& sValue = QString(pAction->shortcut().toString());
     settings.setValue(sKey, sValue);
   }
-
-  settings.endGroup();
 }
 // ---------------------------------------------------------------------------
 void MainWindow::createMenu()
@@ -1846,8 +1840,7 @@ void MainWindow::createToolBar()
  *---------------------------------------------------------------------------*/
 void MainWindow::loadSettings()
 {
-  Settings settings;
-  settings.beginGroup("Settings");
+  Settings settings("Settings");
 
   showSplashScreen_ = settings.value("showSplashScreen", true).toBool();
   reopenFeedStartup_ = settings.value("reopenFeedStartup", true).toBool();
@@ -2072,40 +2065,38 @@ void MainWindow::loadSettings()
   showMenuBarAct_->setChecked(true);
 #endif
 
-  settings.endGroup();
-
-  settings.beginGroup("Color");
+  Settings colorSettings("Color");
   QString windowTextColor = qApp->palette().brush(QPalette::WindowText).color().name();
   QString linkTextColor = qApp->palette().brush(QPalette::Link).color().name();
-  feedsModel_->textColor_ = settings.value("feedsListTextColor", windowTextColor).toString();
-  feedsModel_->backgroundColor_ = settings.value("feedsListBackgroundColor", "").toString();
+  feedsModel_->textColor_ = colorSettings.value("feedsListTextColor", windowTextColor).toString();
+  feedsModel_->backgroundColor_ = colorSettings.value("feedsListBackgroundColor", "").toString();
   feedsView_->setStyleSheet(QString("#feedsView_ {background: %1;}").arg(feedsModel_->backgroundColor_));
-  newsListTextColor_ = settings.value("newsListTextColor", windowTextColor).toString();
-  newsListBackgroundColor_ = settings.value("newsListBackgroundColor", "").toString();
-  newNewsTextColor_ = settings.value("newNewsTextColor", windowTextColor).toString();
-  unreadNewsTextColor_ = settings.value("unreadNewsTextColor", windowTextColor).toString();
-  focusedNewsTextColor_ = settings.value("focusedNewsTextColor", windowTextColor).toString();
-  focusedNewsBGColor_ = settings.value("focusedNewsBGColor", "").toString();
-  linkColor_ = settings.value("linkColor", "#0066CC").toString();
-  titleColor_ = settings.value("titleColor", "#0066CC").toString();
-  dateColor_ = settings.value("dateColor", "#666666").toString();
-  authorColor_ = settings.value("authorColor", "#666666").toString();
-  newsTextColor_ = settings.value("newsTextColor", "#000000").toString();
-  newsTitleBackgroundColor_ = settings.value("newsTitleBackgroundColor", "#FFFFFF").toString();
-  newsBackgroundColor_ = settings.value("newsBackgroundColor", "#FFFFFF").toString();
-  feedsModel_->feedWithNewNewsColor_ = settings.value("feedWithNewNewsColor", linkTextColor).toString();
-  feedsModel_->countNewsUnreadColor_ = settings.value("countNewsUnreadColor", linkTextColor).toString();
-  feedsModel_->focusedFeedTextColor_ = settings.value("focusedFeedTextColor", windowTextColor).toString();
-  feedsModel_->focusedFeedBGColor_ = settings.value("focusedFeedBGColor", "").toString();
-  feedsModel_->feedDisabledUpdateColor_ = settings.value("feedDisabledUpdateColor", "#999999").toString();
-  alternatingRowColors_ = settings.value("alternatingRowColors", qApp->palette().color(QPalette::AlternateBase).name()).toString();
-  notifierTextColor_ = settings.value("notifierTextColor", windowTextColor).toString();
-  notifierBackgroundColor_ = settings.value("notifierBackgroundColor", "#FFFFFF").toString();
-  settings.endGroup();
+  newsListTextColor_ = colorSettings.value("newsListTextColor", windowTextColor).toString();
+  newsListBackgroundColor_ = colorSettings.value("newsListBackgroundColor", "").toString();
+  newNewsTextColor_ = colorSettings.value("newNewsTextColor", windowTextColor).toString();
+  unreadNewsTextColor_ = colorSettings.value("unreadNewsTextColor", windowTextColor).toString();
+  focusedNewsTextColor_ = colorSettings.value("focusedNewsTextColor", windowTextColor).toString();
+  focusedNewsBGColor_ = colorSettings.value("focusedNewsBGColor", "").toString();
+  linkColor_ = colorSettings.value("linkColor", "#0066CC").toString();
+  titleColor_ = colorSettings.value("titleColor", "#0066CC").toString();
+  dateColor_ = colorSettings.value("dateColor", "#666666").toString();
+  authorColor_ = colorSettings.value("authorColor", "#666666").toString();
+  newsTextColor_ = colorSettings.value("newsTextColor", "#000000").toString();
+  newsTitleBackgroundColor_ = colorSettings.value("newsTitleBackgroundColor", "#FFFFFF").toString();
+  newsBackgroundColor_ = colorSettings.value("newsBackgroundColor", "#FFFFFF").toString();
+  feedsModel_->feedWithNewNewsColor_ = colorSettings.value("feedWithNewNewsColor", linkTextColor).toString();
+  feedsModel_->countNewsUnreadColor_ = colorSettings.value("countNewsUnreadColor", linkTextColor).toString();
+  feedsModel_->focusedFeedTextColor_ = colorSettings.value("focusedFeedTextColor", windowTextColor).toString();
+  feedsModel_->focusedFeedBGColor_ = colorSettings.value("focusedFeedBGColor", "").toString();
+  feedsModel_->feedDisabledUpdateColor_ = colorSettings.value("feedDisabledUpdateColor", "#999999").toString();
+  alternatingRowColors_ = colorSettings.value("alternatingRowColors", qApp->palette().color(QPalette::AlternateBase).name()).toString();
+  notifierTextColor_ = colorSettings.value("notifierTextColor", windowTextColor).toString();
+  notifierBackgroundColor_ = colorSettings.value("notifierBackgroundColor", "#FFFFFF").toString();
 
+  Settings stateSettings;
   resize(800, 600);
-  restoreGeometry(settings.value("GeometryState").toByteArray());
-  restoreState(settings.value("ToolBarsState").toByteArray());
+  restoreGeometry(stateSettings.value("GeometryState").toByteArray());
+  restoreState(stateSettings.value("ToolBarsState").toByteArray());
 
   if (!mainToolbarToggle_->isChecked())
     mainToolbar_->hide();
@@ -2114,12 +2105,12 @@ void MainWindow::loadSettings()
   if (!statusBarToggle_->isChecked())
     statusBar()->hide();
 
-  mainSplitter_->restoreState(settings.value("MainSplitterState").toByteArray());
-  feedsWidgetVisibleAct_->setChecked(settings.value("FeedsWidgetVisible", true).toBool());
+  mainSplitter_->restoreState(stateSettings.value("MainSplitterState").toByteArray());
+  feedsWidgetVisibleAct_->setChecked(stateSettings.value("FeedsWidgetVisible", true).toBool());
   slotVisibledFeedsWidget();
 
-  feedsWidgetSplitterState_ = settings.value("FeedsWidgetSplitterState").toByteArray();
-  bool showCategories = settings.value("NewsCategoriesTreeVisible", true).toBool();
+  feedsWidgetSplitterState_ = stateSettings.value("FeedsWidgetSplitterState").toByteArray();
+  bool showCategories = stateSettings.value("NewsCategoriesTreeVisible", true).toBool();
   categoriesTree_->setVisible(showCategories);
   if (showCategories) {
     showCategoriesButton_->setIcon(QIcon(":/images/images/panel_hide.png"));
@@ -2132,7 +2123,7 @@ void MainWindow::loadSettings()
     sizes << virtualDesktopSize().height() << 20;
     feedsSplitter_->setSizes(sizes);
   }
-  bool expandCategories = settings.value("categoriesTreeExpanded", true).toBool();
+  bool expandCategories = stateSettings.value("categoriesTreeExpanded", true).toBool();
   if (expandCategories)
     categoriesTree_->expandAll();
 
@@ -2144,8 +2135,7 @@ void MainWindow::loadSettings()
  *---------------------------------------------------------------------------*/
 void MainWindow::saveSettings()
 {
-  Settings settings;
-  settings.beginGroup("Settings");
+  Settings settings("Settings");
 
   settings.setValue("showSplashScreen", showSplashScreen_);
   settings.setValue("reopenFeedStartup", reopenFeedStartup_);
@@ -2277,49 +2267,47 @@ void MainWindow::saveSettings()
 
   settings.setValue("showMenuBar", showMenuBarAct_->isChecked());
 
-  settings.endGroup();
+  Settings colorSettings("Color");
+  colorSettings.setValue("feedsListTextColor", feedsModel_->textColor_);
+  colorSettings.setValue("feedsListBackgroundColor", feedsModel_->backgroundColor_);
+  colorSettings.setValue("newsListTextColor", newsListTextColor_);
+  colorSettings.setValue("newsListBackgroundColor", newsListBackgroundColor_);
+  colorSettings.setValue("newNewsTextColor", newNewsTextColor_);
+  colorSettings.setValue("unreadNewsTextColor", unreadNewsTextColor_);
+  colorSettings.setValue("focusedNewsTextColor", focusedNewsTextColor_);
+  colorSettings.setValue("focusedNewsBGColor", focusedNewsBGColor_);
+  colorSettings.setValue("linkColor", linkColor_);
+  colorSettings.setValue("titleColor", titleColor_);
+  colorSettings.setValue("dateColor", dateColor_);
+  colorSettings.setValue("authorColor", authorColor_);
+  colorSettings.setValue("newsTextColor", newsTextColor_);
+  colorSettings.setValue("newsTitleBackgroundColor", newsTitleBackgroundColor_);
+  colorSettings.setValue("newsBackgroundColor", newsBackgroundColor_);
+  colorSettings.setValue("feedWithNewNewsColor", feedsModel_->feedWithNewNewsColor_);
+  colorSettings.setValue("countNewsUnreadColor", feedsModel_->countNewsUnreadColor_);
+  colorSettings.setValue("focusedFeedTextColor", feedsModel_->focusedFeedTextColor_);
+  colorSettings.setValue("focusedFeedBGColor", feedsModel_->focusedFeedBGColor_);
+  colorSettings.setValue("feedDisabledUpdateColor", feedsModel_->feedDisabledUpdateColor_);
+  colorSettings.setValue("alternatingRowColors", alternatingRowColors_);
+  colorSettings.setValue("notifierTextColor", notifierTextColor_);
+  colorSettings.setValue("notifierBackgroundColor", notifierBackgroundColor_);
 
-  settings.beginGroup("Color");
-  settings.setValue("feedsListTextColor", feedsModel_->textColor_);
-  settings.setValue("feedsListBackgroundColor", feedsModel_->backgroundColor_);
-  settings.setValue("newsListTextColor", newsListTextColor_);
-  settings.setValue("newsListBackgroundColor", newsListBackgroundColor_);
-  settings.setValue("newNewsTextColor", newNewsTextColor_);
-  settings.setValue("unreadNewsTextColor", unreadNewsTextColor_);
-  settings.setValue("focusedNewsTextColor", focusedNewsTextColor_);
-  settings.setValue("focusedNewsBGColor", focusedNewsBGColor_);
-  settings.setValue("linkColor", linkColor_);
-  settings.setValue("titleColor", titleColor_);
-  settings.setValue("dateColor", dateColor_);
-  settings.setValue("authorColor", authorColor_);
-  settings.setValue("newsTextColor", newsTextColor_);
-  settings.setValue("newsTitleBackgroundColor", newsTitleBackgroundColor_);
-  settings.setValue("newsBackgroundColor", newsBackgroundColor_);
-  settings.setValue("feedWithNewNewsColor", feedsModel_->feedWithNewNewsColor_);
-  settings.setValue("countNewsUnreadColor", feedsModel_->countNewsUnreadColor_);
-  settings.setValue("focusedFeedTextColor", feedsModel_->focusedFeedTextColor_);
-  settings.setValue("focusedFeedBGColor", feedsModel_->focusedFeedBGColor_);
-  settings.setValue("feedDisabledUpdateColor", feedsModel_->feedDisabledUpdateColor_);
-  settings.setValue("alternatingRowColors", alternatingRowColors_);
-  settings.setValue("notifierTextColor", notifierTextColor_);
-  settings.setValue("notifierBackgroundColor", notifierBackgroundColor_);
-  settings.endGroup();
+  Settings stateSettings;
+  stateSettings.setValue("GeometryState", saveGeometry());
+  stateSettings.setValue("ToolBarsState", saveState());
 
-  settings.setValue("GeometryState", saveGeometry());
-  settings.setValue("ToolBarsState", saveState());
-
-  settings.setValue("MainSplitterState", mainSplitter_->saveState());
-  settings.setValue("FeedsWidgetVisible", showFeedsTabPermanent_);
+  stateSettings.setValue("MainSplitterState", mainSplitter_->saveState());
+  stateSettings.setValue("FeedsWidgetVisible", showFeedsTabPermanent_);
 
   bool newsCategoriesTreeVisible = true;
   if (categoriesWidget_->height() <= (categoriesPanel_->height()+2)) {
     newsCategoriesTreeVisible = false;
-    settings.setValue("FeedsWidgetSplitterState", feedsWidgetSplitterState_);
+    stateSettings.setValue("FeedsWidgetSplitterState", feedsWidgetSplitterState_);
   } else {
-    settings.setValue("FeedsWidgetSplitterState", feedsSplitter_->saveState());
+    stateSettings.setValue("FeedsWidgetSplitterState", feedsSplitter_->saveState());
   }
-  settings.setValue("NewsCategoriesTreeVisible", newsCategoriesTreeVisible);
-  settings.setValue("categoriesTreeExpanded", categoriesTree_->topLevelItem(CategoriesTreeWidget::LabelsItem)->isExpanded());
+  stateSettings.setValue("NewsCategoriesTreeVisible", newsCategoriesTreeVisible);
+  stateSettings.setValue("categoriesTreeExpanded", categoriesTree_->topLevelItem(CategoriesTreeWidget::LabelsItem)->isExpanded());
 
   if (stackedWidget_->count()) {
     NewsTabWidget *widget;
@@ -2329,15 +2317,15 @@ void MainWindow::saveSettings()
       widget = (NewsTabWidget*)stackedWidget_->widget(TAB_WIDGET_PERMANENT);
 
     widget->newsHeader_->saveStateColumns(widget);
-    settings.setValue("NewsTabSplitterState",
+    stateSettings.setValue("NewsTabSplitterState",
                       widget->newsTabWidgetSplitter_->saveState());
   }
 
   NewsTabWidget *widget = (NewsTabWidget*)stackedWidget_->widget(TAB_WIDGET_PERMANENT);
-  settings.setValue("feedSettings/currentId", widget->feedId_);
-  settings.setValue("feedSettings/filterName",
+  stateSettings.setValue("feedSettings/currentId", widget->feedId_);
+  stateSettings.setValue("feedSettings/filterName",
                     feedsFilterGroup_->checkedAction()->objectName());
-  settings.setValue("newsSettings/filterName",
+  stateSettings.setValue("newsSettings/filterName",
                     newsFilterGroup_->checkedAction()->objectName());
 
   mainApp->cookieJar()->saveCookies();
@@ -3133,9 +3121,7 @@ void MainWindow::showOptionDlg(int index)
 
   optionsDialog_ = new OptionsDialog(this);
 
-  settings.beginGroup("Settings");
-  bool updateFeedsStartUp = settings.value("autoUpdatefeedsStartUp", false).toBool();
-  settings.endGroup();
+  bool updateFeedsStartUp = settings.value("Settings/autoUpdatefeedsStartUp", false).toBool();
 
   optionsDialog_->showSplashScreen_->setChecked(showSplashScreen_);
   optionsDialog_->reopenFeedStartup_->setChecked(reopenFeedStartup_);
@@ -3647,9 +3633,7 @@ void MainWindow::showOptionDlg(int index)
   delete optionsDialog_;
   optionsDialog_ = NULL;
 
-  settings.beginGroup("Settings");
-  settings.setValue("autoUpdatefeedsStartUp", updateFeedsStartUp);
-  settings.endGroup();
+  settings.setValue("Settings/autoUpdatefeedsStartUp", updateFeedsStartUp);
 
   saveSettings();
   saveActionShortcuts();
@@ -4926,8 +4910,7 @@ void MainWindow::showFeedPropertiesDlg()
   properties.general.avoidedOldSingleNewsDate =
       feedsModel_->dataField(index, "avoidedOldSingleNewsDate").toDate();
 
-  Settings settings;
-  settings.beginGroup("NewsHeader");
+  Settings settings("NewsHeader");
   QString indexColumnsStr = settings.value("columns").toString();
   QStringList indexColumnsList = indexColumnsStr.split(",", Qt::SkipEmptyParts);
   foreach (QString indexStr, indexColumnsList) {
@@ -4938,7 +4921,6 @@ void MainWindow::showFeedPropertiesDlg()
   properties.columnDefault.sortBy = sortBy;
   int sortType = settings.value("sortOrder", Qt::DescendingOrder).toInt();
   properties.columnDefault.sortType = sortType;
-  settings.endGroup();
 
   if (feedsModel_->dataField(index, "columns").toString().isEmpty()) {
     widget = (NewsTabWidget*)stackedWidget_->widget(TAB_WIDGET_PERMANENT);
@@ -5810,25 +5792,22 @@ void MainWindow::setStyleApp(QAction *pAct)
     alternatingRowColors_ = qApp->palette().color(QPalette::AlternateBase).name();
   }
 
-  settings.beginGroup("Settings");
-  settings.setValue("transparencyNotify", transparencyNotify_);
-  settings.endGroup();
-  settings.beginGroup("Color");
-  settings.setValue("feedsListTextColor", feedsModel_->textColor_);
-  settings.setValue("newsListTextColor", newsListTextColor_);
-  settings.setValue("newsListBackgroundColor", newsListBackgroundColor_);
-  settings.setValue("newNewsTextColor", newNewsTextColor_);
-  settings.setValue("unreadNewsTextColor", unreadNewsTextColor_);
-  settings.setValue("titleColor", titleColor_);
-  settings.setValue("newsTextColor", newsTextColor_);
-  settings.setValue("newsTitleBackgroundColor", newsTitleBackgroundColor_);
-  settings.setValue("newsBackgroundColor", newsBackgroundColor_);
-  settings.setValue("dateColor", dateColor_);
-  settings.setValue("authorColor", authorColor_);
-  settings.setValue("notifierTextColor", notifierTextColor_);
-  settings.setValue("notifierBackgroundColor", notifierBackgroundColor_);
-  settings.setValue("alternatingRowColors", alternatingRowColors_);
-  settings.endGroup();
+  settings.setValue("Settings/transparencyNotify", transparencyNotify_);
+  Settings colorSettings("Color");
+  colorSettings.setValue("feedsListTextColor", feedsModel_->textColor_);
+  colorSettings.setValue("newsListTextColor", newsListTextColor_);
+  colorSettings.setValue("newsListBackgroundColor", newsListBackgroundColor_);
+  colorSettings.setValue("newNewsTextColor", newNewsTextColor_);
+  colorSettings.setValue("unreadNewsTextColor", unreadNewsTextColor_);
+  colorSettings.setValue("titleColor", titleColor_);
+  colorSettings.setValue("newsTextColor", newsTextColor_);
+  colorSettings.setValue("newsTitleBackgroundColor", newsTitleBackgroundColor_);
+  colorSettings.setValue("newsBackgroundColor", newsBackgroundColor_);
+  colorSettings.setValue("dateColor", dateColor_);
+  colorSettings.setValue("authorColor", authorColor_);
+  colorSettings.setValue("notifierTextColor", notifierTextColor_);
+  colorSettings.setValue("notifierBackgroundColor", notifierBackgroundColor_);
+  colorSettings.setValue("alternatingRowColors", alternatingRowColors_);
 
   QFile file(fileName);
   if (!file.open(QFile::ReadOnly)) {

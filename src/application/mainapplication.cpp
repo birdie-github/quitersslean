@@ -150,8 +150,7 @@ void MainApplication::receiveMessage(const QString &message)
 
 void MainApplication::createSettings()
 {
-  Settings settings;
-  settings.beginGroup("Settings");
+  Settings settings("Settings");
   storeDBMemory_ = settings.value("storeDBMemory", true).toBool();
   isSaveDataLastFeed_ = settings.value("createLastFeed", false).toBool();
   styleApplication_ = settings.value("styleApplication", "greenStyle_").toString();
@@ -183,8 +182,6 @@ void MainApplication::createSettings()
   }
   if (!findLang) strLang = "en";
   langFileName_ = settings.value("langFileName", strLang).toString();
-
-  settings.endGroup();
 
   proxyLoadSettings();
 }
@@ -416,8 +413,7 @@ CookieJar *MainApplication::cookieJar()
 
 void MainApplication::setDiskCache()
 {
-  Settings settings;
-  settings.beginGroup("Settings");
+  Settings settings("Settings");
 
   bool useDiskCache = settings.value("useDiskCache", true).toBool();
   if (useDiskCache) {
@@ -446,8 +442,6 @@ void MainApplication::setDiskCache()
       diskCache_->clear();
     }
   }
-
-  settings.endGroup();
 }
 
 QString MainApplication::cacheDefaultDir() const
@@ -494,15 +488,13 @@ DownloadManager *MainApplication::downloadManager()
 
 void MainApplication::proxyLoadSettings()
 {
-  Settings settings;
-  settings.beginGroup("networkProxy");
+  Settings settings("networkProxy");
   networkProxy_.setType(static_cast<QNetworkProxy::ProxyType>(
                           settings.value("type", QNetworkProxy::DefaultProxy).toInt()));
   networkProxy_.setHostName(settings.value("hostName", "").toString());
   networkProxy_.setPort(    settings.value("port",     "").toUInt());
   networkProxy_.setUser(    settings.value("user",     "").toString());
   networkProxy_.setPassword(settings.value("password", "").toString());
-  settings.endGroup();
 
   setProxy();
 }
@@ -511,14 +503,12 @@ void MainApplication::proxySaveSettings(const QNetworkProxy &proxy)
 {
   networkProxy_ = proxy;
 
-  Settings settings;
-  settings.beginGroup("networkProxy");
+  Settings settings("networkProxy");
   settings.setValue("type",     networkProxy_.type());
   settings.setValue("hostName", networkProxy_.hostName());
   settings.setValue("port",     networkProxy_.port());
   settings.setValue("user",     networkProxy_.user());
   settings.setValue("password", networkProxy_.password());
-  settings.endGroup();
 
   setProxy();
 }

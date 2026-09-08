@@ -20,18 +20,16 @@
 #define SETTINGS_H
 
 #include <QSettings>
-#include <QStringList>
 #include <QVariant>
 
 class Settings
 {
 public:
+  explicit Settings(const QString &prefix = QString()) : prefix_(prefix) {}
+
   static void createSettings(const QString &fileName = QString());
   static void syncSettings();
   QString fileName();
-
-  void beginGroup(const QString &prefix);
-  void endGroup();
 
   void setValue(const QString &key, const QVariant &defaultValue = QVariant());
   QVariant value(const QString &key, const QVariant &defaultValue = QVariant());
@@ -40,7 +38,7 @@ public:
 private:
   static QSettings *storage();
   QString fullKey(const QString &key) const;
-  QStringList groups_;
+  const QString prefix_;
 
 };
 
