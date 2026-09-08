@@ -219,8 +219,7 @@ void UpdateAppDialog::updaterRun()
 
 void UpdateAppDialog::renderStatistics()
 {
-  Settings settings;
-  bool updateCheckEnabled = settings.value("Settings/updateCheckEnabled", true).toBool();
+  bool updateCheckEnabled = AppSettings::updateCheckEnabled.get();
   if (updateCheckEnabled || showDialog_) {
     QNetworkRequest request(QUrl("https://quiterss.org/files/updates_new/VersionNo.h"));
     reply_ = networkManagerProxy_->get(request);

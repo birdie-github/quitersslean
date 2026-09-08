@@ -1842,7 +1842,7 @@ void MainWindow::loadSettings()
 {
   Settings settings("Settings");
 
-  showSplashScreen_ = settings.value("showSplashScreen", true).toBool();
+  showSplashScreen_ = AppSettings::showSplashScreen.get();
   reopenFeedStartup_ = settings.value("reopenFeedStartup", true).toBool();
   openNewTabNextToActive_ = settings.value("openNewTabNextToActive", false).toBool();
 
@@ -1879,8 +1879,8 @@ void MainWindow::loadSettings()
   updateFeedsInterval_ = settings.value("autoUpdatefeedsTime", 10).toInt();
   updateFeedsIntervalType_ = settings.value("autoUpdatefeedsInterval", 0).toInt();
 
-  openingFeedAction_ = settings.value("openingFeedAction", 0).toInt();
-  openNewsWebViewOn_ = settings.value("openNewsWebViewOn", true).toBool();
+  openingFeedAction_ = AppSettings::openingFeedAction.get();
+  openNewsWebViewOn_ = AppSettings::openNewsWebViewOn.get();
 
   markNewsReadOn_ = settings.value("markNewsReadOn", true).toBool();
   markCurNewsRead_ = settings.value("markCurNewsRead", true).toBool();
@@ -2137,7 +2137,7 @@ void MainWindow::saveSettings()
 {
   Settings settings("Settings");
 
-  settings.setValue("showSplashScreen", showSplashScreen_);
+  AppSettings::showSplashScreen.set(showSplashScreen_);
   settings.setValue("reopenFeedStartup", reopenFeedStartup_);
   settings.setValue("openNewTabNextToActive", openNewTabNextToActive_);
 
@@ -2172,8 +2172,8 @@ void MainWindow::saveSettings()
   settings.setValue("autoUpdatefeedsTime", updateFeedsInterval_);
   settings.setValue("autoUpdatefeedsInterval", updateFeedsIntervalType_);
 
-  settings.setValue("openingFeedAction", openingFeedAction_);
-  settings.setValue("openNewsWebViewOn", openNewsWebViewOn_);
+  AppSettings::openingFeedAction.set(openingFeedAction_);
+  AppSettings::openNewsWebViewOn.set(openNewsWebViewOn_);
 
   settings.setValue("markNewsReadOn", markNewsReadOn_);
   settings.setValue("markCurNewsRead", markCurNewsRead_);
@@ -3121,7 +3121,7 @@ void MainWindow::showOptionDlg(int index)
 
   optionsDialog_ = new OptionsDialog(this);
 
-  bool updateFeedsStartUp = settings.value("Settings/autoUpdatefeedsStartUp", false).toBool();
+  bool updateFeedsStartUp = AppSettings::autoUpdatefeedsStartUp.get();
 
   optionsDialog_->showSplashScreen_->setChecked(showSplashScreen_);
   optionsDialog_->reopenFeedStartup_->setChecked(reopenFeedStartup_);
@@ -3130,15 +3130,15 @@ void MainWindow::showOptionDlg(int index)
   optionsDialog_->showToggleFeedsTree_->setChecked(showToggleFeedsTree_);
   optionsDialog_->defaultIconFeeds_->setChecked(defaultIconFeeds_);
   optionsDialog_->autocollapseFolder_->setChecked(feedsView_->autocollapseFolder_);
-  bool showCloseButtonTab = settings.value("Settings/showCloseButtonTab", true).toBool();
+  bool showCloseButtonTab = AppSettings::showCloseButtonTab.get();
   optionsDialog_->showCloseButtonTab_->setChecked(showCloseButtonTab);
 
-  bool updateCheckEnabled = settings.value("Settings/updateCheckEnabled", true).toBool();
+  bool updateCheckEnabled = AppSettings::updateCheckEnabled.get();
   optionsDialog_->updateCheckEnabled_->setChecked(updateCheckEnabled);
 
-  bool storeDBMemory_ = settings.value("Settings/storeDBMemory", true).toBool();
+  bool storeDBMemory_ = AppSettings::storeDBMemory.get();
   optionsDialog_->storeDBMemory_->setChecked(storeDBMemory_);
-  int saveDBMemFileInterval = settings.value("Settings/saveDBMemFileInterval", 30).toInt();
+  int saveDBMemFileInterval = AppSettings::saveDBMemFileInterval.get();
   optionsDialog_->saveDBMemFileInterval_->setValue(saveDBMemFileInterval);
 
   optionsDialog_->showTrayIconBox_->setChecked(showTrayIcon_);
@@ -3152,9 +3152,9 @@ void MainWindow::showOptionDlg(int index)
 
   optionsDialog_->setProxy(mainApp->networkProxy());
 
-  int timeoutRequest = settings.value("Settings/timeoutRequest", 15).toInt();
-  int numberRequests = settings.value("Settings/numberRequest", 10).toInt();
-  int numberRepeats = settings.value("Settings/numberRepeats", 2).toInt();
+  int timeoutRequest = AppSettings::timeoutRequest.get();
+  int numberRequests = AppSettings::numberRequest.get();
+  int numberRepeats = AppSettings::numberRepeats.get();
   optionsDialog_->timeoutRequest_->setValue(timeoutRequest);
   optionsDialog_->numberRequests_->setValue(numberRequests);
   optionsDialog_->numberRepeats_->setValue(numberRepeats);
@@ -3454,18 +3454,18 @@ void MainWindow::showOptionDlg(int index)
   feedsView_->autocollapseFolder_ = optionsDialog_->autocollapseFolder_->isChecked();
 
   showCloseButtonTab = optionsDialog_->showCloseButtonTab_->isChecked();
-  settings.setValue("Settings/showCloseButtonTab", showCloseButtonTab);
+  AppSettings::showCloseButtonTab.set(showCloseButtonTab);
 
   pushButtonNull_->setVisible(showToggleFeedsTree_);
 
   updateCheckEnabled = optionsDialog_->updateCheckEnabled_->isChecked();
-  settings.setValue("Settings/updateCheckEnabled", updateCheckEnabled);
+  AppSettings::updateCheckEnabled.set(updateCheckEnabled);
 
   storeDBMemory_ = optionsDialog_->storeDBMemory_->isChecked();
-  settings.setValue("Settings/storeDBMemory", storeDBMemory_);
+  AppSettings::storeDBMemory.set(storeDBMemory_);
   if (saveDBMemFileInterval != optionsDialog_->saveDBMemFileInterval_->value()) {
     saveDBMemFileInterval = optionsDialog_->saveDBMemFileInterval_->value();
-    settings.setValue("Settings/saveDBMemFileInterval", saveDBMemFileInterval);
+    AppSettings::saveDBMemFileInterval.set(saveDBMemFileInterval);
     mainApp->updateFeeds()->startSaveTimer();
   }
 
@@ -3490,9 +3490,9 @@ void MainWindow::showOptionDlg(int index)
   timeoutRequest = optionsDialog_->timeoutRequest_->value();
   numberRequests = optionsDialog_->numberRequests_->value();
   numberRepeats = optionsDialog_->numberRepeats_->value();
-  settings.setValue("Settings/timeoutRequest", timeoutRequest);
-  settings.setValue("Settings/numberRequest", numberRequests);
-  settings.setValue("Settings/numberRepeats", numberRepeats);
+  AppSettings::timeoutRequest.set(timeoutRequest);
+  AppSettings::numberRequest.set(numberRequests);
+  AppSettings::numberRepeats.set(numberRepeats);
 
   autoLoadImages_ = optionsDialog_->autoLoadImages_->isChecked();
   openLinkInBackground_ = optionsDialog_->openLinkInBackground_->isChecked();
@@ -3633,7 +3633,7 @@ void MainWindow::showOptionDlg(int index)
   delete optionsDialog_;
   optionsDialog_ = NULL;
 
-  settings.setValue("Settings/autoUpdatefeedsStartUp", updateFeedsStartUp);
+  AppSettings::autoUpdatefeedsStartUp.set(updateFeedsStartUp);
 
   saveSettings();
   saveActionShortcuts();
@@ -6484,9 +6484,8 @@ void MainWindow::slotOpenNew(int feedId, int newsId)
   feedsView_->repaint();
   feedIdOld_ = feedId;
 
-  Settings settings;
-  openingFeedAction_ = settings.value("/Settings/openingFeedAction", 0).toInt();
-  openNewsWebViewOn_ = settings.value("/Settings/openNewsWebViewOn", true).toBool();
+  openingFeedAction_ = AppSettings::openingFeedAction.get();
+  openNewsWebViewOn_ = AppSettings::openNewsWebViewOn.get();
   showWindows();
   newsView_->setFocus();
 }
@@ -7352,8 +7351,7 @@ void MainWindow::nextUnreadNews()
         }
       }
 
-      Settings settings;
-      openingFeedAction_ = settings.value("/Settings/openingFeedAction", 0).toInt();
+      openingFeedAction_ = AppSettings::openingFeedAction.get();
     }
     return;
   }
@@ -7388,8 +7386,7 @@ void MainWindow::prevUnreadNews()
       feedsView_->clearSelection();
       feedsView_->setCurrentIndex(indexNextUnread);
       slotFeedClicked(indexNextUnread);
-      Settings settings;
-      openingFeedAction_ = settings.value("/Settings/openingFeedAction", 0).toInt();
+      openingFeedAction_ = AppSettings::openingFeedAction.get();
     }
     return;
   }

@@ -46,10 +46,9 @@ UpdateFeeds::UpdateFeeds(QObject *parent, bool addFeed)
   updateFeedThread_ = new QThread();
   updateFeedThread_->setObjectName("updateFeedThread_");
 
-  Settings settings;
-  int timeoutRequest = settings.value("Settings/timeoutRequest", 15).toInt();
-  int numberRequests = settings.value("Settings/numberRequest", 10).toInt();
-  int numberRepeats = settings.value("Settings/numberRepeats", 2).toInt();
+  int timeoutRequest = AppSettings::timeoutRequest.get();
+  int numberRequests = AppSettings::numberRequest.get();
+  int numberRepeats = AppSettings::numberRepeats.get();
 
   requestFeed_ = new RequestFeed(timeoutRequest, numberRequests, numberRepeats);
 
@@ -253,8 +252,7 @@ void UpdateFeeds::startSaveTimer()
     connect(saveMemoryDBTimer_, SIGNAL(timeout()), this, SLOT(saveMemoryDatabase()));
   }
 
-  Settings settings;
-  int saveInterval = settings.value("Settings/saveDBMemFileInterval", 30).toInt();
+  int saveInterval = AppSettings::saveDBMemFileInterval.get();
   saveMemoryDBTimer_->start(saveInterval*60*1000);
 }
 

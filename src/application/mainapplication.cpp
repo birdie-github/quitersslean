@@ -151,11 +151,11 @@ void MainApplication::receiveMessage(const QString &message)
 void MainApplication::createSettings()
 {
   Settings settings("Settings");
-  storeDBMemory_ = settings.value("storeDBMemory", true).toBool();
+  storeDBMemory_ = AppSettings::storeDBMemory.get();
   isSaveDataLastFeed_ = settings.value("createLastFeed", false).toBool();
   styleApplication_ = settings.value("styleApplication", "greenStyle_").toString();
-  showSplashScreen_ = settings.value("showSplashScreen", true).toBool();
-  updateFeedsStartUp_ = settings.value("autoUpdatefeedsStartUp", false).toBool();
+  showSplashScreen_ = AppSettings::showSplashScreen.get();
+  updateFeedsStartUp_ = AppSettings::autoUpdatefeedsStartUp.get();
 
   QString strLang;
   QString strLocalLang = QLocale::system().name();

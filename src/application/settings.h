@@ -42,4 +42,29 @@ private:
 
 };
 
+namespace AppSettings {
+// Shared fixed defaults. Keys are absolute, independent of any wrapper prefix.
+template<typename T>
+struct Setting
+{
+  const char *key;
+  T defaultValue;
+
+  T get() const { return qvariant_cast<T>(Settings().value(key, defaultValue)); }
+  void set(const T &value) const { Settings().setValue(key, value); }
+};
+
+constexpr Setting<bool> showSplashScreen = {"Settings/showSplashScreen", true};
+constexpr Setting<bool> autoUpdatefeedsStartUp = {"Settings/autoUpdatefeedsStartUp", false};
+constexpr Setting<bool> storeDBMemory = {"Settings/storeDBMemory", true};
+constexpr Setting<int> saveDBMemFileInterval = {"Settings/saveDBMemFileInterval", 30};
+constexpr Setting<bool> showCloseButtonTab = {"Settings/showCloseButtonTab", true};
+constexpr Setting<bool> updateCheckEnabled = {"Settings/updateCheckEnabled", true};
+constexpr Setting<int> openingFeedAction = {"Settings/openingFeedAction", 0};
+constexpr Setting<bool> openNewsWebViewOn = {"Settings/openNewsWebViewOn", true};
+constexpr Setting<int> timeoutRequest = {"Settings/timeoutRequest", 15};
+constexpr Setting<int> numberRequest = {"Settings/numberRequest", 10};
+constexpr Setting<int> numberRepeats = {"Settings/numberRepeats", 2};
+} // namespace AppSettings
+
 #endif // SETTINGS_H

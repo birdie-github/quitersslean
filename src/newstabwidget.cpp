@@ -77,8 +77,7 @@ NewsTabWidget::NewsTabWidget(QWidget *parent, TabType type, int feedId, int feed
   newsTitleLabel_->setLayout(newsTitleLayout);
   newsTitleLabel_->setVisible(false);
 
-  Settings settings;
-  bool showCloseButtonTab = settings.value("Settings/showCloseButtonTab", true).toBool();
+  bool showCloseButtonTab = AppSettings::showCloseButtonTab.get();
   if (!showCloseButtonTab) {
     closeButton_->hide();
     newsTitleLabel_->setFixedWidth(MAX_TAB_WIDTH-15);
