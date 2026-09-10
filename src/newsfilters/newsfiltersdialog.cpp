@@ -117,7 +117,7 @@ NewsFiltersDialog::NewsFiltersDialog(QWidget *parent)
   buttonsVLayout->addWidget(runFilterButton_);
 
   QHBoxLayout *mainlayout = new QHBoxLayout();
-  mainlayout->setMargin(0);
+  mainlayout->setContentsMargins(0, 0, 0, 0);
   mainlayout->addWidget(filtersTree_);
   mainlayout->addLayout(buttonsVLayout);
 

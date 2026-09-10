@@ -368,7 +368,11 @@ QString ArticleView::exportHtml() const {
       cursor.setCharFormat(format);
     }
   }
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+  return copy->toHtml(); // Qt 6 exports UTF-8 HTML.
+#else
   return copy->toHtml("UTF-8");
+#endif
 }
 void ArticleView::print(QPrinter *printer) { document()->print(printer); }
 void ArticleView::setSource(const QUrl &) {
@@ -377,6 +381,11 @@ void ArticleView::setSource(const QUrl &) {
 void ArticleView::setSource(const QUrl &, QTextDocument::ResourceType) {
   // Deliberately no source loader: all documents are supplied by the reader.
 }
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+void ArticleView::doSetSource(const QUrl &, QTextDocument::ResourceType) {
+  // Qt 6 routes base-class source loading through this virtual entry point.
+}
+#endif
 void ArticleView::mouseReleaseEvent(QMouseEvent *event) {
   if (event->button() == Qt::MiddleButton ||
       (event->button() == Qt::LeftButton && event->modifiers() != Qt::NoModifier)) {

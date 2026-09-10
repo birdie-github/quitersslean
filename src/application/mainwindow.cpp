@@ -16,6 +16,8 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 * ============================================================ */
+#include <QTimeZone>
+#include <QTextCodec>
 #include "mainwindow.h"
 #include "statusbarcontroller.h"
 #include "trayiconcontroller.h"
@@ -76,21 +78,17 @@ MainWindow::MainWindow(QWidget *parent)
   setWindowTitle("QuiteRSS");
   setContextMenuPolicy(Qt::CustomContextMenu);
 
-  connect(soundPlayer_, &SoundPlayer::missingAudioSupport, this,
-          [this](const QString &errorText) {
+  connect(soundPlayer_, &SoundPlayer::playbackFailed, this,
+          [this](const QString &soundPath, const QString &errorText) {
     if (mainApp->isClosing()) return;
     // A warning owned by MainWindow would sit behind (and be blocked by)
     // an open modal dialog, such as Settings or the filter editor.
     QWidget *warningParent = QApplication::activeModalWidget();
     if (!warningParent) warningParent = this;
     QMessageBox *warning = new QMessageBox(
-          QMessageBox::Warning, tr("Missing audio support"),
-          tr("The notification sound cannot be played because a required "
-             "multimedia decoder or parser appears to be missing.\n\n"
-             "On Linux, Qt5 Multimedia commonly uses GStreamer. Installing "
-             "the GStreamer \"good\" plugins may resolve this problem "
-             "(on Fedora: gstreamer1-plugins-good).\n\n"
-             "Backend error: %1").arg(errorText),
+          QMessageBox::Warning, tr("Sound playback failed"),
+          tr("The notification sound could not be played.\n\nFile: %1\nError: %2")
+              .arg(soundPath, errorText),
           QMessageBox::Ok, warningParent);
     warning->setTextFormat(Qt::PlainText);
     warning->setAttribute(Qt::WA_DeleteOnClose);
@@ -422,7 +420,7 @@ void MainWindow::createFeedsWidget()
   feedsToolBar_->setStyleSheet("QToolBar { border: none; padding: 0px; }");
 
   QHBoxLayout *feedsPanelLayout = new QHBoxLayout();
-  feedsPanelLayout->setMargin(2);
+  feedsPanelLayout->setContentsMargins(2, 2, 2, 2);
   feedsPanelLayout->addWidget(feedsToolBar_, 1);
 
   feedsPanel_ = new QWidget(this);
@@ -434,7 +432,7 @@ void MainWindow::createFeedsWidget()
 
   findFeeds_ = new FindFeed(this);
   QVBoxLayout *findFeedsLayout = new QVBoxLayout();
-  findFeedsLayout->setMargin(2);
+  findFeedsLayout->setContentsMargins(2, 2, 2, 2);
   findFeedsLayout->addWidget(findFeeds_);
   findFeedsWidget_ = new QWidget(this);
   findFeedsWidget_->hide();
@@ -451,7 +449,7 @@ void MainWindow::createFeedsWidget()
   showCategoriesButton_->setAutoRaise(true);
 
   QHBoxLayout *categoriesPanelLayout = new QHBoxLayout();
-  categoriesPanelLayout->setMargin(2);
+  categoriesPanelLayout->setContentsMargins(2, 2, 2, 2);
   categoriesPanelLayout->addSpacing(2);
   categoriesPanelLayout->addWidget(categoriesLabel_, 1);
   categoriesPanelLayout->addWidget(showCategoriesButton_);
@@ -461,7 +459,7 @@ void MainWindow::createFeedsWidget()
   categoriesPanel_->setLayout(categoriesPanelLayout);
 
   QVBoxLayout *categoriesLayout = new QVBoxLayout();
-  categoriesLayout->setMargin(0);
+  categoriesLayout->setContentsMargins(0, 0, 0, 0);
   categoriesLayout->setSpacing(0);
   categoriesLayout->addWidget(categoriesPanel_);
   categoriesLayout->addWidget(categoriesTree_, 1);
@@ -485,7 +483,7 @@ void MainWindow::createFeedsWidget()
   feedsSplitter_->setSizes(sizes);
 
   QVBoxLayout *feedsLayout = new QVBoxLayout();
-  feedsLayout->setMargin(0);
+  feedsLayout->setContentsMargins(0, 0, 0, 0);
   feedsLayout->setSpacing(0);
   feedsLayout->addWidget(feedsPanel_);
   feedsLayout->addWidget(findFeedsWidget_);
@@ -662,7 +660,7 @@ void MainWindow::createCentralWidget()
   mainLayout1->addWidget(mainSplitter_, 1);
 
   QVBoxLayout *mainLayout = new QVBoxLayout();
-  mainLayout->setMargin(0);
+  mainLayout->setContentsMargins(0, 0, 0, 0);
   mainLayout->setSpacing(0);
   mainLayout->addWidget(tabBarWidget_);
   mainLayout->addLayout(mainLayout1, 1);
@@ -1347,15 +1345,15 @@ void MainWindow::createShortcut()
 {
   addFeedAct_->setShortcut(QKeySequence(QKeySequence::New));
   shortcutRegistry_.append(addFeedAct_);
-  addFolderAct_->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_N));
+  addFolderAct_->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_N));
   shortcutRegistry_.append(addFolderAct_);
   shortcutRegistry_.append(deleteFeedAct_);
   shortcutRegistry_.append(createBackupAct_);
-  exitAct_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Q));  // standart on other OS
+  exitAct_->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Q));  // standart on other OS
   shortcutRegistry_.append(exitAct_);
   updateFeedAct_->setShortcut(QKeySequence(Qt::Key_F5));
   shortcutRegistry_.append(updateFeedAct_);
-  updateAllFeedsAct_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_F5));
+  updateAllFeedsAct_->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_F5));
   shortcutRegistry_.append(updateAllFeedsAct_);
   shortcutRegistry_.append(stopUpdateAct_);
   shortcutRegistry_.append(openHomeFeedAct_);
@@ -1367,13 +1365,13 @@ void MainWindow::createShortcut()
   shortcutRegistry_.append(optionsAct_);
   deleteNewsAct_->setShortcut(QKeySequence(Qt::Key_Delete));
   shortcutRegistry_.append(deleteNewsAct_);
-  deleteAllNewsAct_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Delete));
+  deleteAllNewsAct_->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Delete));
   shortcutRegistry_.append(deleteAllNewsAct_);
-  feedProperties_->setShortcut(QKeySequence(Qt::CTRL+Qt::Key_E));
+  feedProperties_->setShortcut(QKeySequence(Qt::CTRL|Qt::Key_E));
   shortcutRegistry_.append(feedProperties_);
-  feedKeyUpAct_->setShortcut(QKeySequence(Qt::CTRL+Qt::Key_Up));
+  feedKeyUpAct_->setShortcut(QKeySequence(Qt::CTRL|Qt::Key_Up));
   shortcutRegistry_.append(feedKeyUpAct_);
-  feedKeyDownAct_->setShortcut(QKeySequence(Qt::CTRL+Qt::Key_Down));
+  feedKeyDownAct_->setShortcut(QKeySequence(Qt::CTRL|Qt::Key_Down));
   shortcutRegistry_.append(feedKeyDownAct_);
   newsKeyUpAct_->setShortcut(QKeySequence(Qt::Key_Left));
   shortcutRegistry_.append(newsKeyUpAct_);
@@ -1404,31 +1402,31 @@ void MainWindow::createShortcut()
   shortcutRegistry_.append(openDescriptionNewsAct_);
   openDescriptionNewsAct_->setShortcut(QKeySequence(Qt::Key_Return));
   shortcutRegistry_.append(openInExternalBrowserAct_);
-  openInExternalBrowserAct_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_O));
+  openInExternalBrowserAct_->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_O));
 
-  switchFocusAct_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Tab));
+  switchFocusAct_->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Tab));
   shortcutRegistry_.append(switchFocusAct_);
-  switchFocusPrevAct_->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_Tab));
+  switchFocusPrevAct_->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Tab));
   shortcutRegistry_.append(switchFocusPrevAct_);
 
-  feedsWidgetVisibleAct_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_D));
+  feedsWidgetVisibleAct_->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_D));
   shortcutRegistry_.append(feedsWidgetVisibleAct_);
 
   shortcutRegistry_.append(placeToTrayAct_);
 
-  zoomInAct_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Plus));
+  zoomInAct_->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Plus));
   shortcutRegistry_.append(zoomInAct_);
-  zoomOutAct_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Minus));
+  zoomOutAct_->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Minus));
   shortcutRegistry_.append(zoomOutAct_);
-  zoomTo100Act_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_0));
+  zoomTo100Act_->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_0));
   shortcutRegistry_.append(zoomTo100Act_);
 
-  printAct_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_P));
+  printAct_->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_P));
   shortcutRegistry_.append(printAct_);
-  printPreviewAct_->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_P));
+  printPreviewAct_->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_P));
   shortcutRegistry_.append(printPreviewAct_);
 
-  savePageAsAct_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_S));
+  savePageAsAct_->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_S));
   shortcutRegistry_.append(savePageAsAct_);
 
   fullScreenAct_->setShortcut(QKeySequence(Qt::Key_F11));
@@ -1439,22 +1437,22 @@ void MainWindow::createShortcut()
 
   shortcutRegistry_.append(layoutToggle_);
 
-  closeTabAct_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_W));
+  closeTabAct_->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_W));
   shortcutRegistry_.append(closeTabAct_);
   shortcutRegistry_.append(closeOtherTabsAct_);
   shortcutRegistry_.append(closeAllTabsAct_);
   shortcutRegistry_.append(nextTabAct_);
   shortcutRegistry_.append(prevTabAct_);
 
-  reduceNewsListAct_->setShortcut(QKeySequence(Qt::ALT+ Qt::Key_Up));
+  reduceNewsListAct_->setShortcut(QKeySequence(Qt::ALT| Qt::Key_Up));
   shortcutRegistry_.append(reduceNewsListAct_);
-  increaseNewsListAct_->setShortcut(QKeySequence(Qt::ALT + Qt::Key_Down));
+  increaseNewsListAct_->setShortcut(QKeySequence(Qt::ALT | Qt::Key_Down));
   shortcutRegistry_.append(increaseNewsListAct_);
 
-  restoreLastNewsAct_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Z));
+  restoreLastNewsAct_->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Z));
   shortcutRegistry_.append(restoreLastNewsAct_);
 
-  findTextAct_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_F));
+  findTextAct_->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_F));
   shortcutRegistry_.append(findTextAct_);
 
   shortcutRegistry_.append(findFeedAct_);
@@ -4865,7 +4863,11 @@ void MainWindow::showFeedPropertiesDlg()
   properties.status.feedStatus = feedsModel_->dataField(index, "status").toString();
 
   QDateTime dtLocalTime = QDateTime::currentDateTime();
-  QDateTime dtUTC = QDateTime(dtLocalTime.date(), dtLocalTime.time(), Qt::UTC);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+  QDateTime dtUTC(dtLocalTime.date(), dtLocalTime.time(), QTimeZone(QTimeZone::UTC));
+#else
+  QDateTime dtUTC(dtLocalTime.date(), dtLocalTime.time(), Qt::UTC);
+#endif
   int nTimeShift = dtLocalTime.secsTo(dtUTC);
 
   QDateTime dt = QDateTime::fromString(
@@ -5328,9 +5330,7 @@ void MainWindow::slotIconFeedUpdate(int feedId, QByteArray faviconData)
 // ----------------------------------------------------------------------------
 void MainWindow::slotPlaySound(const QString &path)
 {
-  Settings settings;
-  soundPlayer_->play(mainApp->absolutePath(path),
-                     settings.value("Settings/useMediaPlayer", true).toBool());
+  soundPlayer_->play(mainApp->absolutePath(path));
 }
 
 void MainWindow::slotPlaySoundNewNews()
@@ -5529,11 +5529,9 @@ void MainWindow::setStyleApp(QAction *pAct)
   colorSettings.setValue("alternatingRowColors", alternatingRowColors_);
 
   QFile file(fileName);
-  if (!file.open(QFile::ReadOnly)) {
-    file.setFileName(":/style/systemStyle");
-    file.open(QFile::ReadOnly);
-  }
-  qApp->setStyleSheet(QLatin1String(file.readAll()));
+  const QByteArray styleData = file.open(QFile::ReadOnly)
+      ? file.readAll() : Common::readAllFileByteContents(":/style/systemStyle");
+  qApp->setStyleSheet(QLatin1String(styleData));
   file.close();
 
   mainSplitter_->setStyleSheet(

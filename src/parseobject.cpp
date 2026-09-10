@@ -16,6 +16,8 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 * ============================================================ */
+#include <QTimeZone>
+#include <QTextCodec>
 #include "parseobject.h"
 
 #include "mainapplication.h"
@@ -105,9 +107,10 @@ void ParseObject::slotParse(const QByteArray &xmlData, const int &feedId,
 {
   if (mainApp->isSaveDataLastFeed()) {
     QFile file(mainApp->dataDir()  + "/lastfeed.dat");
-    file.open(QIODevice::WriteOnly);
-    file.write(xmlData);
-    file.close();
+    if (file.open(QIODevice::WriteOnly)) {
+      file.write(xmlData);
+      file.close();
+    }
   }
 
   qDebug() << "=================== parseXml:start ============================";
@@ -218,7 +221,18 @@ void ParseObject::slotParse(const QByteArray &xmlData, const int &feedId,
     }
   }
 
-  if (!doc.setContent(convertData, false, &errorStr, &errorLine, &errorColumn)) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+  const auto parseResult = doc.setContent(convertData, QDomDocument::ParseOption::Default);
+  const bool parsed = bool(parseResult);
+  if (!parsed) {
+    errorStr = parseResult.errorMessage;
+    errorLine = int(parseResult.errorLine);
+    errorColumn = int(parseResult.errorColumn);
+  }
+#else
+  const bool parsed = doc.setContent(convertData, false, &errorStr, &errorLine, &errorColumn);
+#endif
+  if (!parsed) {
     qWarning() << QString("Parse data error (2): url %1, id %2, line %3, column %4: %5").
                   arg(feedUrl).arg(parseFeedId_).
                   arg(errorLine).arg(errorColumn).arg(errorStr);
@@ -944,7 +958,11 @@ QString ParseObject::parseDate(const QString &dateString, const QString &urlStri
   if (dateString.isEmpty()) return QString();
 
   QDateTime dtLocalTime = QDateTime::currentDateTime();
-  QDateTime dtUTC = QDateTime(dtLocalTime.date(), dtLocalTime.time(), Qt::UTC);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+  QDateTime dtUTC(dtLocalTime.date(), dtLocalTime.time(), QTimeZone(QTimeZone::UTC));
+#else
+  QDateTime dtUTC(dtLocalTime.date(), dtLocalTime.time(), Qt::UTC);
+#endif
   int nTimeShift = dtLocalTime.secsTo(dtUTC)/3600;
 
   QString ds = dateString.simplified();

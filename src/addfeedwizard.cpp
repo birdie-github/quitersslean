@@ -137,7 +137,7 @@ QWizardPage *AddFeedWizard::createUrlFeedPage()
   textWarning->setFont(font);
 
   QHBoxLayout *warningLayout = new QHBoxLayout();
-  warningLayout->setMargin(0);
+  warningLayout->setContentsMargins(0, 0, 0, 0);
   warningLayout->addWidget(iconWarning);
   warningLayout->addWidget(textWarning, 1);
 
@@ -234,11 +234,11 @@ QWizardPage *AddFeedWizard::createNameFeedPage()
   newFolderButton->setAutoRaise(true);
 
   QHBoxLayout *newFolderLayout = new QHBoxLayout;
-  newFolderLayout->setMargin(0);
+  newFolderLayout->setContentsMargins(0, 0, 0, 0);
   newFolderLayout->addWidget(newFolderButton);
   newFolderLayout->addStretch();
   QVBoxLayout *newFolderVLayout = new QVBoxLayout;
-  newFolderVLayout->setMargin(2);
+  newFolderVLayout->setContentsMargins(2, 2, 2, 2);
   newFolderVLayout->addStretch();
   newFolderVLayout->addLayout(newFolderLayout);
 
@@ -468,7 +468,18 @@ void AddFeedWizard::getUrlDone(int result, int feedId, QString feedUrlStr,
     int errorLine;
     int errorColumn;
     QDomDocument doc("parseDoc");
-    if (!doc.setContent(data, false, &errorStr, &errorLine, &errorColumn)) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+    const auto parseResult = doc.setContent(data, QDomDocument::ParseOption::Default);
+    const bool parsed = bool(parseResult);
+    if (!parsed) {
+      errorStr = parseResult.errorMessage;
+      errorLine = int(parseResult.errorLine);
+      errorColumn = int(parseResult.errorColumn);
+    }
+#else
+    const bool parsed = doc.setContent(data, false, &errorStr, &errorLine, &errorColumn);
+#endif
+    if (!parsed) {
       qWarning() << QString("Parse data error (1): url %1, id %2, line %3, column %4: %5").
                     arg(feedUrlStr).arg(feedId).
                     arg(errorLine).arg(errorColumn).arg(errorStr);

@@ -42,7 +42,7 @@ DownloadManager::DownloadManager(QWidget *parent)
   toolBar->addAction(listClaerAct_);
 
   QHBoxLayout *buttonLayout = new QHBoxLayout();
-  buttonLayout->setMargin(2);
+  buttonLayout->setContentsMargins(2, 2, 2, 2);
   buttonLayout->addWidget(toolBar);
 
   QWidget *buttonPanelWidget = new QWidget(this);
@@ -54,7 +54,7 @@ DownloadManager::DownloadManager(QWidget *parent)
   buttonPanelWidget->setLayout(buttonLayout);
 
   QVBoxLayout *mainLayout = new QVBoxLayout();
-  mainLayout->setMargin(0);
+  mainLayout->setContentsMargins(0, 0, 0, 0);
   mainLayout->setSpacing(0);
   mainLayout->addWidget(buttonPanelWidget);
   mainLayout->addWidget(listWidget_);

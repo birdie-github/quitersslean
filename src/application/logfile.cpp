@@ -20,6 +20,9 @@
 
 #include <QStandardPaths>
 #include <QDir>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#include <QStringConverter>
+#endif
 #include <cstdio>
 
 #include "globals.h"
@@ -55,11 +58,15 @@ void LogFile::msgHandler(QtMsgType type, const QMessageLogContext &, const QStri
     openMode |= QIODevice::Append;
   }
 
-  file.open(openMode);
+  if (!file.open(openMode)) return;
 
   QTextStream stream;
   stream.setDevice(&file);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+  stream.setEncoding(QStringConverter::Utf8);
+#else
   stream.setCodec("UTF-8");
+#endif
 
   if (file.isOpen()) {
     QString currentDateTime = QDateTime::currentDateTime().toString("dd.MM.yyyy hh:mm:ss.zzz");

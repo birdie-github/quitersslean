@@ -48,7 +48,7 @@ NewsItem::NewsItem(int idFeed, int idNews, int width, QWidget * parent)
   deleteButton_->setAutoRaise(true);
 
   QHBoxLayout *mainLayout = new QHBoxLayout();
-  mainLayout->setMargin(0);
+  mainLayout->setContentsMargins(0, 0, 0, 0);
   mainLayout->setSpacing(1);
   mainLayout->addWidget(readButton_);
   mainLayout->addWidget(iconLabel_);

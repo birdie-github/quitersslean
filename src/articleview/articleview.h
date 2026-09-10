@@ -59,10 +59,17 @@ signals:
 
 public slots:
   void print(QPrinter *printer);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
   void setSource(const QUrl &) override;
+#else
+  void setSource(const QUrl &);
+#endif
   void setSource(const QUrl &, QTextDocument::ResourceType);
 
 protected:
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+  void doSetSource(const QUrl &, QTextDocument::ResourceType) override;
+#endif
   QVariant loadResource(int type, const QUrl &url) override;
   void mouseReleaseEvent(QMouseEvent *event) override;
   void contextMenuEvent(QContextMenuEvent *event) override;

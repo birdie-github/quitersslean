@@ -2,31 +2,25 @@
 #define SOUNDPLAYER_H
 
 #include <QObject>
+#include <QThread>
 
-#include <QMediaPlayer>
-
-class QMediaPlaylist;
-class QString;
+class SoundWorker;
 
 class SoundPlayer : public QObject
 {
   Q_OBJECT
 public:
-  explicit SoundPlayer(QObject *parent = 0);
-
-  void play(const QString &soundPath, bool useMediaPlayer);
+  explicit SoundPlayer(QObject *parent = nullptr);
+  ~SoundPlayer() override;
+  void play(const QString &soundPath);
 
 signals:
-  void missingAudioSupport(const QString &errorText);
-
-private slots:
-  void mediaStatusChanged(QMediaPlayer::MediaStatus status);
-  void mediaError(QMediaPlayer::Error error);
+  void playbackFailed(const QString &soundPath, const QString &errorText);
 
 private:
-  QMediaPlayer *mediaPlayer_;
-  QMediaPlaylist *playlist_;
-  bool missingAudioSupportReported_ = false;
+  QThread workerThread_;
+  SoundWorker *worker_;
+  bool errorReported_ = false;
 };
 
 #endif // SOUNDPLAYER_H

@@ -129,7 +129,7 @@ CustomizeToolbarDialog::CustomizeToolbarDialog(QWidget *parent, QToolBar *toolba
   styleWidget->setLayout(styleLayout);
 
   QHBoxLayout *settingsLayout = new QHBoxLayout();
-  settingsLayout->setMargin(0);
+  settingsLayout->setContentsMargins(0, 0, 0, 0);
   settingsLayout->addWidget(iconWidget);
   settingsLayout->addSpacing(10);
   settingsLayout->addWidget(styleWidget);
@@ -174,7 +174,7 @@ CustomizeToolbarDialog::CustomizeToolbarDialog(QWidget *parent, QToolBar *toolba
   buttonsVLayout->addStretch();
 
   QHBoxLayout *mainlayout = new QHBoxLayout();
-  mainlayout->setMargin(0);
+  mainlayout->setContentsMargins(0, 0, 0, 0);
   mainlayout->addLayout(mainVLayout);
   mainlayout->addLayout(buttonsVLayout);
 

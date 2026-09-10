@@ -16,6 +16,7 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 * ============================================================ */
+#include "common.h"
 #include "aboutdialog.h"
 #include "articlecontent.h"
 #include <QDesktopServices>
@@ -73,11 +74,7 @@ AboutDialog::AboutDialog(const QString &lang, QWidget *parent) :
 
   QTextEdit *authorsTextEdit = new QTextEdit(this);
   authorsTextEdit->setReadOnly(true);
-  QFile file;
-  file.setFileName(":/file/AUTHORS");
-  file.open(QFile::ReadOnly);
-  authorsTextEdit->setText(QString::fromUtf8(file.readAll()));
-  file.close();
+  authorsTextEdit->setText(Common::readAllFileContents(":/file/AUTHORS"));
 
   QHBoxLayout *authorsLayout = new QHBoxLayout();
   authorsLayout->addWidget(authorsTextEdit);
@@ -90,13 +87,9 @@ AboutDialog::AboutDialog(const QString &lang, QWidget *parent) :
   connect(historyTextBrowser, &QTextBrowser::anchorClicked, this, [](const QUrl &url) {
     if (ArticleContent::isExternalLink(url)) mainApp->openExternalUrl(url);
   });
-  if (lang.contains("ru", Qt::CaseInsensitive))
-    file.setFileName(":/file/HISTORY_RU");
-  else
-    file.setFileName(":/file/HISTORY_EN");
-  file.open(QFile::ReadOnly);
-  historyTextBrowser->setHtml(QString::fromUtf8(file.readAll()));
-  file.close();
+  const QString historyFile = lang.contains("ru", Qt::CaseInsensitive)
+      ? ":/file/HISTORY_RU" : ":/file/HISTORY_EN";
+  historyTextBrowser->setHtml(Common::readAllFileContents(historyFile));
 
   QHBoxLayout *historyLayout = new QHBoxLayout();
   historyLayout->addWidget(historyTextBrowser);
@@ -105,11 +98,7 @@ AboutDialog::AboutDialog(const QString &lang, QWidget *parent) :
 
   QTextEdit *licenseTextEdit = new QTextEdit();
   licenseTextEdit->setReadOnly(true);
-  file.setFileName(":/file/COPYING");
-  file.open(QFile::ReadOnly);
-  QString str = QString(QString::fromUtf8(file.readAll())).section("-----", 1, 1);
-  licenseTextEdit->setText(str);
-  file.close();
+  licenseTextEdit->setText(Common::readAllFileContents(":/file/COPYING").section("-----", 1, 1));
 
   QHBoxLayout *licenseLayout = new QHBoxLayout();
   licenseLayout->addWidget(licenseTextEdit);

@@ -28,14 +28,14 @@ Dialog::Dialog(QWidget *parent, Qt::WindowFlags flag)
   buttonBox = new QDialogButtonBox();
 
   buttonsLayout = new QHBoxLayout();
-  buttonsLayout->setMargin(10);
+  buttonsLayout->setContentsMargins(10, 10, 10, 10);
   buttonsLayout->addWidget(buttonBox);
 
   QFrame *line = new QFrame();
   line->setFrameStyle(QFrame::HLine | QFrame::Sunken);
 
   mainLayout = new QVBoxLayout();
-  mainLayout->setMargin(0);
+  mainLayout->setContentsMargins(0, 0, 0, 0);
   mainLayout->setSpacing(0);
   mainLayout->addLayout(pageLayout, 1);
   mainLayout->addWidget(line);

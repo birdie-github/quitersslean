@@ -51,7 +51,11 @@ signals:
 protected:
   void showEvent(QShowEvent*);
   bool eventFilter(QObject *obj, QEvent *event);
-  void enterEvent(QEvent*);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+  void enterEvent(QEnterEvent*) override;
+#else
+  void enterEvent(QEvent*) override;
+#endif
   void leaveEvent(QEvent*);
 
 private slots:

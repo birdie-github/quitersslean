@@ -1,4 +1,4 @@
-name: Qt 5 build
+name: Qt builds (Qt 5 Linux/macOS, Qt 6 Windows)
 on: [push, pull_request, workflow_dispatch]
 jobs:
   build:
@@ -14,8 +14,12 @@ jobs:
     steps:
       - name: Install dependencies
         run: |
-          dnf install -y git gcc-c++ clang lld make pkgconf-pkg-config qt5-qtbase-devel qt5-qttools-devel qt5-qtmultimedia-devel qtsingleapplication-qt5-devel sqlite-devel libxml2-devel
+          dnf install -y git python3 gcc-c++ clang lld make pkgconf-pkg-config qt5-qtbase-devel qt5-qttools-devel qtsingleapplication-qt5-devel sqlite-devel libxml2-devel
       - uses: actions/checkout@v4
+      - name: Prepare miniaudio
+        run: |
+          python3 scripts/prepare-miniaudio.py --prefix "$RUNNER_TEMP/quitersslean-miniaudio"
+          echo "MINIAUDIO_INCLUDE_DIR=$RUNNER_TEMP/quitersslean-miniaudio/include" >> "$GITHUB_ENV"
       - name: Build
         run: |
           mkdir _build
@@ -44,10 +48,10 @@ jobs:
             mingw-w64-ucrt-x86_64-make
             mingw-w64-ucrt-x86_64-python
             mingw-w64-ucrt-x86_64-pkgconf
-            mingw-w64-ucrt-x86_64-qt5-base
-            mingw-w64-ucrt-x86_64-qt5-tools
-            mingw-w64-ucrt-x86_64-qt5-multimedia
-            mingw-w64-ucrt-x86_64-qt5-imageformats
+            mingw-w64-ucrt-x86_64-qt6-base
+            mingw-w64-ucrt-x86_64-qt6-tools
+            mingw-w64-ucrt-x86_64-qt6-5compat
+            mingw-w64-ucrt-x86_64-qt6-imageformats
             mingw-w64-ucrt-x86_64-sqlite3
             mingw-w64-ucrt-x86_64-libxml2
             mingw-w64-ucrt-x86_64-openssl
@@ -56,19 +60,18 @@ jobs:
         run: |
           export PKG_CONFIG_PATH="$(cygpath -m /ucrt64/lib/pkgconfig)"
           dep_work="$(cygpath -m "$RUNNER_TEMP/quitersslean-deps")"
-          python3 scripts/prepare-qtsingleapplication.py --work-dir "$dep_work" --qmake qmake-qt5 --make mingw32-make
+          python3 scripts/prepare-qtsingleapplication.py --work-dir "$dep_work" --qmake qmake6 --make mingw32-make
           export QMAKEFEATURES="$dep_work/install/features"
+          python3 scripts/prepare-miniaudio.py --prefix "$dep_work/miniaudio"
+          export MINIAUDIO_INCLUDE_DIR="$dep_work/miniaudio/include"
           mkdir _build
           cd _build
-          qmake-qt5 ../QuiteRSS.pro CONFIG+=release CONFIG-=debug_and_release
+          qmake6 ../QuiteRSS.pro QUITERSS_QT_MAJOR=6 CONFIG+=release CONFIG-=debug_and_release
           mingw32-make -j2
           mingw32-make install
 
       - name: Deploy with windeployqt
         run: |
-          # Workaround for MSYS2 Qt5 packages: windeployqt looks for "qmake"
-          ln -sf /ucrt64/bin/qmake-qt5.exe /ucrt64/bin/qmake.exe || true
-
           DEPLOY_DIR=release/target
           EXE="$DEPLOY_DIR/QuiteRSS.exe"
 
@@ -77,11 +80,10 @@ jobs:
           # --release          → only release DLLs
           # --compiler-runtime → copy MinGW/UCRT runtime DLLs
           # --verbose 1        → useful log in the Actions output
-          windeployqt-qt5 \
+          windeployqt6 \
             --release \
             --compiler-runtime \
             --no-opengl-sw \
-            --no-angle \
             --no-translations \
             --verbose 1 \
             "$EXE"
@@ -137,6 +139,8 @@ jobs:
           dep_work="$RUNNER_TEMP/quitersslean-deps"
           python3 scripts/prepare-qtsingleapplication.py --work-dir "$dep_work"
           export QMAKEFEATURES="$dep_work/install/features"
+          python3 scripts/prepare-miniaudio.py --prefix "$dep_work/miniaudio"
+          export MINIAUDIO_INCLUDE_DIR="$dep_work/miniaudio/include"
           mkdir _build
           cd _build
           qmake ../QuiteRSS.pro CONFIG+=release CONFIG-=debug_and_release

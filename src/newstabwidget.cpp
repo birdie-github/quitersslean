@@ -16,6 +16,8 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 * ============================================================ */
+#include "common.h"
+#include <QTimeZone>
 #include "newstabwidget.h"
 
 #include "mainapplication.h"
@@ -64,7 +66,7 @@ NewsTabWidget::NewsTabWidget(QWidget *parent, TabType type, int feedId, int feed
           this, SLOT(slotTabClose()));
 
   QHBoxLayout *newsTitleLayout = new QHBoxLayout();
-  newsTitleLayout->setMargin(0);
+  newsTitleLayout->setContentsMargins(0, 0, 0, 0);
   newsTitleLayout->setSpacing(0);
   newsTitleLayout->addWidget(newsIconTitle_);
   newsTitleLayout->addSpacing(3);
@@ -105,7 +107,7 @@ NewsTabWidget::NewsTabWidget(QWidget *parent, TabType type, int feedId, int feed
   }
 
   QVBoxLayout *layout = new QVBoxLayout();
-  layout->setMargin(0);
+  layout->setContentsMargins(0, 0, 0, 0);
   layout->setSpacing(0);
   if (type_ == TabTypeDownloads)
     layout->addWidget(mainApp->downloadManager());
@@ -220,7 +222,7 @@ void NewsTabWidget::createNewsList()
   findText_->setFixedWidth(200);
 
   QHBoxLayout *newsPanelLayout = new QHBoxLayout();
-  newsPanelLayout->setMargin(2);
+  newsPanelLayout->setContentsMargins(2, 2, 2, 2);
   newsPanelLayout->setSpacing(2);
   newsPanelLayout->addWidget(newsToolBar_);
   newsPanelLayout->addStretch(1);
@@ -237,7 +239,7 @@ void NewsTabWidget::createNewsList()
     newsPanelWidget_->hide();
 
   QVBoxLayout *newsLayout = new QVBoxLayout();
-  newsLayout->setMargin(0);
+  newsLayout->setContentsMargins(0, 0, 0, 0);
   newsLayout->setSpacing(0);
   newsLayout->addWidget(newsPanelWidget_);
   newsLayout->addWidget(newsView_);
@@ -247,27 +249,11 @@ void NewsTabWidget::createNewsList()
 
   markNewsReadTimer_ = new QTimer(this);
 
-  QFile htmlFile;
-  htmlFile.setFileName(":/html/newspaper_head");
-  htmlFile.open(QFile::ReadOnly);
-  newspaperHeadHtml_ = QString::fromUtf8(htmlFile.readAll());
-  htmlFile.close();
-  htmlFile.setFileName(":/html/newspaper_description");
-  htmlFile.open(QFile::ReadOnly);
-  newspaperHtml_ = QString::fromUtf8(htmlFile.readAll());
-  htmlFile.close();
-  htmlFile.setFileName(":/html/newspaper_description_rtl");
-  htmlFile.open(QFile::ReadOnly);
-  newspaperHtmlRtl_ = QString::fromUtf8(htmlFile.readAll());
-  htmlFile.close();
-  htmlFile.setFileName(":/html/description");
-  htmlFile.open(QFile::ReadOnly);
-  htmlString_ = QString::fromUtf8(htmlFile.readAll());
-  htmlFile.close();
-  htmlFile.setFileName(":/html/description_rtl");
-  htmlFile.open(QFile::ReadOnly);
-  htmlRtlString_ = QString::fromUtf8(htmlFile.readAll());
-  htmlFile.close();
+  newspaperHeadHtml_ = Common::readAllFileContents(":/html/newspaper_head");
+  newspaperHtml_ = Common::readAllFileContents(":/html/newspaper_description");
+  newspaperHtmlRtl_ = Common::readAllFileContents(":/html/newspaper_description_rtl");
+  htmlString_ = Common::readAllFileContents(":/html/description");
+  htmlRtlString_ = Common::readAllFileContents(":/html/description_rtl");
 
   connect(newsView_, SIGNAL(pressed(QModelIndex)),
           this, SLOT(slotNewsViewClicked(QModelIndex)));
@@ -404,11 +390,9 @@ void NewsTabWidget::setSettings(bool init, bool newTab)
       QString styleSheetNews = settings.value("Settings/styleSheetNews",
                                               mainApp->styleSheetNewsDefaultFile()).toString();
       QFile file(styleSheetNews);
-      if (!file.open(QFile::ReadOnly)) {
-        file.setFileName(":/style/newsStyle");
-        file.open(QFile::ReadOnly);
-      }
-      cssString_ = QString::fromUtf8(file.readAll()).
+      const QByteArray styleData = file.open(QFile::ReadOnly)
+          ? file.readAll() : Common::readAllFileByteContents(":/style/newsStyle");
+      cssString_ = QString::fromUtf8(styleData).
           arg(mainWindow_->newsTextFontFamily_).
           arg(mainWindow_->newsTextFontSize_).
           arg(mainWindow_->newsTitleFontFamily_).
@@ -1211,7 +1195,11 @@ void NewsTabWidget::updateArticleView(QModelIndex index, bool preservePosition)
       QString dateString = newsModel_->dataField(index.row(), "published").toString();
       if (!dateString.isNull()) {
         QDateTime dtLocalTime = QDateTime::currentDateTime();
-        QDateTime dtUTC = QDateTime(dtLocalTime.date(), dtLocalTime.time(), Qt::UTC);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+        QDateTime dtUTC(dtLocalTime.date(), dtLocalTime.time(), QTimeZone(QTimeZone::UTC));
+#else
+        QDateTime dtUTC(dtLocalTime.date(), dtLocalTime.time(), Qt::UTC);
+#endif
         int nTimeShift = dtLocalTime.secsTo(dtUTC);
 
         QDateTime dt = QDateTime::fromString(dateString, Qt::ISODate);
@@ -1438,7 +1426,11 @@ void NewsTabWidget::loadNewspaper(int refresh)
       QString dateString = newsModel_->dataField(index.row(), "published").toString();
       if (!dateString.isNull()) {
         QDateTime dtLocalTime = QDateTime::currentDateTime();
-        QDateTime dtUTC = QDateTime(dtLocalTime.date(), dtLocalTime.time(), Qt::UTC);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+        QDateTime dtUTC(dtLocalTime.date(), dtLocalTime.time(), QTimeZone(QTimeZone::UTC));
+#else
+        QDateTime dtUTC(dtLocalTime.date(), dtLocalTime.time(), Qt::UTC);
+#endif
         int nTimeShift = dtLocalTime.secsTo(dtUTC);
 
         QDateTime dt = QDateTime::fromString(dateString, Qt::ISODate);

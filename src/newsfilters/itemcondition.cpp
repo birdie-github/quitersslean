@@ -50,7 +50,7 @@ ItemCondition::ItemCondition(QWidget * parent)
 
   QHBoxLayout *buttonsLayout = new QHBoxLayout();
   buttonsLayout->setAlignment(Qt::AlignCenter);
-  buttonsLayout->setMargin(0);
+  buttonsLayout->setContentsMargins(0, 0, 0, 0);
   buttonsLayout->setSpacing(5);
   buttonsLayout->addWidget(comboBox1_);
   buttonsLayout->addWidget(comboBox2_);
@@ -62,8 +62,8 @@ ItemCondition::ItemCondition(QWidget * parent)
   setLayout(buttonsLayout);
 
   connect(deleteButton_, SIGNAL(clicked()), this, SLOT(deleteFilterRules()));
-  connect(comboBox1_, SIGNAL(currentIndexChanged(QString)),
-          this, SLOT(currentIndexChanged(QString)));
+  connect(comboBox1_, QOverload<int>::of(&QComboBox::currentIndexChanged),
+          this, [this](int) { currentIndexChanged(comboBox1_->currentText()); });
 }
 
 void ItemCondition::deleteFilterRules()

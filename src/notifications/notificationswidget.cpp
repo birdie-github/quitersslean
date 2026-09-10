@@ -136,7 +136,7 @@ NotificationWidget::NotificationWidget(QList<int> idFeedList,
         "image: url(:/images/closeHover); }");
 
   QHBoxLayout *titleLayout = new QHBoxLayout();
-  titleLayout->setMargin(4);
+  titleLayout->setContentsMargins(4, 4, 4, 4);
   titleLayout->setSpacing(5);
   titleLayout->addWidget(iconTitle_);
   titleLayout->addWidget(textTitle_, 1);
@@ -172,7 +172,7 @@ NotificationWidget::NotificationWidget(QList<int> idFeedList,
   nextButton_->setStyleSheet("background: none;");
 
   QHBoxLayout *bottomLayout = new QHBoxLayout();
-  bottomLayout->setMargin(2);
+  bottomLayout->setContentsMargins(2, 2, 2, 2);
   bottomLayout->setSpacing(1);
   bottomLayout->addSpacing(3);
   bottomLayout->addWidget(numPage_);
@@ -196,7 +196,7 @@ NotificationWidget::NotificationWidget(QList<int> idFeedList,
   stackedWidget_->setStyleSheet("background: none;");
 
   QVBoxLayout *mainLayout = new QVBoxLayout();
-  mainLayout->setMargin(1);
+  mainLayout->setContentsMargins(1, 1, 1, 1);
   mainLayout->setSpacing(0);
   mainLayout->addWidget(titlePanel_);
   mainLayout->addWidget(stackedWidget_);
@@ -211,7 +211,7 @@ NotificationWidget::NotificationWidget(QList<int> idFeedList,
                             arg(color.blue()).arg(transparency));
 
   QVBoxLayout *layout = new QVBoxLayout();
-  layout->setMargin(0);
+  layout->setContentsMargins(0, 0, 0, 0);
   layout->addWidget(mainWidget);
 
   setLayout(layout);
@@ -436,7 +436,11 @@ bool NotificationWidget::eventFilter(QObject *obj, QEvent *event)
   }
 }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+void NotificationWidget::enterEvent(QEnterEvent*)
+#else
 void NotificationWidget::enterEvent(QEvent*)
+#endif
 {
   showTimer_->stop();
 }
@@ -452,7 +456,7 @@ void NotificationWidget::addPage(bool next)
   if (next) pageLayout_->addStretch();
 
   pageLayout_ = new QVBoxLayout();
-  pageLayout_->setMargin(5);
+  pageLayout_->setContentsMargins(5, 5, 5, 5);
   pageLayout_->setSpacing(0);
   QWidget *pageWidget = new QWidget(this);
   pageWidget->setLayout(pageLayout_);

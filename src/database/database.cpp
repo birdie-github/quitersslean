@@ -362,41 +362,41 @@ void Database::createTables(QSqlDatabase &db)
 {
   db.transaction();
 
-  db.exec(kCreateFeedsTableQuery);
-  db.exec(kAddColumnsFeedsTableQuery);
-  db.exec(kCreateNewsTableQuery);
+  QSqlQuery(db).exec(kCreateFeedsTableQuery);
+  QSqlQuery(db).exec(kAddColumnsFeedsTableQuery);
+  QSqlQuery(db).exec(kCreateNewsTableQuery);
   // Create index for feedId field
-  db.exec("CREATE INDEX feedId ON news(feedId)");
+  QSqlQuery(db).exec("CREATE INDEX feedId ON news(feedId)");
 
   // Create extra feeds table just in case
-  db.exec("CREATE TABLE feeds_ex(id integer primary key, "
+  QSqlQuery(db).exec("CREATE TABLE feeds_ex(id integer primary key, "
           "feedId integer, "  // feed Id
           "name varchar, "    // parameter name
           "value varchar "    // parameter value
           ")");
   // Create extra news table just in case
-  db.exec("CREATE TABLE news_ex(id integer primary key, "
+  QSqlQuery(db).exec("CREATE TABLE news_ex(id integer primary key, "
           "feedId integer, "  // feed Id
           "newsId integer, "  // news Id
           "name varchar, "    // parameter name
           "value varchar "    // parameter value
           ")");
   // Create filters table
-  db.exec(kCreateFiltersTable);
-  db.exec(kCreateFilterConditionsTable);
-  db.exec(kCreateFilterActionsTable);
+  QSqlQuery(db).exec(kCreateFiltersTable);
+  QSqlQuery(db).exec(kCreateFilterConditionsTable);
+  QSqlQuery(db).exec(kCreateFilterActionsTable);
   // Create extra filters just in case
-  db.exec("CREATE TABLE filters_ex(id integer primary key, "
+  QSqlQuery(db).exec("CREATE TABLE filters_ex(id integer primary key, "
           "idFilter integer, "  // filter Id
           "name text, "         // parameter name
           "value text"          // parameter value
           ")");
   // Create labels table
-  db.exec(kCreateLabelsTable);
+  QSqlQuery(db).exec(kCreateLabelsTable);
   // Create password table
-  db.exec(kCreatePasswordsTable);
+  QSqlQuery(db).exec(kCreatePasswordsTable);
   //
-  db.exec("CREATE TABLE info(id integer primary key, name varchar, value varchar)");
+  QSqlQuery(db).exec("CREATE TABLE info(id integer primary key, name varchar, value varchar)");
 
   db.commit();
 }
@@ -409,10 +409,7 @@ void Database::createLabels(QSqlDatabase &db)
               "VALUES (:name, :image)");
     q.bindValue(":name", MainWindow::nameLabels().at(i));
 
-    QFile file(QString(":/images/label_%1").arg(i+1));
-    file.open(QFile::ReadOnly);
-    q.bindValue(":image", file.readAll());
-    file.close();
+    q.bindValue(":image", Common::readAllFileByteContents(QString(":/images/label_%1").arg(i+1)));
 
     q.exec();
 
@@ -431,7 +428,7 @@ void Database::addColumnsToFeedsTables(QSqlDatabase &db)
 
     db.transaction();
     foreach (QString col, columnsList) {
-        db.exec("ALTER TABLE feeds ADD COLUMN" + col);
+        QSqlQuery(db).exec("ALTER TABLE feeds ADD COLUMN" + col);
     }
     db.commit();
 }
@@ -540,7 +537,7 @@ void Database::setVacuum()
     dbFile.setDatabaseName(mainApp->dbFileName());
     dbFile.open();
     setPragma(dbFile);
-    dbFile.exec("VACUUM");
+    QSqlQuery(dbFile).exec("VACUUM");
     dbFile.close();
   }
   QSqlDatabase::removeDatabase("vacuum");

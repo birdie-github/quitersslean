@@ -26,6 +26,7 @@
 
 #include <qcoreapplication.h>
 #include <qvariant.h>
+#include <QDateTime>
 #include <qsqlerror.h>
 #include <qsqlfield.h>
 #include <qsqlindex.h>
@@ -59,21 +60,21 @@ static QString _q_escapeIdentifier(const QString &identifier)
   return res;
 }
 
-static QVariant::Type qGetColumnType(const QString &tpName)
+static QMetaType::Type qGetColumnType(const QString &tpName)
 {
   const QString typeName = tpName.toLower();
 
   if (typeName == QLatin1String("integer")
       || typeName == QLatin1String("int"))
-    return QVariant::Int;
+    return QMetaType::Int;
   if (typeName == QLatin1String("double")
       || typeName == QLatin1String("float")
       || typeName == QLatin1String("real")
       || typeName.startsWith(QLatin1String("numeric")))
-    return QVariant::Double;
+    return QMetaType::Double;
   if (typeName == QLatin1String("blob"))
-    return QVariant::ByteArray;
-  return QVariant::String;
+    return QMetaType::QByteArray;
+  return QMetaType::QString;
 }
 
 static QSqlError qMakeError(sqlite3 *access, const QString &descr, QSqlError::ErrorType type,
@@ -166,7 +167,7 @@ void SQLiteResultPrivate::initColumns(bool emptyResultset)
     // sqlite3_column_type is documented to have undefined behavior if the result set is empty
     int stp = emptyResultset ? -1 : sqlite3_column_type(stmt, i);
 
-    QVariant::Type fieldType;
+    QMetaType::Type fieldType;
 
     if (!typeName.isEmpty()) {
       fieldType = qGetColumnType(typeName);
@@ -174,26 +175,30 @@ void SQLiteResultPrivate::initColumns(bool emptyResultset)
       // Get the proper type for the field based on stp value
       switch (stp) {
       case SQLITE_INTEGER:
-        fieldType = QVariant::Int;
+        fieldType = QMetaType::Int;
         break;
       case SQLITE_FLOAT:
-        fieldType = QVariant::Double;
+        fieldType = QMetaType::Double;
         break;
       case SQLITE_BLOB:
-        fieldType = QVariant::ByteArray;
+        fieldType = QMetaType::QByteArray;
         break;
       case SQLITE_TEXT:
-        fieldType = QVariant::String;
+        fieldType = QMetaType::QString;
         break;
       case SQLITE_NULL:
       default:
-        fieldType = QVariant::Invalid;
+        fieldType = QMetaType::UnknownType;
         break;
       }
     }
 
-    QSqlField fld(colName, fieldType);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    QSqlField fld(colName, QMetaType(int(fieldType)));
+#else
+    QSqlField fld(colName, QVariant::Type(fieldType));
     fld.setSqlType(stp);
+#endif
     rInf.append(fld);
   }
 }
@@ -260,7 +265,11 @@ bool SQLiteResultPrivate::fetchNext(SqlCachedResult::ValueCache &values, int idx
         };
         break;
       case SQLITE_NULL:
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        values[i + idx] = QVariant(QMetaType(QMetaType::QString));
+#else
         values[i + idx] = QVariant(QVariant::String);
+#endif
         break;
       default:
         values[i + idx] = QString(reinterpret_cast<const QChar *>(
@@ -384,26 +393,39 @@ bool SQLiteResult::exec()
       res = SQLITE_OK;
       const QVariant value = values.at(i);
 
-      if (value.isNull()) {
+      bool nullValue = value.isNull();
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+      // Qt 6 QVariant no longer asks the contained value whether it is null.
+      // Retain Qt 5 binding semantics for nullable SQL value types.
+      switch (value.userType()) {
+      case QMetaType::QString: nullValue |= value.toString().isNull(); break;
+      case QMetaType::QByteArray: nullValue |= value.toByteArray().isNull(); break;
+      case QMetaType::QDate: nullValue |= value.toDate().isNull(); break;
+      case QMetaType::QTime: nullValue |= value.toTime().isNull(); break;
+      case QMetaType::QDateTime: nullValue |= value.toDateTime().isNull(); break;
+      default: break;
+      }
+#endif
+      if (nullValue) {
         res = sqlite3_bind_null(d->stmt, i + 1);
       } else {
-        switch (value.type()) {
-        case QVariant::ByteArray: {
+        switch (value.userType()) {
+        case QMetaType::QByteArray: {
           const QByteArray *ba = static_cast<const QByteArray*>(value.constData());
           res = sqlite3_bind_blob(d->stmt, i + 1, ba->constData(),
                                   ba->size(), SQLITE_STATIC);
           break; }
-        case QVariant::Int:
+        case QMetaType::Int:
           res = sqlite3_bind_int(d->stmt, i + 1, value.toInt());
           break;
-        case QVariant::Double:
+        case QMetaType::Double:
           res = sqlite3_bind_double(d->stmt, i + 1, value.toDouble());
           break;
-        case QVariant::UInt:
-        case QVariant::LongLong:
+        case QMetaType::UInt:
+        case QMetaType::LongLong:
           res = sqlite3_bind_int64(d->stmt, i + 1, value.toLongLong());
           break;
-        case QVariant::String: {
+        case QMetaType::QString: {
           // lifetime of string == lifetime of its qvariant
           const QString *str = static_cast<const QString*>(value.constData());
           res = sqlite3_bind_text16(d->stmt, i + 1, str->utf16(),
@@ -701,7 +723,11 @@ static QSqlIndex qGetTableInfo(QSqlQuery &q, const QString &tableName, bool only
     if (onlyPIndex && !isPk)
       continue;
     QString typeName = q.value(2).toString().toLower();
-    QSqlField fld(q.value(1).toString(), qGetColumnType(typeName));
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    QSqlField fld(q.value(1).toString(), QMetaType(int(qGetColumnType(typeName))));
+#else
+    QSqlField fld(q.value(1).toString(), QVariant::Type(qGetColumnType(typeName)));
+#endif
     if (isPk && (typeName == QLatin1String("integer")))
       // INTEGER PRIMARY KEY fields are auto-generated in sqlite
       // INT PRIMARY KEY is not the same as INTEGER PRIMARY KEY!

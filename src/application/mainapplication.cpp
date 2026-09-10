@@ -331,11 +331,9 @@ void MainApplication::setStyleApplication()
     fileName.append("/style/green.qss");
   }
   QFile file(fileName);
-  if (!file.open(QFile::ReadOnly)) {
-    file.setFileName(":/style/systemStyle");
-    file.open(QFile::ReadOnly);
-  }
-  setStyleSheet(QLatin1String(file.readAll()));
+  const QByteArray styleData = file.open(QFile::ReadOnly)
+      ? file.readAll() : Common::readAllFileByteContents(":/style/systemStyle");
+  setStyleSheet(QLatin1String(styleData));
   file.close();
 
   setStyle(new QProxyStyle);
@@ -346,18 +344,23 @@ void MainApplication::setTranslateApplication()
   if (!translator_)
     translator_ = new QTranslator(this);
   removeTranslator(translator_);
-  translator_->load(resourcesDir() + QString("/lang/quiterss_%1").arg(langFileName_));
-  installTranslator(translator_);
+  if (translator_->load(resourcesDir() + QString("/lang/quiterss_%1").arg(langFileName_)))
+    installTranslator(translator_);
 
   if (!qt_translator_)
     qt_translator_ = new QTranslator(this);
   removeTranslator(qt_translator_);
 #ifdef HAVE_X11
-  qt_translator_->load(QLibraryInfo::location (QLibraryInfo::TranslationsPath) + "/qtbase_" + langFileName_);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+  const QString translationsDir = QLibraryInfo::path(QLibraryInfo::TranslationsPath);
 #else
-  qt_translator_->load(resourcesDir() + "/lang/qtbase_" + langFileName_);
+  const QString translationsDir = QLibraryInfo::location(QLibraryInfo::TranslationsPath);
 #endif
-  installTranslator(qt_translator_);
+#else
+  const QString translationsDir = resourcesDir() + "/lang";
+#endif
+  if (qt_translator_->load(translationsDir + "/qtbase_" + langFileName_))
+    installTranslator(qt_translator_);
 }
 
 void MainApplication::showSplashScreen()

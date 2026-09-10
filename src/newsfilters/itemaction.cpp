@@ -42,7 +42,7 @@ ItemAction::ItemAction(QWidget * parent)
   playSound_->setToolTip(tr("Play"));
   playSound_->setAutoRaise(true);
   QHBoxLayout *soundLayout = new QHBoxLayout();
-  soundLayout->setMargin(0);
+  soundLayout->setContentsMargins(0, 0, 0, 0);
   soundLayout->setSpacing(1);
   soundLayout->addWidget(soundPathEdit_, 1);
   soundLayout->addWidget(selectionSound_);
@@ -70,7 +70,7 @@ ItemAction::ItemAction(QWidget * parent)
 
   QHBoxLayout *buttonsLayout = new QHBoxLayout();
   buttonsLayout->setAlignment(Qt::AlignCenter);
-  buttonsLayout->setMargin(0);
+  buttonsLayout->setContentsMargins(0, 0, 0, 0);
   buttonsLayout->setSpacing(5);
   buttonsLayout->addWidget(comboBox1_);
   buttonsLayout->addWidget(comboBox2_);

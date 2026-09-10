@@ -16,6 +16,7 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 * ============================================================ */
+#include <QTimeZone>
 #include "feedsmodel.h"
 #include "feedsproxymodel.h"
 
@@ -167,7 +168,11 @@ QVariant FeedsModel::data(const QModelIndex &index, int role) const
 
       if (!strDate.isNull()) {
         QDateTime dtLocalTime = QDateTime::currentDateTime();
-        QDateTime dtUTC = QDateTime(dtLocalTime.date(), dtLocalTime.time(), Qt::UTC);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+        QDateTime dtUTC(dtLocalTime.date(), dtLocalTime.time(), QTimeZone(QTimeZone::UTC));
+#else
+        QDateTime dtUTC(dtLocalTime.date(), dtLocalTime.time(), Qt::UTC);
+#endif
         int nTimeShift = dtLocalTime.secsTo(dtUTC);
 
         QDateTime dt = QDateTime::fromString(strDate, Qt::ISODate);
@@ -183,7 +188,7 @@ QVariant FeedsModel::data(const QModelIndex &index, int role) const
         return QVariant();
       }
     }
-  } else if (role == Qt::TextColorRole) {
+  } else if (role == Qt::ForegroundRole) {
     if (indexColumnOf("unread") == index.column()) {
       return QColor(countNewsUnreadColor_);
     }

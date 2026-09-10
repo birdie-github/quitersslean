@@ -24,9 +24,9 @@
 #define SQLCACHEDRESULT_H
 
 #include <QtSql/qsqlresult.h>
+#include <QVector>
 
 class QVariant;
-template <typename T> class QVector;
 
 class SqlCachedResultPrivate;
 

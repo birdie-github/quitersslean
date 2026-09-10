@@ -16,6 +16,7 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 * ============================================================ */
+#include <QTextCodec>
 #include "updatefeeds.h"
 
 #include "mainapplication.h"
@@ -411,7 +412,7 @@ void UpdateObject::slotImportFeeds(QByteArray xmlData)
     xml.readNext();
     if (xml.isStartElement()) {
       // Search for "outline" only
-      if (xml.name() == "outline") {
+      if (xml.name() == QLatin1String("outline")) {
         qDebug() << outlineCount << "+:" << xml.prefix().toString()
                  << ":" << xml.name().toString();
 
@@ -484,7 +485,7 @@ void UpdateObject::slotImportFeeds(QByteArray xmlData)
         }
       }
     } else if (xml.isEndElement()) {
-      if (xml.name() == "outline") {
+      if (xml.name() == QLatin1String("outline")) {
         parentIdsStack.pop();
         ++outlineCount;
       }
@@ -1416,7 +1417,7 @@ void UpdateObject::startCleanUp(bool isShutdown, QStringList feedsIdList, QList<
 
   if (!mainApp->storeDBMemory()) {
     if ((cleanupOn && optimizeDB) || !isShutdown)
-      db_.exec("VACUUM");
+      QSqlQuery(db_).exec("VACUUM");
   } else if (isShutdown) {
     // Persist on actual exit, even when shutdown cleanup is disabled.
     saveMemoryDatabase();
@@ -1424,7 +1425,7 @@ void UpdateObject::startCleanUp(bool isShutdown, QStringList feedsIdList, QList<
       Database::setVacuum();
   } else {
     // Manual cleanup stays in memory until the save timer or actual exit.
-    db_.exec("VACUUM");
+    QSqlQuery(db_).exec("VACUUM");
   }
 
   emit signalFinishCleanUp(countDeleted);

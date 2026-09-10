@@ -87,6 +87,9 @@ ShareServiceConfiguration ShareServiceLoader::load(const QString &installedDirec
 
   log(QStringLiteral("using image directory: %1").arg(result.imageDirectory));
   QSettings settings(result.selectedFile, QSettings::IniFormat);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+  settings.setIniCodec("UTF-8");
+#endif
   settings.beginGroup(QStringLiteral("services"));
   QStringList serviceIds = settings.value(QStringLiteral("order")).toStringList();
   settings.endGroup();

@@ -24,12 +24,19 @@ void FeedsProxyModel::setFilter(const QString &filterAct, const QList<int> &idLi
 {
   if ((filterAct_ != filterAct) || (filterAct != "filterFeedsAll_") ||
       (findAct_ != findAct) || (findText_ != findText) || (idList_ != idList)) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+    beginFilterChange();
+#endif
     filterAct_ = filterAct;
     findAct_ = findAct;
     findText_ = findText;
     idList_ = idList;
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+    endFilterChange(Direction::Rows);
+#else
     invalidateFilter();
+#endif
   }
 }
 

@@ -50,10 +50,15 @@ exists(.git) {
   }
 }
 
-!equals(QT_MAJOR_VERSION, 5): error("QuiteRSS requires Qt 5.15.x")
-lessThan(QT_MINOR_VERSION, 15): error("QuiteRSS requires Qt 5.15 or newer within Qt 5")
-QT += widgets network xml printsupport sql multimedia
-CONFIG += c++11 link_pkgconfig
+# Invoke the matching qmake; this option validates, rather than switches, its Qt.
+isEmpty(QUITERSS_QT_MAJOR): QUITERSS_QT_MAJOR = 5
+!equals(QUITERSS_QT_MAJOR, 5):!equals(QUITERSS_QT_MAJOR, 6): error("QUITERSS_QT_MAJOR must be 5 or 6")
+!equals(QT_MAJOR_VERSION, $$QUITERSS_QT_MAJOR): error("Run qmake from the requested Qt installation. Qt 6 requires QUITERSS_QT_MAJOR=6; Qt 5 is the default.")
+equals(QT_MAJOR_VERSION, 5):lessThan(QT_MINOR_VERSION, 15): error("QuiteRSS requires Qt 5.15 or newer within Qt 5")
+equals(QT_MAJOR_VERSION, 6):lessThan(QT_MINOR_VERSION, 2): error("QuiteRSS requires Qt 6.2 or newer within Qt 6")
+QT += widgets network xml printsupport sql
+equals(QT_MAJOR_VERSION, 6): QT += core5compat
+CONFIG += c++17 link_pkgconfig
 !packagesExist(libxml-2.0) {
   error("libxml2 development files and pkg-config are required. Set PKG_CONFIG_PATH to the directory containing libxml-2.0.pc. See INSTALL for Linux, MSYS2 and Homebrew setup.")
 }
@@ -205,9 +210,10 @@ RCC_DIR = $${BUILD_DIR}/rcc
 
 # Require the installed Qt 5 QtSingleApplication library and qmake feature.
 !load(qtsingleapplication, true) {
-  error("QtSingleApplication for Qt 5 is required. Install its development package with qtsingleapplication.prf; on Fedora: qtsingleapplication-qt5-devel. For Windows/macOS and QMAKEFEATURES setup see INSTALL.")
+  error("QtSingleApplication built with the selected Qt is required, including qtsingleapplication.prf. See INSTALL for the preparation helper and QMAKEFEATURES setup.")
 }
 include(3rdparty/sqlite.pri)
+include(3rdparty/miniaudio.pri)
 
 win32|mac {
   TARGET = QuiteRSS

@@ -48,7 +48,7 @@ void CookieJar::loadCookies()
 
   QList<QNetworkCookie> loadedCookies;
   QFile file(mainApp->dataDir() + "/cookies.dat");
-  file.open(QIODevice::ReadOnly);
+  if (!file.open(QIODevice::ReadOnly)) return;
   QDataStream stream(&file);
   int count;
 
@@ -84,7 +84,7 @@ void CookieJar::saveCookies()
   QList<QNetworkCookie> allCookies = getAllCookies();
 
   QFile file(mainApp->dataDir() + "/cookies.dat");
-  file.open(QIODevice::WriteOnly);
+  if (!file.open(QIODevice::WriteOnly)) return;
   QDataStream stream(&file);
   int count = allCookies.count();
 

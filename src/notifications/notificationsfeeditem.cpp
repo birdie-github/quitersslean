@@ -28,14 +28,14 @@ FeedItem::FeedItem(int width, QWidget * parent)
   QWidget *mainWidget = new QWidget(this);
   mainWidget->setObjectName("feedItemNotification");
   QHBoxLayout *layout = new QHBoxLayout(mainWidget);
-  layout->setMargin(4);
+  layout->setContentsMargins(4, 4, 4, 4);
   layout->setSpacing(5);
   layout->addWidget(iconLabel_);
   layout->addWidget(titleLabel_);
   layout->addStretch();
 
   QHBoxLayout *mainLayout = new QHBoxLayout();
-  mainLayout->setMargin(0);
+  mainLayout->setContentsMargins(0, 0, 0, 0);
   mainLayout->addWidget(mainWidget);
   setLayout(mainLayout);
 }

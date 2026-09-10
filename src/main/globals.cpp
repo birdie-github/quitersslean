@@ -68,7 +68,7 @@ void Globals::init()
     cacheDir_ = "cache";
     soundNotifyDir_ = "sound";
   } else {
-    dataDir_ = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+    dataDir_ = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
     cacheDir_ = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
     soundNotifyDir_ = resourcesDir_ % "/sound";
 

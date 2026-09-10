@@ -130,7 +130,7 @@ FilterRulesDialog::FilterRulesDialog(QWidget *parent, int filterId, int feedId)
   conditionScrollArea_->setWidgetResizable(true);
 
   conditionLayout_ = new QVBoxLayout();
-  conditionLayout_->setMargin(1);
+  conditionLayout_->setContentsMargins(1, 1, 1, 1);
   conditionLayout_->setSpacing(1);
   if (filterId_ == -1)
     addCondition();
@@ -141,7 +141,7 @@ FilterRulesDialog::FilterRulesDialog(QWidget *parent, int filterId, int feedId)
   conditionScrollArea_->setWidget(conditionWidget_);
 
   QVBoxLayout *splitterLayoutV1 = new QVBoxLayout();
-  splitterLayoutV1->setMargin(0);
+  splitterLayoutV1->setContentsMargins(0, 0, 0, 0);
   splitterLayoutV1->addLayout(matchLayout);
   splitterLayoutV1->addWidget(conditionScrollArea_, 1);
 
@@ -154,7 +154,7 @@ FilterRulesDialog::FilterRulesDialog(QWidget *parent, int filterId, int feedId)
   actionsScrollArea_->setFocusPolicy(Qt::NoFocus);
 
   actionsLayout_ = new QVBoxLayout();
-  actionsLayout_->setMargin(1);
+  actionsLayout_->setContentsMargins(1, 1, 1, 1);
   actionsLayout_->setSpacing(1);
   if (filterId_ == -1)
     addAction();
@@ -165,7 +165,7 @@ FilterRulesDialog::FilterRulesDialog(QWidget *parent, int filterId, int feedId)
   actionsScrollArea_->setWidget(actionsWidget_);
 
   QVBoxLayout *splitterLayoutV2 = new QVBoxLayout();
-  splitterLayoutV2->setMargin(0);
+  splitterLayoutV2->setContentsMargins(0, 0, 0, 0);
   splitterLayoutV2->addWidget(new QLabel(tr("Perform these actions:")));
   splitterLayoutV2->addWidget(actionsScrollArea_, 1);
 
@@ -178,7 +178,7 @@ FilterRulesDialog::FilterRulesDialog(QWidget *parent, int filterId, int feedId)
   spliter->addWidget(splitterWidget2);
 
   QVBoxLayout *rulesLayout = new QVBoxLayout();
-  rulesLayout->setMargin(0);
+  rulesLayout->setContentsMargins(0, 0, 0, 0);
   rulesLayout->addLayout(filterNamelayout);
   rulesLayout->addWidget(spliter);
 
@@ -198,7 +198,7 @@ FilterRulesDialog::FilterRulesDialog(QWidget *parent, int filterId, int feedId)
   textWarning_->setFont(font);
 
   QHBoxLayout *warningLayout = new QHBoxLayout();
-  warningLayout->setMargin(0);
+  warningLayout->setContentsMargins(0, 0, 0, 0);
   warningLayout->addWidget(iconWarning);
   warningLayout->addWidget(textWarning_, 1);
 
@@ -504,8 +504,10 @@ ItemCondition *FilterRulesDialog::addCondition()
   itemCondition->lineEdit_->setFocus();
   connect(itemCondition->lineEdit_, SIGNAL(textChanged(QString)),
           this, SLOT(filterNameChanged(QString)));
-  connect(itemCondition->comboBox1_, SIGNAL(currentIndexChanged(QString)),
-          this, SLOT(filterNameChanged(QString)));
+  connect(itemCondition->comboBox1_, QOverload<int>::of(&QComboBox::currentIndexChanged),
+          this, [this, itemCondition](int) {
+    filterNameChanged(itemCondition->comboBox1_->currentText());
+  });
   return itemCondition;
 }
 

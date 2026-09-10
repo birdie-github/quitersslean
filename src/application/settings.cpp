@@ -44,11 +44,17 @@ QSettings *Settings::storage()
   Q_ASSERT(settingsCreated);
   // Distinct objects per thread, kept alive across temporary Settings wrappers.
   // QSettings shares changes to the same location within this process.
-  static thread_local std::unique_ptr<QSettings> settings(
-      settingsFileName.isEmpty()
-      ? new QSettings(QSettings::IniFormat, QSettings::UserScope,
-                      settingsOrganization, settingsApplication)
-      : new QSettings(settingsFileName, QSettings::IniFormat));
+  static thread_local std::unique_ptr<QSettings> settings = []() {
+    std::unique_ptr<QSettings> result(settingsFileName.isEmpty()
+        ? new QSettings(QSettings::IniFormat, QSettings::UserScope,
+                        settingsOrganization, settingsApplication)
+        : new QSettings(settingsFileName, QSettings::IniFormat));
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    // Read settings written by either Qt major version, including Unicode values.
+    result->setIniCodec("UTF-8");
+#endif
+    return result;
+  }();
   return settings.get();
 }
 

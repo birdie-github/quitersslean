@@ -618,7 +618,11 @@ void FeedsView::mouseReleaseEvent(QMouseEvent *event)
 void FeedsView::dragEnterEvent(QDragEnterEvent *event)
 {
   event->accept();
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+  dragPos_ = event->position().toPoint();
+#else
   dragPos_ = event->pos();
+#endif
   viewport()->update();
 }
 
@@ -639,7 +643,11 @@ void FeedsView::dragMoveEvent(QDragMoveEvent *event)
     return;
   }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+  dragPos_ = event->position().toPoint();
+#else
   dragPos_ = event->pos();
+#endif
   QModelIndex dragIndex = indexAt(dragPos_);
 
   // Process categories
@@ -689,7 +697,7 @@ void FeedsView::dragMoveEvent(QDragMoveEvent *event)
 
   viewport()->update();
 
-  if (shouldAutoScroll(event->pos()))
+  if (shouldAutoScroll(dragPos_))
     startAutoScroll();
 }
 
@@ -823,15 +831,20 @@ void FeedsView::updateCurrentIndex(const QModelIndex &index)
 // ----------------------------------------------------------------------------
 void FeedsView::handleDrop(QDropEvent *e)
 {
-  QModelIndex dropIndex = indexAt(e->pos());
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+  const QPoint dropPos = e->position().toPoint();
+#else
+  const QPoint dropPos = e->pos();
+#endif
+  QModelIndex dropIndex = indexAt(dropPos);
 
   QModelIndex indexWhere = dropIndex;
 
   int how = 0;
   QRect rectText = visualRect(dropIndex);
-  if (qAbs(rectText.top() - e->pos().y()) < 3) {
+  if (qAbs(rectText.top() - dropPos.y()) < 3) {
     how = 0;
-  } else if (qAbs(rectText.bottom() - e->pos().y()) < 3) {
+  } else if (qAbs(rectText.bottom() - dropPos.y()) < 3) {
     how = 1;
   } else {
     if (isFolder(dropIndex)) {

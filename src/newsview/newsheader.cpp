@@ -49,7 +49,7 @@ NewsHeader::NewsHeader(NewsModel *model, QWidget *parent)
   connect(buttonColumnView_, SIGNAL(clicked()), this, SLOT(slotButtonColumnView()));
 
   QHBoxLayout *buttonLayout = new QHBoxLayout();
-  buttonLayout->setMargin(0);
+  buttonLayout->setContentsMargins(0, 0, 0, 0);
   buttonLayout->addWidget(buttonColumnView_, 0, Qt::AlignRight|Qt::AlignVCenter);
   setLayout(buttonLayout);
 
@@ -157,11 +157,20 @@ bool NewsHeader::eventFilter(QObject *obj, QEvent *event)
              (event->type() == QEvent::HoverEnter) ||
              (event->type() == QEvent::HoverLeave)) {
     QHoverEvent *hoverEvent = static_cast<QHoverEvent*>(event);
-    if (hoverEvent->pos().x() >= width() - buttonColumnView_->width()) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    const QPoint hoverPos = hoverEvent->position().toPoint();
+#else
+    const QPoint hoverPos = hoverEvent->pos();
+#endif
+    if (hoverPos.x() >= width() - buttonColumnView_->width()) {
       if ((event->type() == QEvent::HoverMove) && !(QApplication::mouseButtons() & Qt::LeftButton)) {
-        QHoverEvent* pe =
-            new QHoverEvent(QEvent::HoverLeave, hoverEvent->oldPos(), hoverEvent->pos());
-        QApplication::sendEvent(this, pe);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
+        QHoverEvent leaveEvent(QEvent::HoverLeave, hoverEvent->oldPos(),
+                              mapToGlobal(hoverEvent->oldPos()), hoverPos);
+#else
+        QHoverEvent leaveEvent(QEvent::HoverLeave, hoverEvent->oldPos(), hoverPos);
+#endif
+        QApplication::sendEvent(this, &leaveEvent);
       }
       return true;
     } else {
