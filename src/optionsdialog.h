@@ -175,7 +175,7 @@ public:
   QTreeWidget *colorsTree_;
 
   // shortcut
-  void loadActionShortcut(QList<QAction *> actions, QStringList *list);
+  void loadActionShortcut(QList<QAction *> actions, const QStringList *list);
   void saveActionShortcut(QList<QAction *> actions, QActionGroup *labelGroup);
 
 signals:
@@ -310,7 +310,7 @@ private:
 
   // shortcut
   void createShortcutWidget();
-  QStringList *listDefaultShortcut_;
+  const QStringList *listDefaultShortcut_;
   LineEdit *filterShortcut_;
   QTreeView *shortcutTree_;
   QStandardItemModel *shortcutModel_;

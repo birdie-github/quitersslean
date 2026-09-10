@@ -100,6 +100,7 @@ HEADERS += \
     src/application/settings.h \
     src/application/logfile.h \
     src/application/mainwindow.h \
+    src/application/shortcutregistry.h \
     src/application/splashscreen.h \
     src/network/authenticationdialog.h \
     src/network/cookiejar.h \
@@ -153,6 +154,7 @@ SOURCES += \
     src/application/settings.cpp \
     src/application/logfile.cpp \
     src/application/mainwindow.cpp \
+    src/application/shortcutregistry.cpp \
     src/main/globals.cpp \
     src/main/main.cpp \
     src/application/splashscreen.cpp \

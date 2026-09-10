@@ -213,7 +213,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
           (keyEvent->key() == Qt::Key_Down) ||
           (keyEvent->key() == Qt::Key_Left) ||
           (keyEvent->key() == Qt::Key_Right)) {
-        QListIterator<QAction *> iter(listActions_);
+        QListIterator<QAction *> iter(shortcutRegistry_.actions());
         while (iter.hasNext()) {
           QAction *pAction = iter.next();
           if (pAction->shortcut() == QKeySequence(keyEvent->key())) {
@@ -1344,166 +1344,132 @@ void MainWindow::createActions()
 void MainWindow::createShortcut()
 {
   addFeedAct_->setShortcut(QKeySequence(QKeySequence::New));
-  listActions_.append(addFeedAct_);
+  shortcutRegistry_.append(addFeedAct_);
   addFolderAct_->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_N));
-  listActions_.append(addFolderAct_);
-  listActions_.append(deleteFeedAct_);
-  listActions_.append(createBackupAct_);
+  shortcutRegistry_.append(addFolderAct_);
+  shortcutRegistry_.append(deleteFeedAct_);
+  shortcutRegistry_.append(createBackupAct_);
   exitAct_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Q));  // standart on other OS
-  listActions_.append(exitAct_);
+  shortcutRegistry_.append(exitAct_);
   updateFeedAct_->setShortcut(QKeySequence(Qt::Key_F5));
-  listActions_.append(updateFeedAct_);
+  shortcutRegistry_.append(updateFeedAct_);
   updateAllFeedsAct_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_F5));
-  listActions_.append(updateAllFeedsAct_);
-  listActions_.append(stopUpdateAct_);
-  listActions_.append(openHomeFeedAct_);
-  listActions_.append(showDownloadManagerAct_);
-  listActions_.append(showCleanUpWizardAct_);
-  listActions_.append(setNewsFiltersAct_);
-  listActions_.append(setFilterNewsAct_);
+  shortcutRegistry_.append(updateAllFeedsAct_);
+  shortcutRegistry_.append(stopUpdateAct_);
+  shortcutRegistry_.append(openHomeFeedAct_);
+  shortcutRegistry_.append(showDownloadManagerAct_);
+  shortcutRegistry_.append(showCleanUpWizardAct_);
+  shortcutRegistry_.append(setNewsFiltersAct_);
+  shortcutRegistry_.append(setFilterNewsAct_);
   optionsAct_->setShortcut(QKeySequence(Qt::Key_F8));
-  listActions_.append(optionsAct_);
+  shortcutRegistry_.append(optionsAct_);
   deleteNewsAct_->setShortcut(QKeySequence(Qt::Key_Delete));
-  listActions_.append(deleteNewsAct_);
+  shortcutRegistry_.append(deleteNewsAct_);
   deleteAllNewsAct_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Delete));
-  listActions_.append(deleteAllNewsAct_);
+  shortcutRegistry_.append(deleteAllNewsAct_);
   feedProperties_->setShortcut(QKeySequence(Qt::CTRL+Qt::Key_E));
-  listActions_.append(feedProperties_);
+  shortcutRegistry_.append(feedProperties_);
   feedKeyUpAct_->setShortcut(QKeySequence(Qt::CTRL+Qt::Key_Up));
-  listActions_.append(feedKeyUpAct_);
+  shortcutRegistry_.append(feedKeyUpAct_);
   feedKeyDownAct_->setShortcut(QKeySequence(Qt::CTRL+Qt::Key_Down));
-  listActions_.append(feedKeyDownAct_);
+  shortcutRegistry_.append(feedKeyDownAct_);
   newsKeyUpAct_->setShortcut(QKeySequence(Qt::Key_Left));
-  listActions_.append(newsKeyUpAct_);
+  shortcutRegistry_.append(newsKeyUpAct_);
   newsKeyDownAct_->setShortcut(QKeySequence(Qt::Key_Right));
-  listActions_.append(newsKeyDownAct_);
-  listActions_.append(newsKeyPageUpAct_);
-  listActions_.append(newsKeyPageDownAct_);
+  shortcutRegistry_.append(newsKeyDownAct_);
+  shortcutRegistry_.append(newsKeyPageUpAct_);
+  shortcutRegistry_.append(newsKeyPageDownAct_);
 
-  listActions_.append(nextUnreadNewsAct_);
-  listActions_.append(prevUnreadNewsAct_);
+  shortcutRegistry_.append(nextUnreadNewsAct_);
+  shortcutRegistry_.append(prevUnreadNewsAct_);
 
-  listActions_.append(nextFolderAct_);
-  listActions_.append(prevFolderAct_);
+  shortcutRegistry_.append(nextFolderAct_);
+  shortcutRegistry_.append(prevFolderAct_);
 
-  listActions_.append(importFeedsAct_);
-  listActions_.append(exportFeedsAct_);
-  listActions_.append(createBackupAct_);
-  listActions_.append(autoLoadImagesToggle_);
-  listActions_.append(markAllFeedsRead_);
-  listActions_.append(markFeedRead_);
-  listActions_.append(markNewsRead_);
-  listActions_.append(markAllNewsRead_);
-  listActions_.append(markStarAct_);
-  listActions_.append(collapseAllFoldersAct_);
-  listActions_.append(expandAllFoldersAct_);
-  listActions_.append(expandFolderAct_);
+  shortcutRegistry_.append(importFeedsAct_);
+  shortcutRegistry_.append(exportFeedsAct_);
+  shortcutRegistry_.append(createBackupAct_);
+  shortcutRegistry_.append(autoLoadImagesToggle_);
+  shortcutRegistry_.append(markAllFeedsRead_);
+  shortcutRegistry_.append(markFeedRead_);
+  shortcutRegistry_.append(markNewsRead_);
+  shortcutRegistry_.append(markAllNewsRead_);
+  shortcutRegistry_.append(markStarAct_);
+  shortcutRegistry_.append(collapseAllFoldersAct_);
+  shortcutRegistry_.append(expandAllFoldersAct_);
+  shortcutRegistry_.append(expandFolderAct_);
 
-  listActions_.append(openDescriptionNewsAct_);
+  shortcutRegistry_.append(openDescriptionNewsAct_);
   openDescriptionNewsAct_->setShortcut(QKeySequence(Qt::Key_Return));
-  listActions_.append(openInExternalBrowserAct_);
+  shortcutRegistry_.append(openInExternalBrowserAct_);
   openInExternalBrowserAct_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_O));
 
   switchFocusAct_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Tab));
-  listActions_.append(switchFocusAct_);
+  shortcutRegistry_.append(switchFocusAct_);
   switchFocusPrevAct_->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_Tab));
-  listActions_.append(switchFocusPrevAct_);
+  shortcutRegistry_.append(switchFocusPrevAct_);
 
   feedsWidgetVisibleAct_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_D));
-  listActions_.append(feedsWidgetVisibleAct_);
+  shortcutRegistry_.append(feedsWidgetVisibleAct_);
 
-  listActions_.append(placeToTrayAct_);
+  shortcutRegistry_.append(placeToTrayAct_);
 
   zoomInAct_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Plus));
-  listActions_.append(zoomInAct_);
+  shortcutRegistry_.append(zoomInAct_);
   zoomOutAct_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Minus));
-  listActions_.append(zoomOutAct_);
+  shortcutRegistry_.append(zoomOutAct_);
   zoomTo100Act_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_0));
-  listActions_.append(zoomTo100Act_);
+  shortcutRegistry_.append(zoomTo100Act_);
 
   printAct_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_P));
-  listActions_.append(printAct_);
+  shortcutRegistry_.append(printAct_);
   printPreviewAct_->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_P));
-  listActions_.append(printPreviewAct_);
+  shortcutRegistry_.append(printPreviewAct_);
 
   savePageAsAct_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_S));
-  listActions_.append(savePageAsAct_);
+  shortcutRegistry_.append(savePageAsAct_);
 
   fullScreenAct_->setShortcut(QKeySequence(Qt::Key_F11));
-  listActions_.append(fullScreenAct_);
+  shortcutRegistry_.append(fullScreenAct_);
 
   stayOnTopAct_->setShortcut(QKeySequence(Qt::Key_F10));
-  listActions_.append(stayOnTopAct_);
+  shortcutRegistry_.append(stayOnTopAct_);
 
-  listActions_.append(layoutToggle_);
+  shortcutRegistry_.append(layoutToggle_);
 
   closeTabAct_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_W));
-  listActions_.append(closeTabAct_);
-  listActions_.append(closeOtherTabsAct_);
-  listActions_.append(closeAllTabsAct_);
-  listActions_.append(nextTabAct_);
-  listActions_.append(prevTabAct_);
+  shortcutRegistry_.append(closeTabAct_);
+  shortcutRegistry_.append(closeOtherTabsAct_);
+  shortcutRegistry_.append(closeAllTabsAct_);
+  shortcutRegistry_.append(nextTabAct_);
+  shortcutRegistry_.append(prevTabAct_);
 
   reduceNewsListAct_->setShortcut(QKeySequence(Qt::ALT+ Qt::Key_Up));
-  listActions_.append(reduceNewsListAct_);
+  shortcutRegistry_.append(reduceNewsListAct_);
   increaseNewsListAct_->setShortcut(QKeySequence(Qt::ALT + Qt::Key_Down));
-  listActions_.append(increaseNewsListAct_);
+  shortcutRegistry_.append(increaseNewsListAct_);
 
   restoreLastNewsAct_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Z));
-  listActions_.append(restoreLastNewsAct_);
+  shortcutRegistry_.append(restoreLastNewsAct_);
 
   findTextAct_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_F));
-  listActions_.append(findTextAct_);
+  shortcutRegistry_.append(findTextAct_);
 
-  listActions_.append(findFeedAct_);
+  shortcutRegistry_.append(findFeedAct_);
 
-  listActions_.append(copyLinkAct_);
+  shortcutRegistry_.append(copyLinkAct_);
 
-  listActions_.append(pageUpWebViewAct_);
-  listActions_.append(pageDownWebViewAct_);
+  shortcutRegistry_.append(pageUpWebViewAct_);
+  shortcutRegistry_.append(pageDownWebViewAct_);
 
-  listActions_.append(shareGroup_->actions());
+  shortcutRegistry_.append(shareGroup_->actions());
 
   // Actions for labels do add at the end
-  listActions_.append(settingPageLabelsAct_);
-  listActions_.append(showLabelsMenuAct_);
-  listActions_.append(newsLabelGroup_->actions());
+  shortcutRegistry_.append(settingPageLabelsAct_);
+  shortcutRegistry_.append(showLabelsMenuAct_);
+  shortcutRegistry_.append(newsLabelGroup_->actions());
 
-  loadActionShortcuts();
-}
-// ---------------------------------------------------------------------------
-void MainWindow::loadActionShortcuts()
-{
-  Settings settings("/Shortcuts");
-
-  QListIterator<QAction *> iter(listActions_);
-  while (iter.hasNext()) {
-    QAction *pAction = iter.next();
-    if (pAction->objectName().isEmpty())
-      continue;
-
-    listDefaultShortcut_.append(pAction->shortcut().toString());
-
-    const QString& sKey = '/' + pAction->objectName();
-    const QString& sValue = settings.value('/' + sKey, pAction->shortcut().toString()).toString();
-    pAction->setShortcut(QKeySequence(sValue));
-  }
-}
-// ---------------------------------------------------------------------------
-void MainWindow::saveActionShortcuts()
-{
-  Settings settings("/Shortcuts/");
-
-  QListIterator<QAction *> iter(listActions_);
-  while (iter.hasNext()) {
-    QAction *pAction = iter.next();
-    if (pAction->objectName().isEmpty())
-      continue;
-
-    const QString& sKey = '/' + pAction->objectName();
-    const QString& sValue = QString(pAction->shortcut().toString());
-    settings.setValue(sKey, sValue);
-  }
+  shortcutRegistry_.load();
 }
 // ---------------------------------------------------------------------------
 void MainWindow::createMenu()
@@ -3289,7 +3255,7 @@ void MainWindow::showOptionDlg(int index)
   optionsDialog_->colorsTree_->topLevelItem(22)->setIcon(0, pixmapColor);
   optionsDialog_->colorsTree_->topLevelItem(22)->setText(1, notifierBackgroundColor_);
 
-  optionsDialog_->loadActionShortcut(listActions_, &listDefaultShortcut_);
+  optionsDialog_->loadActionShortcut(shortcutRegistry_.actions(), &shortcutRegistry_.defaults());
 
   // Display setting dialog
 
@@ -3305,15 +3271,15 @@ void MainWindow::showOptionDlg(int index)
 
   // Apply accepted settings
 
-  foreach (QAction *action, listActions_) {
+  foreach (QAction *action, shortcutRegistry_.actions()) {
     QString objectName = action->objectName();
     if (objectName.contains("labelAction_")) {
-      listActions_.removeOne(action);
+      shortcutRegistry_.removeOne(action);
       delete action;
     }
   }
-  optionsDialog_->saveActionShortcut(listActions_, newsLabelGroup_);
-  listActions_.append(newsLabelGroup_->actions());
+  optionsDialog_->saveActionShortcut(shortcutRegistry_.actions(), newsLabelGroup_);
+  shortcutRegistry_.append(newsLabelGroup_->actions());
   newsLabelMenu_->addActions(newsLabelGroup_->actions());
   this->addActions(newsLabelGroup_->actions());
   if (newsLabelGroup_->actions().count()) {
@@ -3577,7 +3543,7 @@ void MainWindow::showOptionDlg(int index)
   AppSettings::autoUpdatefeedsStartUp.set(updateFeedsStartUp);
 
   saveSettings();
-  saveActionShortcuts();
+  shortcutRegistry_.save();
 
   if (currentNewsTab != NULL) {
     if (currentNewsTab->type_ < NewsTabWidget::TabTypeDownloads)

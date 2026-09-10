@@ -20,6 +20,7 @@
 #define MAINWINDOW_H
 
 #include <QtWidgets>
+#include "shortcutregistry.h"
 #include <QtSql>
 #include <QPrintDialog>
 #include <QPrintPreviewDialog>
@@ -453,8 +454,6 @@ private:
   void createToolBarNull();
   void createActions();
   void createShortcut();
-  void loadActionShortcuts();
-  void saveActionShortcuts();
   void createMenu();
   void createToolBar();
   void createStatusBar();
@@ -482,8 +481,7 @@ private:
   QFrame *feedsWidget_;
   QWidget *centralWidget_;
 
-  QList<QAction *> listActions_;
-  QStringList listDefaultShortcut_;
+  ShortcutRegistry shortcutRegistry_;
   QString shareConfigurationMessage_;
 
   QAction *addAct_;

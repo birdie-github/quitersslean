@@ -1880,7 +1880,7 @@ int OptionsDialog::behaviorIconTray()
   else return STATIC_ICON_TRAY;
 }
 //----------------------------------------------------------------------------
-void OptionsDialog::loadActionShortcut(QList<QAction *> actions, QStringList *list)
+void OptionsDialog::loadActionShortcut(QList<QAction *> actions, const QStringList *list)
 {
   QListIterator<QAction *> iter(actions);
   while (iter.hasNext()) {
