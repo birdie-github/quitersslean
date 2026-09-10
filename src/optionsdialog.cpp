@@ -2082,7 +2082,9 @@ void OptionsDialog::selectionSoundNotifer()
 
   QString fileName = QFileDialog::getOpenFileName(this,
                                                   tr("Open File..."),
-                                                  path, "*.wav");
+                                                  path,
+                                                  tr("Audio Files (*.wav *.flac *.mp3);;All Files (*)")
+                                                 );
   if (!fileName.isEmpty())
     editSoundNotifer_->setText(fileName);
 }

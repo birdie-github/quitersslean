@@ -115,7 +115,9 @@ void ItemAction::selectionSound()
 
   QString fileName = QFileDialog::getOpenFileName(this,
                                                   tr("Open File..."),
-                                                  path, "*.wav");
+                                                  path,
+                                                  tr("Audio Files (*.wav *.flac *.mp3);;All Files (*)")
+                                                  );
   if (!fileName.isEmpty())
     soundPathEdit_->setText(fileName);
 }
