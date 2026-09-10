@@ -58,8 +58,8 @@ CONFIG += c++11 link_pkgconfig
   error("libxml2 development files and pkg-config are required. Set PKG_CONFIG_PATH to the directory containing libxml-2.0.pc. See INSTALL for Linux, MSYS2 and Homebrew setup.")
 }
 PKGCONFIG += libxml-2.0
-HEADERS += src/network/networkpolicy.h src/articleview/articlecontent.h src/articleview/articleimages.h src/sharing/shareservice.h src/newsretention.h
-SOURCES += src/articleview/articlecontent.cpp src/articleview/articleimages.cpp src/sharing/shareservice.cpp
+HEADERS += src/network/networkpolicy.h src/articleview/articlecontent.h src/articleview/articleimages.h src/sharing/shareservice.h src/newsretention.h src/application/statusbarcontroller.h
+SOURCES += src/articleview/articlecontent.cpp src/articleview/articleimages.cpp src/sharing/shareservice.cpp src/application/statusbarcontroller.cpp
 
 unix:!mac:DEFINES += HAVE_X11
 

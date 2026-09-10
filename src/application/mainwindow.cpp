@@ -17,6 +17,7 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 * ============================================================ */
 #include "mainwindow.h"
+#include "statusbarcontroller.h"
 #include "articlecontent.h"
 
 #include "common.h"
@@ -532,59 +533,9 @@ void MainWindow::createNewsTab(int index)
 // ---------------------------------------------------------------------------
 void MainWindow::createStatusBar()
 {
-#if defined(HAVE_X11) || defined(Q_OS_MAC)
-  statusBar()->setStyleSheet(QString("QStatusBar::item {border-right: 1px solid %1;"
-                                     "margin: 1px;}").
-                             arg(qApp->palette().color(QPalette::Dark).name()));
-#endif
-
-  progressBar_ = new QProgressBar(this);
-  progressBar_->setObjectName("progressBar_");
-  progressBar_->setFormat("%p%");
-  progressBar_->setAlignment(Qt::AlignCenter);
-  progressBar_->setFixedWidth(100);
-  progressBar_->setFixedHeight(15);
-  progressBar_->setMinimum(0);
-  progressBar_->setMaximum(0);
-  progressBar_->setValue(0);
-  progressBar_->setVisible(false);
-
-  QToolButton *stopUpdateButton_ = new QToolButton(progressBar_);
-  stopUpdateButton_->setFocusPolicy(Qt::NoFocus);
-  stopUpdateButton_->setToolButtonStyle(Qt::ToolButtonIconOnly);
-  stopUpdateButton_->setFixedSize(15, 15);
-  stopUpdateButton_->setCursor(Qt::ArrowCursor);
-  stopUpdateButton_->setDefaultAction(stopUpdateAct_);
-  stopUpdateButton_->setStyleSheet(
-        "QToolButton { border: none; padding: 0px; background: none; }"
-        "QToolButton:hover { background: rgba(150, 150, 150, 60) }"
-        );
-  stopUpdateButton_->move(progressBar_->rect().right() - stopUpdateButton_->sizeHint().width(),
-                          progressBar_->rect().top());
-
-  QToolButton *loadImagesButton = new QToolButton(this);
-  loadImagesButton->setFocusPolicy(Qt::NoFocus);
-  loadImagesButton->setIconSize(QSize(16,16));
-  loadImagesButton->setDefaultAction(autoLoadImagesToggle_);
-  loadImagesButton->setStyleSheet("QToolButton { border: none; padding: 0px; background: none; }");
-
-  QToolButton *fullScreenButton = new QToolButton(this);
-  fullScreenButton->setFocusPolicy(Qt::NoFocus);
-  loadImagesButton->setIconSize(QSize(16,16));
-  fullScreenButton->setDefaultAction(fullScreenAct_);
-  fullScreenButton->setStyleSheet("QToolButton { border: none; padding: 0px; background: none; }");
+  statusBarController_ = new StatusBarController(statusBar(), stopUpdateAct_,
+                                                 autoLoadImagesToggle_, fullScreenAct_, this);
   statusBar()->installEventFilter(this);
-
-  statusBar()->addPermanentWidget(progressBar_);
-  statusUnread_ = new QLabel(this);
-  statusUnread_->hide();
-  statusBar()->addPermanentWidget(statusUnread_);
-  statusAll_ = new QLabel(this);
-  statusAll_->hide();
-  statusBar()->addPermanentWidget(statusAll_);
-  statusBar()->addPermanentWidget(loadImagesButton);
-  statusBar()->addPermanentWidget(fullScreenButton);
-  statusBar()->setVisible(true);
 }
 // ---------------------------------------------------------------------------
 void MainWindow::createTray()
@@ -2791,8 +2742,7 @@ void MainWindow::slotRecountCategoryCounts(QList<int> deletedList, QList<int> st
       && categoriesTree_->currentIndex().isValid()) {
     int unreadCount = widget->getUnreadCount(categoriesTree_->currentItem()->text(4));
     int allCount = widget->newsModel_->rowCount();
-    statusUnread_->setText(QString(" " + tr("Unread: %1") + " ").arg(unreadCount));
-    statusAll_->setText(QString(" " + tr("All: %1") + " ").arg(allCount));
+    setStatusCounts(unreadCount, allCount);
   }
 
   recountCategoryCountsOn_ = false;
@@ -2808,9 +2758,7 @@ void MainWindow::slotUpdateFeed(int feedId, bool changed, int newCount, bool fin
 {
   if (finish) {
     emit signalShowNotification();
-    progressBar_->hide();
-    progressBar_->setMaximum(0);
-    progressBar_->setValue(0);
+    statusBarController_->resetProgress();
     isStartImportFeed_ = false;
   }
 
@@ -2990,8 +2938,7 @@ void MainWindow::slotFeedSelected(QModelIndex index, bool createTab)
     currentNewsTab->setSettings(true, false);
     currentNewsTab->setVisible(index.isValid());
   }
-  statusUnread_->setVisible(index.isValid());
-  statusAll_->setVisible(index.isValid());
+  statusBarController_->setCountsVisible(index.isValid(), index.isValid());
 
   // Set icon for tab has opened
   bool isFeed = (index.isValid() && feedsModel_->isFolder(index)) ? false : true;
@@ -3745,7 +3692,7 @@ void MainWindow::slotGetAllFeeds()
 
 void MainWindow::slotStopUpdate()
 {
-  progressBar_->hide();
+  statusBarController_->hideProgress();
   emit signalStopUpdate();
 }
 
@@ -3763,22 +3710,26 @@ void MainWindow::showProgressBar(int maximum)
 
   playSoundNewNews_ = false;
 
-  progressBar_->setMaximum(maximum);
-  progressBar_->show();
+  statusBarController_->startProgress(maximum);
 }
 void MainWindow::slotSetValue(int value)
 {
-  if (progressBar_->isVisible())
-    progressBar_->setValue(progressBar_->maximum() - value);
+  statusBarController_->updateProgress(value);
 }
 void MainWindow::showMessageStatusBar(QString message, int timeout)
 {
-  statusBar()->showMessage(message, timeout);
+  statusBarController_->showMessage(message, timeout);
 }
 void MainWindow::slotCountsStatusBar(int unreadCount, int allCount)
 {
-  statusUnread_->setText(QString(" " + tr("Unread: %1") + " ").arg(unreadCount));
-  statusAll_->setText(QString(" " + tr("All: %1") + " ").arg(allCount));
+  setStatusCounts(unreadCount, allCount);
+}
+
+void MainWindow::setStatusCounts(int unreadCount, int allCount)
+{
+  statusBarController_->setCountTexts(
+        QString(" " + tr("Unread: %1") + " ").arg(unreadCount),
+        QString(" " + tr("All: %1") + " ").arg(allCount));
 }
 // ----------------------------------------------------------------------------
 void MainWindow::slotVisibledFeedsWidget()
@@ -4380,12 +4331,13 @@ void MainWindow::slotShowUpdateAppDlg()
 // ----------------------------------------------------------------------------
 void MainWindow::retranslateStrings()
 {
-  QString str = statusUnread_->text();
+  QString str = statusBarController_->unreadText();
   str = str.right(str.length() - str.indexOf(':') - 1).replace(" ", "");
-  statusUnread_->setText(QString(" " + tr("Unread: %1") + " ").arg(str));
-  str = statusAll_->text();
+  const QString unreadText = QString(" " + tr("Unread: %1") + " ").arg(str);
+  str = statusBarController_->allText();
   str = str.right(str.length() - str.indexOf(':') - 1).replace(" ", "");
-  statusAll_->setText(QString(" " + tr("All: %1") + " ").arg(str));
+  statusBarController_->setCountTexts(
+        unreadText, QString(" " + tr("All: %1") + " ").arg(str));
 
   str = traySystem->toolTip();
   QString info =
@@ -5921,11 +5873,9 @@ void MainWindow::slotTabCurrentChanged(int index)
     else
       feedsView_->setFocus();
 
-    statusUnread_->setVisible(widget->feedId_);
-    statusAll_->setVisible(widget->feedId_);
+    statusBarController_->setCountsVisible(widget->feedId_, widget->feedId_);
   } else if (widget->type_ == NewsTabWidget::TabTypeDownloads) {
-    statusUnread_->setVisible(false);
-    statusAll_->setVisible(false);
+    statusBarController_->setCountsVisible(false, false);
     mainApp->downloadManager()->show();
     currentNewsTab = widget;
     currentNewsTab->retranslateStrings();
@@ -5955,11 +5905,9 @@ void MainWindow::slotTabCurrentChanged(int index)
 
     int unreadCount = widget->getUnreadCount(categoriesTree_->currentItem()->text(4));
     int allCount = widget->newsModel_->rowCount();
-    statusUnread_->setText(QString(" " + tr("Unread: %1") + " ").arg(unreadCount));
-    statusAll_->setText(QString(" " + tr("All: %1") + " ").arg(allCount));
+    setStatusCounts(unreadCount, allCount);
 
-    statusUnread_->setVisible(widget->type_ != NewsTabWidget::TabTypeDel);
-    statusAll_->setVisible(true);
+    statusBarController_->setCountsVisible(widget->type_ != NewsTabWidget::TabTypeDel, true);
   }
 
   setTextTitle(widget->newsTitleLabel_->toolTip(), widget);
@@ -7004,11 +6952,10 @@ void MainWindow::slotCategoriesClicked(QTreeWidgetItem *item, int, bool createTa
 
   int unreadCount = currentNewsTab->getUnreadCount(categoriesTree_->currentItem()->text(4));
   int allCount = currentNewsTab->newsModel_->rowCount();
-  statusUnread_->setText(QString(" " + tr("Unread: %1") + " ").arg(unreadCount));
-  statusAll_->setText(QString(" " + tr("All: %1") + " ").arg(allCount));
+  setStatusCounts(unreadCount, allCount);
 
-  statusUnread_->setVisible(currentNewsTab->type_ != NewsTabWidget::TabTypeDel);
-  statusAll_->setVisible(true);
+  statusBarController_->setCountsVisible(
+        currentNewsTab->type_ != NewsTabWidget::TabTypeDel, true);
 }
 
 void MainWindow::clearDeleted()
@@ -7623,8 +7570,7 @@ void MainWindow::showDownloadManager(bool activate)
   if (activate) {
     currentNewsTab = widget;
     currentNewsTab->setTextTab(tr("Downloads"));
-    statusUnread_->setVisible(false);
-    statusAll_->setVisible(false);
+    statusBarController_->setCountsVisible(false, false);
     mainApp->downloadManager()->show();
     emit signalSetCurrentTab(indexTab);
   } else {

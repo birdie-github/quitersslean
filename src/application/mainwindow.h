@@ -59,6 +59,8 @@ enum FeedReedType {
   FeedReadSwitchingTab
 };
 
+class StatusBarController;
+
 class MainWindow : public QMainWindow
 {
   Q_OBJECT
@@ -445,6 +447,7 @@ private slots:
   void createBackup();
 
 private:
+  void setStatusCounts(int unreadCount, int allCount);
   void closeEvent(QCloseEvent *event);
   bool eventFilter(QObject *obj, QEvent *event);
   void changeEvent(QEvent *event);
@@ -621,9 +624,7 @@ private:
 
   NewsView *newsView_;
 
-  QProgressBar *progressBar_;
-  QLabel *statusUnread_;
-  QLabel *statusAll_;
+  StatusBarController *statusBarController_;
 
   QPushButton *pushButtonNull_;
 
