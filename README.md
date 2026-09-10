@@ -5,7 +5,7 @@
 
 QuiteRSSlean is a fork of QuiteRSS, an open-source, cross-platform RSS/Atom news feed reader written in C++/Qt.
 
-This Qt 5/Qt 6 version renders feed articles with QTextBrowser, without QtWebKit or
+The application renders articles with QTextBrowser, without QtWebKit or
 QtWebEngine. See [INSTALL](INSTALL) for dependencies and [ARTICLE_VIEW.md](ARTICLE_VIEW.md)
 for rendering behavior, image-format plugins and validation notes.
 
