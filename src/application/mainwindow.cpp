@@ -3378,6 +3378,7 @@ void MainWindow::showOptionDlg(int index)
     mainApp->updateFeeds()->startSaveTimer();
   }
 
+  const bool wasTrayIconEnabled = showTrayIcon_;
   showTrayIcon_ = optionsDialog_->showTrayIconBox_->isChecked();
   startingTray_ = optionsDialog_->startingTray_->isChecked();
   minimizingTray_ = optionsDialog_->minimizingTray_->isChecked();
@@ -3391,8 +3392,13 @@ void MainWindow::showOptionDlg(int index)
   singleClickTray_ = optionsDialog_->singleClickTray_->isChecked();
   clearStatusNew_ = optionsDialog_->clearStatusNew_->isChecked();
   emptyWorking_ = optionsDialog_->emptyWorking_->isChecked();
-  if (showTrayIcon_) trayIconController_->show();
-  else trayIconController_->hide();
+  if (showTrayIcon_) {
+    trayIconController_->show();
+  } else {
+    trayIconController_->hide();
+    if (wasTrayIconEnabled && isHidden())
+      showWindows();
+  }
 
   mainApp->proxySaveSettings(optionsDialog_->proxy());
 
