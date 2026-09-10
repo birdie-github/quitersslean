@@ -47,6 +47,15 @@ public:
   QModelIndex indexNextFolder(const QModelIndex &indexCur, bool isParent = false);
 
 public slots:
+  void navigateUp();
+  void navigateDown();
+  void navigatePrevious();
+  void navigateNext();
+  void navigateHome();
+  void navigateEnd();
+  void navigatePageUp();
+  void navigatePageDown();
+
   void restoreExpanded();
   void expandAll();
   void collapseAll();
@@ -54,6 +63,8 @@ public slots:
   void updateCurrentIndex(const QModelIndex &index);
 
 signals:
+  // Emitted after a navigation command updates the selection.
+  void navigationActivated(const QModelIndex &index);
   void signalDoubleClicked();
   void signalMiddleClicked();
   void pressKeyUp();

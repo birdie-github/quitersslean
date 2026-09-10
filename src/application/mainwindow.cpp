@@ -405,6 +405,8 @@ void MainWindow::createFeedsWidget()
   feedsView_ = new FeedsView(this);
   feedsView_->setModel(feedsProxyModel_);
   feedsView_->setSourceModel(feedsModel_);
+  connect(feedsView_, &FeedsView::navigationActivated,
+          this, &MainWindow::slotFeedClicked);
   feedsModel_->setView(feedsView_);
 
   for (int i = 0; i < feedsView_->model()->columnCount(); ++i)
@@ -5403,128 +5405,50 @@ void MainWindow::slotNewVersion(const QString &newVersion)
  *---------------------------------------------------------------------------*/
 void MainWindow::slotFeedUpPressed()
 {
-  QModelIndex indexBefore = feedsView_->currentIndex();
-  QModelIndex indexAfter;
-
-  // Jump to bottom in case of the most top index
-  if (!indexBefore.isValid())
-    indexAfter = feedsProxyModel_->index(feedsProxyModel_->rowCount()-1, "text");
-  else
-    indexAfter = feedsView_->indexAbove(indexBefore);
-
-  // There is no "upper" index
-  if (!indexAfter.isValid()) return;
-
-  feedsView_->setCurrentIndex(indexAfter);
-  slotFeedClicked(indexAfter);
+  feedsView_->navigateUp();
 }
-
 /** @brief Process Key_Down in feeds tree
  *---------------------------------------------------------------------------*/
 void MainWindow::slotFeedDownPressed()
 {
-  QModelIndex indexBefore = feedsView_->currentIndex();
-  QModelIndex indexAfter;
-
-  // Jump to top in case of the most bottom index
-  if (!indexBefore.isValid())
-    indexAfter = feedsProxyModel_->index(0, "text");
-  else
-    indexAfter = feedsView_->indexBelow(indexBefore);
-
-  // There is no "downer" index
-  if (!indexAfter.isValid()) return;
-
-  feedsView_->setCurrentIndex(indexAfter);
-  slotFeedClicked(indexAfter);
+  feedsView_->navigateDown();
 }
-
 /** @brief Process previous feed shortcut
  *---------------------------------------------------------------------------*/
 void MainWindow::slotFeedPrevious()
 {
-  QModelIndex indexBefore = feedsView_->currentIndex();
-  if (!indexBefore.isValid())
-    indexBefore = feedsProxyModel_->index(feedsProxyModel_->rowCount()-1, feedsView_->columnIndex("text"));
-
-  QModelIndex indexAfter = feedsView_->indexPrevious(indexBefore);
-
-  // There is no "upper" index
-  if (!indexAfter.isValid()) return;
-  feedsView_->clearSelection();
-
-  feedsView_->setCurrentIndex(indexAfter);
-  slotFeedClicked(indexAfter);
+  feedsView_->navigatePrevious();
 }
-
 /** @brief Process next feed shortcut
  *---------------------------------------------------------------------------*/
 void MainWindow::slotFeedNext()
 {
-  QModelIndex indexBefore = feedsView_->currentIndex();
-  if (!indexBefore.isValid())
-    indexBefore = feedsProxyModel_->index(0, feedsView_->columnIndex("text"));
-
-  QModelIndex indexAfter = feedsView_->indexNext(indexBefore);
-
-  // There is no "downer" index
-  if (!indexAfter.isValid()) return;
-  feedsView_->clearSelection();
-
-  feedsView_->setCurrentIndex(indexAfter);
-  slotFeedClicked(indexAfter);
+  feedsView_->navigateNext();
 }
-
 /** @brief Process Key_Home in feeds tree
  *---------------------------------------------------------------------------*/
 void MainWindow::slotFeedHomePressed()
 {
-  QModelIndex index = feedsProxyModel_->index(0, "text");
-  feedsView_->setCurrentIndex(index);
-  slotFeedClicked(index);
+  feedsView_->navigateHome();
 }
-
 /** @brief Process Key_End in feeds tree
  *---------------------------------------------------------------------------*/
 void MainWindow::slotFeedEndPressed()
 {
-  QModelIndex index = feedsProxyModel_->index(feedsProxyModel_->rowCount()-1, "text");
-  feedsView_->setCurrentIndex(index);
-  slotFeedClicked(index);
+  feedsView_->navigateEnd();
 }
-
 /** @brief Process pressing PageUp-key in feeds tree
  *----------------------------------------------------------------------------*/
 void MainWindow::slotFeedPageUpPressed()
 {
-  int row = 0;
-  QModelIndex index = feedsView_->currentIndex();
-  if (index.isValid())
-    row = index.row() - feedsView_->verticalScrollBar()->pageStep();
-  if (row < 0)
-    row = 0;
-  index = feedsProxyModel_->index(row, "text");
-
-  feedsView_->setCurrentIndex(index);
-  slotFeedClicked(index);
+  feedsView_->navigatePageUp();
 }
-
 /** @brief Process pressing PageDown-key in feeds tree
  *----------------------------------------------------------------------------*/
 void MainWindow::slotFeedPageDownPressed()
 {
-  int row = 0;
-  QModelIndex index = feedsView_->currentIndex();
-  if (index.isValid())
-    row = index.row() + feedsView_->verticalScrollBar()->pageStep();
-  if (row >= feedsProxyModel_->rowCount())
-    row = feedsProxyModel_->rowCount()-1;
-  index = feedsProxyModel_->index(row, "text");
-
-  feedsView_->setCurrentIndex(index);
-  slotFeedClicked(index);
+  feedsView_->navigatePageDown();
 }
-
 /** @brief Set application style
  *---------------------------------------------------------------------------*/
 void MainWindow::setStyleApp(QAction *pAct)

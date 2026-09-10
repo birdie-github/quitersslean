@@ -25,6 +25,123 @@
 #include <QSqlTableModel>
 #include <QSqlQuery>
 
+void FeedsView::navigateUp()
+{
+  QModelIndex indexBefore = currentIndex();
+  QModelIndex indexAfter;
+
+  // Jump to bottom in case of the most top index
+  if (!indexBefore.isValid())
+    indexAfter = model()->index(model()->rowCount()-1, columnIndex("text"));
+  else
+    indexAfter = indexAbove(indexBefore);
+
+  // There is no "upper" index
+  if (!indexAfter.isValid()) return;
+
+  setCurrentIndex(indexAfter);
+  emit navigationActivated(indexAfter);
+}
+
+
+void FeedsView::navigateDown()
+{
+  QModelIndex indexBefore = currentIndex();
+  QModelIndex indexAfter;
+
+  // Jump to top in case of the most bottom index
+  if (!indexBefore.isValid())
+    indexAfter = model()->index(0, columnIndex("text"));
+  else
+    indexAfter = indexBelow(indexBefore);
+
+  // There is no "downer" index
+  if (!indexAfter.isValid()) return;
+
+  setCurrentIndex(indexAfter);
+  emit navigationActivated(indexAfter);
+}
+
+
+void FeedsView::navigatePrevious()
+{
+  QModelIndex indexBefore = currentIndex();
+  if (!indexBefore.isValid())
+    indexBefore = model()->index(model()->rowCount()-1, columnIndex("text"));
+
+  QModelIndex indexAfter = indexPrevious(indexBefore);
+
+  // There is no "upper" index
+  if (!indexAfter.isValid()) return;
+  clearSelection();
+
+  setCurrentIndex(indexAfter);
+  emit navigationActivated(indexAfter);
+}
+
+
+void FeedsView::navigateNext()
+{
+  QModelIndex indexBefore = currentIndex();
+  if (!indexBefore.isValid())
+    indexBefore = model()->index(0, columnIndex("text"));
+
+  QModelIndex indexAfter = indexNext(indexBefore);
+
+  // There is no "downer" index
+  if (!indexAfter.isValid()) return;
+  clearSelection();
+
+  setCurrentIndex(indexAfter);
+  emit navigationActivated(indexAfter);
+}
+
+
+void FeedsView::navigateHome()
+{
+  QModelIndex index = model()->index(0, columnIndex("text"));
+  setCurrentIndex(index);
+  emit navigationActivated(index);
+}
+
+
+void FeedsView::navigateEnd()
+{
+  QModelIndex index = model()->index(model()->rowCount()-1, columnIndex("text"));
+  setCurrentIndex(index);
+  emit navigationActivated(index);
+}
+
+
+void FeedsView::navigatePageUp()
+{
+  int row = 0;
+  QModelIndex index = currentIndex();
+  if (index.isValid())
+    row = index.row() - verticalScrollBar()->pageStep();
+  if (row < 0)
+    row = 0;
+  index = model()->index(row, columnIndex("text"));
+
+  setCurrentIndex(index);
+  emit navigationActivated(index);
+}
+
+
+void FeedsView::navigatePageDown()
+{
+  int row = 0;
+  QModelIndex index = currentIndex();
+  if (index.isValid())
+    row = index.row() + verticalScrollBar()->pageStep();
+  if (row >= model()->rowCount())
+    row = model()->rowCount()-1;
+  index = model()->index(row, columnIndex("text"));
+
+  setCurrentIndex(index);
+  emit navigationActivated(index);
+}
+
 // ----------------------------------------------------------------------------
 FeedsView::FeedsView(QWidget * parent)
   : QTreeView(parent)
