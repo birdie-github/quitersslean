@@ -102,7 +102,7 @@ MainApplication::MainApplication(int &argc, char **argv)
   closeSplashScreen();
 
   if (mainWindow_->showTrayIcon_) {
-    QTimer::singleShot(0, mainWindow_->traySystem, SLOT(show()));
+    QTimer::singleShot(0, mainWindow_->trayIcon(), SLOT(show()));
   }
 
   if (updateFeedsStartUp_) {

@@ -18,6 +18,7 @@
 * ============================================================ */
 #include "mainwindow.h"
 #include "statusbarcontroller.h"
+#include "trayiconcontroller.h"
 #include "articlecontent.h"
 
 #include "common.h"
@@ -163,7 +164,7 @@ void MainWindow::quitApp()
   mainApp->showClosingWidget();
 
   hide();
-  traySystem->hide();
+  trayIconController_->hide();
 
   saveSettings();
 
@@ -247,7 +248,7 @@ void MainWindow::changeEvent(QEvent *event)
     }
   } else if (event->type() == QEvent::ActivationChange) {
     if (isActiveWindow() && (behaviorIconTray_ == CHANGE_ICON_TRAY)) {
-      traySystem->setIcon(QIcon(":/images/quiterss128"));
+      trayIconController_->showDefaultIcon();
     }
   } else if (event->type() == QEvent::LanguageChange) {
     retranslateStrings();
@@ -285,7 +286,7 @@ void MainWindow::slotActivationTray(QSystemTrayIcon::ActivationReason reason)
   case QSystemTrayIcon::Unknown:
     break;
   case QSystemTrayIcon::Context:
-    trayMenu_->activateWindow();
+    trayIconController_->activateMenu();
     break;
 
   case QSystemTrayIcon::DoubleClick:
@@ -540,17 +541,27 @@ void MainWindow::createStatusBar()
 // ---------------------------------------------------------------------------
 void MainWindow::createTray()
 {
-  traySystem = new QSystemTrayIcon(QIcon(":/images/quiterss128"), this);
-  traySystem->setToolTip("QuiteRSS");
+  showWindowAct_ = new QAction(this);
+  connect(showWindowAct_, SIGNAL(triggered()), this, SLOT(showWindows()));
+  QFont font = showWindowAct_->font();
+  font.setBold(true);
+  showWindowAct_->setFont(font);
+
+  trayIconController_ = new TrayIconController(
+        this, showWindowAct_, addFeedTrayAct_, updateAllFeedsAct_, markAllFeedsRead_,
+        optionsAct_, exitAct_, this);
 
 #ifndef Q_OS_MAC
-  connect(traySystem,SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
+  connect(trayIcon(), SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
           this, SLOT(slotActivationTray(QSystemTrayIcon::ActivationReason)));
   connect(this, SIGNAL(signalPlaceToTray()),
           this, SLOT(slotPlaceToTray()), Qt::QueuedConnection);
 #endif
+}
 
-  createTrayMenu();
+QSystemTrayIcon *MainWindow::trayIcon() const
+{
+  return trayIconController_->systemTrayIcon();
 }
 
 /** @brief Create tabbar widget
@@ -2770,7 +2781,7 @@ void MainWindow::slotUpdateFeed(int feedId, bool changed, int newCount, bool fin
   // Action after new news has arrived: tray, sound
   if (!isActiveWindow() && (newCount > 0) &&
       (behaviorIconTray_ == CHANGE_ICON_TRAY)) {
-    traySystem->setIcon(QIcon(":/images/quiterss128_NewNews"));
+    trayIconController_->showNewNewsIcon();
   }
   emit signalRefreshInfoTray();
   if (newCount > 0)
@@ -3375,13 +3386,13 @@ void MainWindow::showOptionDlg(int index)
   if (behaviorIconTray_ > CHANGE_ICON_TRAY) {
     emit signalRefreshInfoTray();
   } else {
-    traySystem->setIcon(QIcon(":/images/quiterss128"));
+    trayIconController_->showDefaultIcon();
   }
   singleClickTray_ = optionsDialog_->singleClickTray_->isChecked();
   clearStatusNew_ = optionsDialog_->clearStatusNew_->isChecked();
   emptyWorking_ = optionsDialog_->emptyWorking_->isChecked();
-  if (showTrayIcon_) traySystem->show();
-  else traySystem->hide();
+  if (showTrayIcon_) trayIconController_->show();
+  else trayIconController_->hide();
 
   mainApp->proxySaveSettings(optionsDialog_->proxy());
 
@@ -3547,28 +3558,6 @@ void MainWindow::showOptionDlg(int index)
 void MainWindow::showSettingPageLabels()
 {
   showOptionDlg(5);
-}
-
-// ----------------------------------------------------------------------------
-void MainWindow::createTrayMenu()
-{
-  trayMenu_ = new QMenu(this);
-  showWindowAct_ = new QAction(this);
-  connect(showWindowAct_, SIGNAL(triggered()), this, SLOT(showWindows()));
-  QFont font_ = showWindowAct_->font();
-  font_.setBold(true);
-  showWindowAct_->setFont(font_);
-  trayMenu_->addAction(showWindowAct_);
-  trayMenu_->addAction(addFeedTrayAct_);
-  trayMenu_->addAction(updateAllFeedsAct_);
-  trayMenu_->addAction(markAllFeedsRead_);
-  trayMenu_->addSeparator();
-
-  trayMenu_->addAction(optionsAct_);
-  trayMenu_->addSeparator();
-
-  trayMenu_->addAction(exitAct_);
-  traySystem->setContextMenu(trayMenu_);
 }
 
 /** @brief Free memory working set in Windows
@@ -4339,13 +4328,13 @@ void MainWindow::retranslateStrings()
   statusBarController_->setCountTexts(
         unreadText, QString(" " + tr("All: %1") + " ").arg(str));
 
-  str = traySystem->toolTip();
+  str = trayIconController_->toolTip();
   QString info =
       "QuiteRSS\n" +
       QString(tr("New News: %1")).arg(str.section(": ", 1).section("\n", 0, 0)) +
       QString("\n") +
       QString(tr("Unread News: %1")).arg(str.section(": ", 2));
-  traySystem->setToolTip(info);
+  trayIconController_->setToolTip(info);
 
   mainMenuButton_->setToolTip(tr("Menu"));
 
@@ -5273,57 +5262,12 @@ void MainWindow::slotRefreshInfoTray(int newCount, int unreadCount)
       QString(tr("New News: %1")).arg(newCount) +
       QString("\n") +
       QString(tr("Unread News: %1")).arg(unreadCount);
-  traySystem->setToolTip(info);
+  trayIconController_->setToolTip(info);
 
   // Display new number or unread number of news
   if (behaviorIconTray_ > CHANGE_ICON_TRAY) {
     int trayCount = (behaviorIconTray_ == UNREAD_COUNT_ICON_TRAY) ? unreadCount : newCount;
-    // Display icon with number
-    if (trayCount != 0) {
-      // Prepare number
-      QString trayCountStr;
-      QFont font("Consolas");
-      if (trayCount > 99) {
-        font.setBold(false);
-        if (trayCount < 1000) {
-          font.setPixelSize(60);
-          trayCountStr = QString::number(trayCount);
-        } else {
-          font.setPixelSize(86);
-          trayCountStr = "#";
-        }
-      } else {
-        font.setBold(true);
-        font.setPixelSize(90);
-        trayCountStr = QString::number(trayCount);
-      }
-
-      // Draw icon, text above it, and set this icon to tray icon
-      QPixmap icon(128, 128);
-      icon.fill(Qt::transparent);
-      QPainter trayPainter;
-      trayPainter.begin(&icon);
-      trayPainter.setRenderHint(QPainter::SmoothPixmapTransform, true);
-      trayPainter.setRenderHint(QPainter::TextAntialiasing, true);
-      QRect rectangle(0, 0, 128, 128);
-      QLinearGradient gradient(rectangle.bottomLeft(), rectangle.topLeft());
-      QColor color("#117C04");
-      gradient.setColorAt(0, color.lighter());
-      gradient.setColorAt(0.5, color);
-      gradient.setColorAt(1, color.lighter());
-      trayPainter.setBrush(gradient);
-      trayPainter.drawRoundedRect(rectangle, 20, 20);
-      trayPainter.setFont(font);
-      trayPainter.setPen("#FFFFFF");
-      trayPainter.drawText(rectangle, Qt::AlignVCenter | Qt::AlignHCenter,
-                           trayCountStr);
-      trayPainter.end();
-      traySystem->setIcon(icon);
-    }
-    // Draw icon without number
-    else {
-      traySystem->setIcon(QIcon(":/images/quiterss128"));
-    }
+    trayIconController_->showCountIcon(trayCount);
   }
 }
 
@@ -5502,9 +5446,9 @@ void MainWindow::slotNewVersion(const QString &newVersion)
   updateAppDialog_ = NULL;
 
   if (!newVersion.isEmpty()) {
-    traySystem->showMessage(tr("Check for updates"),
-                            tr("A new version of QuiteRSS..."));
-    connect(traySystem, SIGNAL(messageClicked()),
+    trayIconController_->showMessage(tr("Check for updates"),
+                                     tr("A new version of QuiteRSS..."));
+    connect(trayIcon(), SIGNAL(messageClicked()),
             this, SLOT(slotShowUpdateAppDlg()));
   }
 }

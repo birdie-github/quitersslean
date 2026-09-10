@@ -60,6 +60,7 @@ enum FeedReedType {
 };
 
 class StatusBarController;
+class TrayIconController;
 
 class MainWindow : public QMainWindow
 {
@@ -76,7 +77,7 @@ public:
   bool showTrayIcon_;
   bool startingTray_;
   bool isMinimizeToTray_;
-  QSystemTrayIcon *traySystem;
+  QSystemTrayIcon *trayIcon() const;
 
   QString getIdFeedsString(int idFolder, int idException = -1);
   void recountCategoryCounts();
@@ -461,7 +462,6 @@ private:
   void saveActionShortcuts();
   void createMenu();
   void createToolBar();
-  void createTrayMenu();
   void createStatusBar();
   void createTray();
   void createTabBarWidget();
@@ -612,7 +612,6 @@ private:
   QMenu *browserMenu_;
   QMenu *toolsMenu_;
   QMenu *helpMenu_;
-  QMenu *trayMenu_;
   QMenu *newsContextMenu_;
   QMenu *feedsFilterMenu_;
   QMenu *newsFilterMenu_;
@@ -625,6 +624,7 @@ private:
   NewsView *newsView_;
 
   StatusBarController *statusBarController_;
+  TrayIconController *trayIconController_;
 
   QPushButton *pushButtonNull_;
 
