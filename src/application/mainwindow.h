@@ -20,13 +20,10 @@
 #define MAINWINDOW_H
 
 #include <QtWidgets>
-#include <QMediaPlayer>
-#include <QMediaPlaylist>
 #include <QtSql>
 #include <QPrintDialog>
 #include <QPrintPreviewDialog>
 #include <QPrinter>
-#include <QSound>
 
 #include "categoriestreewidget.h"
 #include "feedsmodel.h"
@@ -61,6 +58,7 @@ enum FeedReedType {
 
 class StatusBarController;
 class TrayIconController;
+class SoundPlayer;
 
 class MainWindow : public QMainWindow
 {
@@ -310,9 +308,6 @@ private slots:
                                  QList<int> readList, QStringList labelList);
   void slotFeedsViewportUpdate();
   void slotPlaySoundNewNews();
-
-  void mediaStatusChanged(QMediaPlayer::MediaStatus status);
-  void mediaError(QMediaPlayer::Error error);
 
   void slotShowAboutDlg();
 
@@ -648,8 +643,7 @@ private:
   int openingFeedAction_;
   bool openNewsWebViewOn_;
 
-  QMediaPlayer *mediaPlayer_;
-  QMediaPlaylist *playlist_;
+  SoundPlayer *soundPlayer_;
 
   bool soundNewNews_;
   QString soundNotifyPath_;

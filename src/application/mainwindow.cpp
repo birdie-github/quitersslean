@@ -19,6 +19,7 @@
 #include "mainwindow.h"
 #include "statusbarcontroller.h"
 #include "trayiconcontroller.h"
+#include "soundplayer.h"
 #include "articlecontent.h"
 
 #include "common.h"
@@ -63,7 +64,7 @@ MainWindow::MainWindow(QWidget *parent)
   , newsFilterAction_(NULL)
   , newsView_(NULL)
   , updateTimeCount_(0)
-  , mediaPlayer_(NULL)
+  , soundPlayer_(new SoundPlayer(this))
   , updateAppDialog_(NULL)
   , notificationWidget(NULL)
   , feedIdOld_(-2)
@@ -5335,60 +5336,9 @@ void MainWindow::slotIconFeedUpdate(int feedId, QByteArray faviconData)
 // ----------------------------------------------------------------------------
 void MainWindow::slotPlaySound(const QString &path)
 {
-  QString soundPath = mainApp->absolutePath(path);
-
-  if (!QFile::exists(soundPath)) {
-    qWarning() << QString("Error playing sound: %1").arg(soundPath);
-    return;
-  }
-
-  bool playing = false;
   Settings settings;
-  bool useMediaPlayer = settings.value("Settings/useMediaPlayer", true).toBool();
-
-  if (useMediaPlayer) {
-    if (mediaPlayer_ == NULL) {
-      playlist_ = new QMediaPlaylist(this);
-      mediaPlayer_ = new QMediaPlayer(this);
-      mediaPlayer_->setPlaylist(playlist_);
-      connect(mediaPlayer_, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
-              this, SLOT(mediaStatusChanged(QMediaPlayer::MediaStatus)));
-      connect(mediaPlayer_, SIGNAL(error(QMediaPlayer::Error)),
-              this, SLOT(mediaError(QMediaPlayer::Error)));
-    }
-
-    playlist_->addMedia(QUrl::fromLocalFile(soundPath));
-    if (playlist_->currentIndex() == -1) {
-      playlist_->setCurrentIndex(1);
-      mediaPlayer_->play();
-    }
-
-    playing = true;
-  }
-
-  if (!playing) {
-#if defined(Q_OS_WIN)
-    QSound::play(soundPath);
-#else
-    qInfo() << "Launching" << QStringLiteral("play") << "arguments:" << (QStringList() << soundPath);
-    QProcess::startDetached(QStringLiteral("play"), QStringList() << soundPath);
-#endif
-  }
-}
-
-void MainWindow::mediaStatusChanged(QMediaPlayer::MediaStatus status)
-{
-  if (status == QMediaPlayer::EndOfMedia) {
-    playlist_->removeMedia(0);
-  }
-}
-
-void MainWindow::mediaError(QMediaPlayer::Error error)
-{
-  QTextCodec *codec = QTextCodec::codecForLocale();
-  qCritical() << QString("Error Media: %1 - %2").
-                 arg(error).
-                 arg(codec->toUnicode(mediaPlayer_->errorString().toUtf8()));
+  soundPlayer_->play(mainApp->absolutePath(path),
+                     settings.value("Settings/useMediaPlayer", true).toBool());
 }
 
 void MainWindow::slotPlaySoundNewNews()
