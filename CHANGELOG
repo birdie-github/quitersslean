@@ -1,3 +1,10 @@
+Version 0.90.2 (10 Sep 2026) unreleased
+
+   * BUG FIX: Multiple behind the scenes improvements (part 1) - may result in new bugs :-(
+   * BUG FIX: Restore custom external browser feature and log opened resources in console
+   * NEW FEATURE: Add full Qt6 support (now default for Windows CI)
+   * NEW FEATURE: Drop QtMultimedia dependency and switch to miniaudio
+
 Version 0.90.1 (8 Sep 2026) unreleased
 
   * Fix unwanted in-memory database saves when moving to tray.

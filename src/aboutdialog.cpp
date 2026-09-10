@@ -50,7 +50,7 @@ AboutDialog::AboutDialog(const QString &lang, QWidget *parent) :
       + revisionStr
       + "</P>"
       + "<BR>"
-      + tr("QuiteRSS is a open-source cross-platform RSS/Atom news reader")
+      + tr("QuiteRSSLean is an open-source, cross-platform RSS/Atom news feed reader")
       + "<P>" + tr("Includes:")
       + QString(" Qt-%1, SQLite-%2").
       arg(QT_VERSION_STR).arg(SQLITE_VERSION)
