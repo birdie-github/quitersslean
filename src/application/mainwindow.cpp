@@ -19,6 +19,7 @@
 #include <QTimeZone>
 #include <QTextCodec>
 #include "mainwindow.h"
+#include "opmlexporter.h"
 #include "statusbarcontroller.h"
 #include "trayiconcontroller.h"
 #include "soundplayer.h"
@@ -2485,61 +2486,7 @@ void MainWindow::slotExportFeeds()
     return;
   }
 
-  QXmlStreamWriter xml(&file);
-  xml.setAutoFormatting(true);
-  xml.writeStartDocument();
-  xml.writeStartElement("opml");
-  xml.writeAttribute("version", "2.0");
-  xml.writeStartElement("head");
-  xml.writeTextElement("title", "QuiteRSS");
-  xml.writeTextElement("dateModified", QDateTime::currentDateTime().toString());
-  xml.writeEndElement(); // </head>
-
-  xml.writeStartElement("body");
-
-  // Create model and view for export
-  // Expand the view to step on every item
-  FeedsModel exportTreeModel(this);
-  QTreeView exportTreeView;
-  exportTreeView.setModel(&exportTreeModel);
-  exportTreeModel.setView(feedsView_);
-  exportTreeView.expandAll();
-
-  QModelIndex index = exportTreeModel.index(0, 0);
-  QStack<int> parentIdsStack;
-  parentIdsStack.push(0);
-  while (index.isValid()) {
-    int feedId = exportTreeModel.idByIndex(index);
-    int feedParId = exportTreeModel.paridByIndex(index);
-
-    // Parent differs from previouse one - close folder
-    while (feedParId != parentIdsStack.top()) {
-      xml.writeEndElement();  // "outline" - folder finishes
-      parentIdsStack.pop();
-    }
-
-    // Folder has found. Open it
-    if (exportTreeModel.isFolder(index)) {
-      parentIdsStack.push(feedId);
-      xml.writeStartElement("outline");  // Folder starts
-      xml.writeAttribute("text", exportTreeModel.dataField(index, "text").toString());
-    }
-    // Feed has found. Save it
-    else {
-      xml.writeEmptyElement("outline");
-      xml.writeAttribute("text",    exportTreeModel.dataField(index, "text").toString());
-      xml.writeAttribute("type",    "rss");
-      xml.writeAttribute("htmlUrl", exportTreeModel.dataField(index, "htmlUrl").toString());
-      xml.writeAttribute("xmlUrl",  exportTreeModel.dataField(index, "xmlUrl").toString());
-    }
-
-    index = exportTreeView.indexBelow(index);
-  }
-
-  xml.writeEndElement(); // </body>
-
-  xml.writeEndElement(); // </opml>
-  xml.writeEndDocument();
+  OpmlExporter::write(file, *feedsView_);
 
   file.close();
 }
