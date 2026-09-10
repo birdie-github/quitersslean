@@ -6,7 +6,6 @@
 #include <QProcess>
 #include <QSound>
 #include <QStringList>
-#include <QTextCodec>
 #include <QUrl>
 
 SoundPlayer::SoundPlayer(QObject *parent)
@@ -36,7 +35,7 @@ void SoundPlayer::play(const QString &soundPath, bool useMediaPlayer)
 
     playlist_->addMedia(QUrl::fromLocalFile(soundPath));
     if (playlist_->currentIndex() == -1) {
-      playlist_->setCurrentIndex(1);
+      playlist_->setCurrentIndex(0);
       mediaPlayer_->play();
     }
     return;
@@ -59,8 +58,21 @@ void SoundPlayer::mediaStatusChanged(QMediaPlayer::MediaStatus status)
 
 void SoundPlayer::mediaError(QMediaPlayer::Error error)
 {
-  QTextCodec *codec = QTextCodec::codecForLocale();
-  qCritical() << QString("Error Media: %1 - %2").
-                 arg(error).
-                 arg(codec->toUnicode(mediaPlayer_->errorString().toUtf8()));
+  const QString errorText = mediaPlayer_->errorString();
+  qCritical() << "Error Media:" << error << errorText;
+
+#if defined(Q_OS_LINUX)
+  // Backend strings vary (and may be localized); do not treat all format or
+  // resource errors as evidence that a codec is missing.
+  const bool missingDecoder =
+      errorText.contains(QStringLiteral("No decoder available"), Qt::CaseInsensitive) ||
+      errorText.contains(QStringLiteral("Cannot play stream of type"), Qt::CaseInsensitive) ||
+      errorText.contains(QStringLiteral("missing a plug-in"), Qt::CaseInsensitive) ||
+      errorText.contains(QStringLiteral("missing plugin"), Qt::CaseInsensitive) ||
+      errorText.contains(QStringLiteral("Missing decoder"), Qt::CaseInsensitive);
+  if (missingDecoder && !missingAudioSupportReported_) {
+    missingAudioSupportReported_ = true;
+    emit missingAudioSupport(errorText);
+  }
+#endif
 }

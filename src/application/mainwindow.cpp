@@ -76,6 +76,30 @@ MainWindow::MainWindow(QWidget *parent)
   setWindowTitle("QuiteRSS");
   setContextMenuPolicy(Qt::CustomContextMenu);
 
+  connect(soundPlayer_, &SoundPlayer::missingAudioSupport, this,
+          [this](const QString &errorText) {
+    if (mainApp->isClosing()) return;
+    // A warning owned by MainWindow would sit behind (and be blocked by)
+    // an open modal dialog, such as Settings or the filter editor.
+    QWidget *warningParent = QApplication::activeModalWidget();
+    if (!warningParent) warningParent = this;
+    QMessageBox *warning = new QMessageBox(
+          QMessageBox::Warning, tr("Missing audio support"),
+          tr("The notification sound cannot be played because a required "
+             "multimedia decoder or parser appears to be missing.\n\n"
+             "On Linux, Qt5 Multimedia commonly uses GStreamer. Installing "
+             "the GStreamer \"good\" plugins may resolve this problem "
+             "(on Fedora: gstreamer1-plugins-good).\n\n"
+             "Backend error: %1").arg(errorText),
+          QMessageBox::Ok, warningParent);
+    warning->setTextFormat(Qt::PlainText);
+    warning->setAttribute(Qt::WA_DeleteOnClose);
+    warning->setWindowModality(Qt::NonModal);
+    warning->show();
+    warning->raise();
+    warning->activateWindow();
+  }, Qt::QueuedConnection);
+
   db_ = QSqlDatabase::database();
 
   createFeedsWidget();

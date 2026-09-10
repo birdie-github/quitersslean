@@ -16,6 +16,9 @@ public:
 
   void play(const QString &soundPath, bool useMediaPlayer);
 
+signals:
+  void missingAudioSupport(const QString &errorText);
+
 private slots:
   void mediaStatusChanged(QMediaPlayer::MediaStatus status);
   void mediaError(QMediaPlayer::Error error);
@@ -23,6 +26,7 @@ private slots:
 private:
   QMediaPlayer *mediaPlayer_;
   QMediaPlaylist *playlist_;
+  bool missingAudioSupportReported_ = false;
 };
 
 #endif // SOUNDPLAYER_H
