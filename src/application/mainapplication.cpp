@@ -160,31 +160,8 @@ void MainApplication::createSettings()
   showSplashScreen_ = AppSettings::showSplashScreen.get();
   updateFeedsStartUp_ = AppSettings::autoUpdatefeedsStartUp.get();
 
-  QString strLang;
-  QString strLocalLang = QLocale::system().name();
-  bool findLang = false;
-  QDir langDir(resourcesDir() + "/lang");
-  foreach (QString file, langDir.entryList(QStringList("*.qm"), QDir::Files)) {
-    strLang = file.section('.', 0, 0).section('_', 1);
-    if (strLocalLang == strLang) {
-      strLang = strLocalLang;
-      findLang = true;
-      break;
-    }
-  }
-  if (!findLang) {
-    strLocalLang = strLocalLang.left(2);
-    foreach (QString file, langDir.entryList(QStringList("*.qm"), QDir::Files)) {
-      strLang = file.section('.', 0, 0).section('_', 1);
-      if (strLocalLang.contains(strLang, Qt::CaseInsensitive)) {
-        strLang = strLocalLang;
-        findLang = true;
-        break;
-      }
-    }
-  }
-  if (!findLang) strLang = "en";
-  langFileName_ = settings.value("langFileName", strLang).toString();
+  const QString defaultLanguage = languageCatalog().defaultLanguage(QLocale::system().uiLanguages());
+  langFileName_ = settings.value("langFileName", defaultLanguage).toString();
 
   proxyLoadSettings();
 }
@@ -339,28 +316,43 @@ void MainApplication::setStyleApplication()
   setStyle(new QProxyStyle);
 }
 
+LanguageCatalog MainApplication::languageCatalog() const
+{
+  return LanguageCatalog(resourcesDir() + "/lang", dataDir() + "/lang");
+}
+
 void MainApplication::setTranslateApplication()
 {
   if (!translator_)
     translator_ = new QTranslator(this);
   removeTranslator(translator_);
-  if (translator_->load(resourcesDir() + QString("/lang/quiterss_%1").arg(langFileName_)))
+  const QString translationFile = languageCatalog().translationFile(langFileName_);
+  if (!translationFile.isEmpty() && translator_->load(translationFile) &&
+      translator_->filePath() == translationFile) {
     installTranslator(translator_);
+  } else {
+    langFileName_ = QStringLiteral("en");
+  }
 
   if (!qt_translator_)
     qt_translator_ = new QTranslator(this);
   removeTranslator(qt_translator_);
-#ifdef HAVE_X11
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-  const QString translationsDir = QLibraryInfo::path(QLibraryInfo::TranslationsPath);
+  const QString qtTranslationsDir = QLibraryInfo::path(QLibraryInfo::TranslationsPath);
 #else
-  const QString translationsDir = QLibraryInfo::location(QLibraryInfo::TranslationsPath);
+  const QString qtTranslationsDir = QLibraryInfo::location(QLibraryInfo::TranslationsPath);
 #endif
-#else
-  const QString translationsDir = resourcesDir() + "/lang";
-#endif
-  if (qt_translator_->load(translationsDir + "/qtbase_" + langFileName_))
-    installTranslator(qt_translator_);
+  QStringList directories{dataDir() + "/lang", resourcesDir() + "/lang",
+                          resourcesDir() + "/translations", qtTranslationsDir};
+  directories.removeDuplicates();
+  if (langFileName_ != QLatin1String("en")) {
+    for (const QString &directory : directories) {
+      if (qt_translator_->load("qtbase_" + langFileName_, directory)) {
+        installTranslator(qt_translator_);
+        break;
+      }
+    }
+  }
 }
 
 void MainApplication::showSplashScreen()

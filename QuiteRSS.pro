@@ -63,6 +63,9 @@ CONFIG += c++17 link_pkgconfig
   error("libxml2 development files and pkg-config are required. Set PKG_CONFIG_PATH to the directory containing libxml-2.0.pc. See INSTALL for Linux, MSYS2 and Homebrew setup.")
 }
 PKGCONFIG += libxml-2.0
+HEADERS += src/application/languagecatalog.h
+SOURCES += src/application/languagecatalog.cpp
+
 HEADERS += src/network/networkpolicy.h src/articleview/articlecontent.h src/articleview/articleimages.h src/sharing/shareservice.h src/newsretention.h src/application/statusbarcontroller.h src/application/trayiconcontroller.h src/application/soundplayer.h
 SOURCES += src/articleview/articlecontent.cpp src/articleview/articleimages.cpp src/sharing/shareservice.cpp src/application/statusbarcontroller.cpp src/application/trayiconcontroller.cpp src/application/soundplayer.cpp
 
@@ -321,6 +324,8 @@ mac {
 
   INSTALLS += bundle_target
 }
+
+include(lang/lang.pri)
 
 RESOURCES += \
     QuiteRSS.qrc

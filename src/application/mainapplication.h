@@ -21,6 +21,7 @@
 
 #define mainApp MainApplication::getInstance()
 
+#include "languagecatalog.h"
 #include <QtWidgets>
 #include <qtsingleapplication.h>
 #include <QNetworkDiskCache>
@@ -74,6 +75,7 @@ public:
   DownloadManager *downloadManager();
   bool openExternalUrl(const QUrl &url);
 
+  LanguageCatalog languageCatalog() const;
   void setTranslateApplication();
   QString language() const { return langFileName_; }
   void setLanguage(const QString &lang) { langFileName_ = lang; }

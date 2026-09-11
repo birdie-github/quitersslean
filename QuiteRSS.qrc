@@ -112,38 +112,4 @@
         <file alias="newspaper_head">html/newspaper_head.html</file>
         <file alias="newspaper_description_rtl">html/newspaper_description_rtl.html</file>
     </qresource>
-    <qresource prefix="/flags">
-        <file alias="flag_AR">images/flags/flag_arab.png</file>
-        <file alias="flag_BR">images/flags/flag_brazil.png</file>
-        <file alias="flag_CN">images/flags/flag_china.png</file>
-        <file alias="flag_CZ">images/flags/flag_czech.png</file>
-        <file alias="flag_FR">images/flags/flag_france.png</file>
-        <file alias="flag_DE">images/flags/flag_germany.png</file>
-        <file alias="flag_EN">images/flags/flag_great_britain.png</file>
-        <file alias="flag_GR">images/flags/flag_greece.png</file>
-        <file alias="flag_HU">images/flags/flag_hungary.png</file>
-        <file alias="flag_FA">images/flags/flag_iran.png</file>
-        <file alias="flag_IT">images/flags/flag_italy.png</file>
-        <file alias="flag_JA">images/flags/flag_japan.png</file>
-        <file alias="flag_LT">images/flags/flag_lithuania.png</file>
-        <file alias="flag_NL">images/flags/flag_netherlands.png</file>
-        <file alias="flag_PL">images/flags/flag_poland.png</file>
-        <file alias="flag_PT">images/flags/flag_portugal.png</file>
-        <file alias="flag_RU">images/flags/flag_russia.png</file>
-        <file alias="flag_SR">images/flags/flag_serbian.png</file>
-        <file alias="flag_SK">images/flags/flag_slovakia.png</file>
-        <file alias="flag_KO">images/flags/flag_south_korea.png</file>
-        <file alias="flag_ES">images/flags/flag_spain.png</file>
-        <file alias="flag_SV">images/flags/flag_sweden.png</file>
-        <file alias="flag_TW">images/flags/flag_taiwan.png</file>
-        <file alias="flag_TJ">images/flags/flag_tajikistan.png</file>
-        <file alias="flag_TR">images/flags/flag_turkey.png</file>
-        <file alias="flag_UK">images/flags/flag_ukraine.png</file>
-        <file alias="flag_VI">images/flags/flag_vietnam.png</file>
-        <file alias="flag_RO">images/flags/flag_romania.png</file>
-        <file alias="flag_FI">images/flags/flag_finland.png</file>
-        <file alias="flag_GL">images/flags/flag_galicia.png</file>
-        <file alias="flag_BG">images/flags/flag_bulgaria.png</file>
-        <file alias="flag_HI">images/flags/flag_india.png</file>
-    </qresource>
 </RCC>

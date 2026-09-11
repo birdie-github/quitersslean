@@ -84,7 +84,6 @@ jobs:
             --release \
             --compiler-runtime \
             --no-opengl-sw \
-            --no-translations \
             --verbose 1 \
             "$EXE"
 
