@@ -1,4 +1,4 @@
-![Build Status](https://github.com/birdie-github/quitersslean/actions/workflows/qt5.yml/badge.svg?branch=master)
+![Build Status](https://github.com/birdie-github/quitersslean/actions/workflows/ci.yml/badge.svg?branch=master)
 
 © 2011-2020 QuiteRSS Project  
 © 2026 Artem S. Tashkinov and ChatGPT
