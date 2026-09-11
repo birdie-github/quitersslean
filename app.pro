@@ -25,7 +25,7 @@ include($$PROJECT_GENERATED_DIR/project.pri)
 INCLUDEPATH += $$PROJECT_GENERATED_DIR
 VERSION = $$PROJECT_VERSION
 # qmake includes these inputs in its Makefile regeneration dependencies.
-QMAKE_INTERNAL_INCLUDED_FILES += $$PWD/project.json $$PWD/scripts/generate-project.py $$files($$PWD/packaging/*.in) $$files($$PWD/images/*/quiterss.png)
+QMAKE_INTERNAL_INCLUDED_FILES += $$PWD/project.json $$PWD/scripts/generate-project.py $$files($$PWD/packaging/*.in) $$files($$PWD/images/*/$${PROJECT_NAME}.png)
 DISTFILES += $$PWD/project.json $$PWD/scripts/generate-project.py $$files($$PWD/packaging/*.in)
 
 # Invoke the matching qmake; this option validates, rather than switches, its Qt.
