@@ -58,8 +58,8 @@ The explicit helper downloads only miniaudio.h and LICENSE from upstream commit
 9634bedb5b5a2ca38c1ee7108a9358a4e233f14d (0.11.25), verifies their SHA-256 hashes,
 and installs them outside the source tree. It does not build or install packages:
 
-  python3 scripts/prepare-miniaudio.py --prefix "$HOME/quitersslean-miniaudio"
-  export MINIAUDIO_INCLUDE_DIR="$HOME/quitersslean-miniaudio/include"
+  python3 scripts/prepare-miniaudio.py --prefix "$HOME/miniaudio-snapshot"
+  export MINIAUDIO_INCLUDE_DIR="$HOME/miniaudio-snapshot/include"
 
 For an offline preparation, add --source-dir /path/to/miniaudio-0.11.25 with
 the upstream miniaudio.h and LICENSE files; the same hashes are checked.
@@ -156,8 +156,8 @@ Linux (Fedora 44)
   sudo dnf install python3 gcc-c++ make pkgconf-pkg-config qt5-qtbase-devel \
     qt5-qttools-devel qtsingleapplication-qt5-devel \
     sqlite-devel libxml2-devel qt5-qtimageformats
-  python3 scripts/prepare-miniaudio.py --prefix "$HOME/quitersslean-miniaudio"
-  export MINIAUDIO_INCLUDE_DIR="$HOME/quitersslean-miniaudio/include"
+  python3 scripts/prepare-miniaudio.py --prefix "$HOME/miniaudio-snapshot"
+  export MINIAUDIO_INCLUDE_DIR="$HOME/miniaudio-snapshot/include"
   mkdir _build
   cd _build
   qmake-qt5 ../app.pro CONFIG+=release CONFIG-=debug_and_release PREFIX=/usr
@@ -186,7 +186,7 @@ it does not use the Qt online installer's separate MinGW or an MSVC toolchain.
 
 From the application source directory:
   export PKG_CONFIG_PATH="$(cygpath -m /ucrt64/lib/pkgconfig)"
-  dep_work="$(cygpath -m "$HOME/quitersslean-deps-ucrt64")"
+  dep_work="$(cygpath -m "$HOME/app-deps-ucrt64")"
   /ucrt64/bin/python scripts/prepare-qtsingleapplication.py \
     --work-dir "$dep_work" --qmake qmake-qt5 --make mingw32-make
   export QMAKEFEATURES="$dep_work/install/features"
@@ -213,7 +213,7 @@ Install Xcode Command Line Tools and Homebrew (https://brew.sh/) first.
 From the application source directory:
   export PATH="$(brew --prefix qt@5)/bin:$PATH"
   export PKG_CONFIG_PATH="$(brew --prefix sqlite)/lib/pkgconfig:$(brew --prefix libxml2)/lib/pkgconfig"
-  dep_work="$HOME/quitersslean-deps-macos"
+  dep_work="$HOME/app-deps-macos"
   python3 scripts/prepare-qtsingleapplication.py --work-dir "$dep_work"
   export QMAKEFEATURES="$dep_work/install/features"
   python3 scripts/prepare-miniaudio.py --prefix "$dep_work/miniaudio"

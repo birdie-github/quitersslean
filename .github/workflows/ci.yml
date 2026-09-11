@@ -18,8 +18,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Prepare miniaudio
         run: |
-          python3 scripts/prepare-miniaudio.py --prefix "$RUNNER_TEMP/quitersslean-miniaudio"
-          echo "MINIAUDIO_INCLUDE_DIR=$RUNNER_TEMP/quitersslean-miniaudio/include" >> "$GITHUB_ENV"
+          python3 scripts/prepare-miniaudio.py --prefix "$RUNNER_TEMP/miniaudio-snapshot"
+          echo "MINIAUDIO_INCLUDE_DIR=$RUNNER_TEMP/miniaudio-snapshot/include" >> "$GITHUB_ENV"
       - name: Build
         run: |
           mkdir _build
@@ -59,7 +59,7 @@ jobs:
       - name: Prepare external QtSingleApplication and build
         run: |
           export PKG_CONFIG_PATH="$(cygpath -m /ucrt64/lib/pkgconfig)"
-          dep_work="$(cygpath -m "$RUNNER_TEMP/quitersslean-deps")"
+          dep_work="$(cygpath -m "$RUNNER_TEMP/app-deps")"
           python3 scripts/prepare-qtsingleapplication.py --work-dir "$dep_work" --qmake qmake6 --make mingw32-make
           export QMAKEFEATURES="$dep_work/install/features"
           python3 scripts/prepare-miniaudio.py --prefix "$dep_work/miniaudio"
@@ -136,7 +136,7 @@ jobs:
         run: |
           export PATH="$(brew --prefix qt@5)/bin:$PATH"
           export PKG_CONFIG_PATH="$(brew --prefix sqlite)/lib/pkgconfig:$(brew --prefix libxml2)/lib/pkgconfig"
-          dep_work="$RUNNER_TEMP/quitersslean-deps"
+          dep_work="$RUNNER_TEMP/app-deps"
           python3 scripts/prepare-qtsingleapplication.py --work-dir "$dep_work"
           export QMAKEFEATURES="$dep_work/install/features"
           python3 scripts/prepare-miniaudio.py --prefix "$dep_work/miniaudio"
