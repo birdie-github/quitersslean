@@ -17,6 +17,7 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 * ============================================================ */
 #include "common.h"
+#include "projectmetadata.h"
 
 #include <QtCore>
 #include <QApplication>
@@ -121,9 +122,9 @@ void Common::createFileBackup(const QString &oldFilename, const QString &oldVers
 
   // Create backup folder inside DB-file folder
   QDir backupDir(fileInfo.absoluteDir());
-  if (!backupDir.exists("backup"))
-    backupDir.mkpath("backup");
-  backupDir.cd("backup");
+  if (!backupDir.exists(ProjectMetadata::backup()))
+    backupDir.mkpath(ProjectMetadata::backup());
+  backupDir.cd(ProjectMetadata::backup());
 
   // Delete old files
   QStringList fileNameList = backupDir.entryList(QStringList(QString("%1*").arg(fileInfo.fileName())),

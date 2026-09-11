@@ -1,3 +1,4 @@
+#include <QGuiApplication>
 #include "trayiconcontroller.h"
 
 #include <QAction>
@@ -15,10 +16,10 @@ TrayIconController::TrayIconController(QWidget *menuParent, QAction *showWindowA
                                        QAction *markAllFeedsReadAction, QAction *optionsAction,
                                        QAction *exitAction, QObject *parent)
   : QObject(parent)
-  , trayIcon_(new QSystemTrayIcon(QIcon(":/images/quiterss128"), this))
+  , trayIcon_(new QSystemTrayIcon(QIcon(":/images/application128"), this))
   , trayMenu_(new QMenu(menuParent))
 {
-  trayIcon_->setToolTip("QuiteRSS");
+  trayIcon_->setToolTip(QGuiApplication::applicationDisplayName());
 
   trayMenu_->addAction(showWindowAction);
   trayMenu_->addAction(addFeedAction);
@@ -68,12 +69,12 @@ void TrayIconController::showMessage(const QString &title, const QString &messag
 
 void TrayIconController::showDefaultIcon()
 {
-  trayIcon_->setIcon(QIcon(":/images/quiterss128"));
+  trayIcon_->setIcon(QIcon(":/images/application128"));
 }
 
 void TrayIconController::showNewNewsIcon()
 {
-  trayIcon_->setIcon(QIcon(":/images/quiterss128_NewNews"));
+  trayIcon_->setIcon(QIcon(":/images/applicationNewNews"));
 }
 
 void TrayIconController::showCountIcon(int count)

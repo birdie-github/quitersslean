@@ -22,7 +22,7 @@
 #include <QDesktopServices>
 #include "mainapplication.h"
 #include "settings.h"
-#include "VersionNo.h"
+#include "projectmetadata.h"
 
 #include <sqlite3.h>
 
@@ -37,27 +37,29 @@ AboutDialog::AboutDialog(const QString &lang, QWidget *parent) :
   QTabWidget *tabWidget = new QTabWidget();
 
   QString revisionStr;
-  if (QString("%1").arg(VCS_REVISION) != "0") {
-      revisionStr = "<BR>" + tr("Revision") + " " + QString("%1").arg(VCS_REVISION);
+  if (!ProjectMetadata::revision().isEmpty()) {
+      revisionStr = "<BR>" + tr("Revision") + " " + QString("%1").arg(ProjectMetadata::revision());
   }
   QString appInfo =
       "<html><style>a { color: blue; text-decoration: none; }</style><body>"
       "<CENTER>"
       "<IMG SRC=\":/images/images/logo.png\">"
-      "<BR><IMG SRC=\":/images/images/logo_text.png\">"
+      "<BR><B>" + QGuiApplication::applicationDisplayName().toHtmlEscaped() + "</B>"
       "<P>"
-      + tr("Version") + " " + "<B>" + QString(STRPRODUCTVER) + "</B>" + QString(" (%1)").arg(STRDATE)
+      + tr("Version") + " " + "<B>" + QString(QCoreApplication::applicationVersion()) + "</B>" + QString(" (%1)").arg(ProjectMetadata::releaseDate())
       + revisionStr
       + "</P>"
       + "<BR>"
-      + tr("QuiteRSSLean is an open-source, cross-platform RSS/Atom news feed reader")
+      + tr("%1 is an open-source, cross-platform RSS/Atom news feed reader").arg(QGuiApplication::applicationDisplayName().toHtmlEscaped())
       + "<P>" + tr("Includes:")
       + QString(" Qt-%1, SQLite-%2").
       arg(QT_VERSION_STR).arg(SQLITE_VERSION)
       + "</P>"
-      + "<P>&copy; 2011-2020 QuiteRSS Project "
-      + "<P>&copy; 2026 Artem S. Tashkinov + ChatGPT "
-      + QString("<a href=\"%1\">E-mail</a>").arg("mailto:aros@gmx.com") + "</P>"
+      + "<P>" + ProjectMetadata::originalCopyright().toHtmlEscaped() + "</P>"
+      + "<P>" + ProjectMetadata::copyright().toHtmlEscaped() + "</P>"
+      + QString("<P><a href=\"%1\">%2</a> · <a href=\"%3\">%4</a></P>")
+          .arg(ProjectMetadata::homepageUrl().toHtmlEscaped(), tr("Homepage"),
+               QString("mailto:") + ProjectMetadata::email().toHtmlEscaped(), tr("E-mail"))
       + "</CENTER></body></html>";
   QLabel *infoLabel = new QLabel(appInfo);
   infoLabel->setOpenExternalLinks(false);
@@ -116,7 +118,7 @@ AboutDialog::AboutDialog(const QString &lang, QWidget *parent) :
   QString information =
       "<table border=\"0\"><tr>"
       "<td>" + tr("Version") + " </td>"
-      "<td>" + QString("%1.%2 %3 %4").arg(STRPRODUCTVER).arg(VCS_REVISION).arg(portable).arg(STRDATE) + "</td>"
+      "<td>" + QString("%1.%2 %3 %4").arg(QCoreApplication::applicationVersion()).arg(ProjectMetadata::revision()).arg(portable).arg(ProjectMetadata::releaseDate()) + "</td>"
       "</tr><tr></tr><tr>"
       "<td>" + tr("Application directory:") + " </td>"
       "<td>" + QCoreApplication::applicationDirPath() + "</td>"
@@ -128,7 +130,7 @@ AboutDialog::AboutDialog(const QString &lang, QWidget *parent) :
       "<td>" + mainApp->dataDir() + "</td>"
       "</tr><tr>"
       "<td>" + tr("Backup directory:") + " </td>"
-      "<td>" + mainApp->dataDir() + "/backup" + "</td>"
+      "<td>" + mainApp->dataDir() + ("/" + ProjectMetadata::backup()) + "</td>"
       "</tr><tr></tr><tr>"
       "<td>" + tr("Database file:") + " </td>"
       "<td>" + mainApp->dbFileName() + "</td>"
@@ -137,7 +139,7 @@ AboutDialog::AboutDialog(const QString &lang, QWidget *parent) :
       "<td>" + settings.fileName() + "</td>"
       "</tr><tr>"
       "<td>" + tr("Log file:") + " </td>"
-      "<td>" + mainApp->dataDir() + "/debug.log" + "</td>"
+      "<td>" + mainApp->dataDir() + ("/" + ProjectMetadata::log()) + "</td>"
       "</tr></table>";
 
   QTextEdit *informationTextEdit = new QTextEdit();

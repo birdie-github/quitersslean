@@ -16,6 +16,7 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 * ============================================================ */
+#include "projectmetadata.h"
 #include "globals.h"
 
 #include <QStandardPaths>
@@ -46,7 +47,7 @@ void Globals::init()
   // isPortable ...
 #if defined(Q_OS_WIN)
   isPortable_ = true;
-  QString fileName(QCoreApplication::applicationDirPath() + "/portable.dat");
+  QString fileName(QCoreApplication::applicationDirPath() + ("/" + ProjectMetadata::portableMarker()));
   if (!QFile::exists(fileName)) {
     isPortable_ = false;
   }
@@ -65,12 +66,12 @@ void Globals::init()
 
   if (isPortable_) {
     dataDir_ = QCoreApplication::applicationDirPath();
-    cacheDir_ = "cache";
-    soundNotifyDir_ = "sound";
+    cacheDir_ = QDir(dataDir_).filePath(ProjectMetadata::cache());
+    soundNotifyDir_ = QDir(dataDir_).filePath(ProjectMetadata::sounds());
   } else {
-    dataDir_ = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
-    cacheDir_ = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
-    soundNotifyDir_ = resourcesDir_ % "/sound";
+    dataDir_ = QDir(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)).filePath(QCoreApplication::applicationName());
+    cacheDir_ = QDir(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)).filePath(QCoreApplication::applicationName());
+    soundNotifyDir_ = QDir(resourcesDir_).filePath(ProjectMetadata::sounds());
 
     QDir dir(dataDir_);
     dir.mkpath(dataDir_);
@@ -79,8 +80,11 @@ void Globals::init()
   // settings ...
   QSettings::setDefaultFormat(QSettings::IniFormat);
   QString settingsFileName;
-  if (isPortable_)
-    settingsFileName = dataDir_ % "/" % QCoreApplication::applicationName() % ".ini";
+  const QString configDirectory = isPortable_ ? dataDir_ :
+      QDir(QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation))
+          .filePath(QCoreApplication::applicationName());
+  QDir().mkpath(configDirectory);
+  settingsFileName = QDir(configDirectory).filePath(QCoreApplication::applicationName() + ".ini");
   Settings::createSettings(settingsFileName);
 
   Settings settings("Settings");

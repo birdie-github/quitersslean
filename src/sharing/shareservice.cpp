@@ -7,6 +7,7 @@
 * the Free Software Foundation, either version 3 of the License, or
 * (at your option) any later version.
 * ============================================================ */
+#include "projectmetadata.h"
 #include "shareservice.h"
 
 #include <cstdio>
@@ -18,8 +19,8 @@
 #include <QSet>
 
 namespace {
-const char configurationFileName[] = "social-networks.ini";
-const char imageDirectoryName[] = "social-networks";
+const QString configurationFileName = ProjectMetadata::sharingConfig();
+const QString imageDirectoryName = ProjectMetadata::sharingIcons();
 
 QString encoded(const QString &value)
 {

@@ -22,7 +22,6 @@
 #include "mainapplication.h"
 #include "mainwindow.h"
 #include "settings.h"
-#include "VersionNo.h"
 #include "sqlitedriver.h"
 
 #include <sqlite3.h>
@@ -283,7 +282,7 @@ void Database::prepareDatabase()
         q.bindValue(":version", version());
         q.exec();
         q.prepare("INSERT INTO info(name, value) VALUES('appVersion', :appVersion)");
-        q.bindValue(":appVersion", STRPRODUCTVER);
+        q.bindValue(":appVersion", QCoreApplication::applicationVersion());
         q.exec();
       } else {
         qWarning() << "Preparation database";
@@ -306,7 +305,7 @@ void Database::prepareDatabase()
         }
 
         // Create backups for DB and Settings
-        if (appVersion != STRPRODUCTVER) {
+        if (appVersion != QCoreApplication::applicationVersion()) {
           Common::createFileBackup(mainApp->dbFileName(), appVersion);
           Common::createFileBackup(settings.fileName(), appVersion);
         }
@@ -330,11 +329,11 @@ void Database::prepareDatabase()
         // Update appVersion anyway
         if (appVersion.isEmpty()) {
           q.prepare("INSERT INTO info(name, value) VALUES('appVersion', :appVersion)");
-          q.bindValue(":appVersion", STRPRODUCTVER);
+          q.bindValue(":appVersion", QCoreApplication::applicationVersion());
           q.exec();
-        } else if (appVersion != STRPRODUCTVER) {
+        } else if (appVersion != QCoreApplication::applicationVersion()) {
           q.prepare("UPDATE info SET value=:appVersion WHERE name='appVersion'");
-          q.bindValue(":appVersion", STRPRODUCTVER);
+          q.bindValue(":appVersion", QCoreApplication::applicationVersion());
           q.exec();
         }
 

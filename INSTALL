@@ -1,6 +1,6 @@
 Build dependencies
 ==================
-Translation catalogs are external runtime files. Restore quiterss_*.ts into
+Translation catalogs are external runtime files. Restore NotQuiteRSS_*.ts into
 lang/ before running qmake to build them with the matching Qt lrelease tool.
 Precompiled .qm files can also be installed or added by users without rebuilding.
 See lang/README.md for discovery paths, optional metadata and installation.
@@ -20,8 +20,8 @@ Selecting Qt 5 or Qt 6
 =====================
 The application defaults to Qt 5. Invoke qmake from the matching Qt installation:
 
-  qmake-qt5 ../QuiteRSS.pro CONFIG+=release CONFIG-=debug_and_release
-  qmake6 ../QuiteRSS.pro QUITERSS_QT_MAJOR=6 CONFIG+=release CONFIG-=debug_and_release
+  qmake-qt5 ../app.pro CONFIG+=release CONFIG-=debug_and_release
+  qmake6 ../app.pro QUITERSS_QT_MAJOR=6 CONFIG+=release CONFIG-=debug_and_release
 
 QUITERSS_QT_MAJOR accepts only 5 or 6; a mismatch with qmake's Qt is an error.
 It cannot switch the libraries used by an already selected qmake executable.
@@ -105,11 +105,11 @@ Article sharing data
 ====================
 The installed application reads social-networks.ini from its resource directory
 and icons from the adjacent social-networks directory. On Linux with PREFIX=/usr,
-these are /usr/share/quiterss/social-networks.ini and
-/usr/share/quiterss/social-networks/. The qmake install target installs both.
+these are /usr/share/NotQuiteRSS/social-networks.ini and
+/usr/share/NotQuiteRSS/social-networks/. The qmake install target installs both.
 
 Only when the installed INI file does not exist, the application looks beside
-the user's QuiteRSS INI file for social-networks.ini and social-networks/. The
+the user's application INI file for social-networks.ini and social-networks/. The
 user definition is then used in full; installed and user definitions are never
 merged. Startup diagnostics use the [article-sharing] prefix on stderr.
 
@@ -160,7 +160,7 @@ Linux (Fedora 44)
   export MINIAUDIO_INCLUDE_DIR="$HOME/quitersslean-miniaudio/include"
   mkdir _build
   cd _build
-  qmake-qt5 ../QuiteRSS.pro CONFIG+=release CONFIG-=debug_and_release PREFIX=/usr
+  qmake-qt5 ../app.pro CONFIG+=release CONFIG-=debug_and_release PREFIX=/usr
   make -j2
   sudo make install
 
@@ -194,10 +194,10 @@ From the application source directory:
   export MINIAUDIO_INCLUDE_DIR="$dep_work/miniaudio/include"
   mkdir _build
   cd _build
-  qmake-qt5 ../QuiteRSS.pro CONFIG+=release CONFIG-=debug_and_release
+  qmake-qt5 ../app.pro CONFIG+=release CONFIG-=debug_and_release
   mingw32-make -j2
   mingw32-make install
-  ./release/target/QuiteRSS.exe
+  ./release/target/notquiterss.exe
 
 The install target copies social-networks.ini and social-networks/ beside the
 executable. The UCRT64 shell supplies the dependency DLL paths for local
@@ -220,9 +220,9 @@ From the application source directory:
   export MINIAUDIO_INCLUDE_DIR="$dep_work/miniaudio/include"
   mkdir _build
   cd _build
-  qmake ../QuiteRSS.pro CONFIG+=release CONFIG-=debug_and_release
+  qmake ../app.pro CONFIG+=release CONFIG-=debug_and_release
   make -j2
-  open release/target/QuiteRSS.app
+  open release/target/NotQuiteRSS.app
 
 This default recipe uses qt@5; see the Qt 6 opt-in instructions above.
 The explicit pkg-config paths select
@@ -243,7 +243,7 @@ No application configuration/build step downloads dependencies.
 
 These recipes and CI compile for local use; they do not create self-contained
 release packages. For redistribution, use the matching windeployqt/macdeployqt
-on release/target/QuiteRSS.exe or release/target/QuiteRSS.app, then inspect and
+on release/target/notquiterss.exe or release/target/NotQuiteRSS.app, then inspect and
 deploy non-Qt dependencies as well (SQLite, libxml2 and their dependencies,
 OpenSSL/TLS backend, compiler runtime where needed). Deployment tools alone
 must not be assumed to collect every non-Qt library. macOS bundles need their

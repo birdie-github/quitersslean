@@ -6,5 +6,7 @@ _build
 debug
 release
 Makefile*
-src/VersionRev.h
-QuiteRSS.pro.user*
+
+generated/
+app.pro.user*
+__pycache__/

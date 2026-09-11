@@ -1,0 +1,33 @@
+{
+  "identity": {
+    "name": "NotQuiteRSS",
+    "bundle_namespace": "io.github.birdie-github"
+  },
+  "release": {
+    "version": "0.90.2",
+    "date": "2026-09-10"
+  },
+  "project": {
+    "repository": "https://github.com/birdie-github/quitersslean",
+    "email": "aros@gmx.com",
+    "copyright": "Copyright © 2026 Artem S. Tashkinov and ChatGPT",
+    "original_copyright": "Copyright © 2011-2020 QuiteRSS Project"
+  },
+  "resources": {
+    "translations": "lang",
+    "qt_translations": "translations",
+    "styles": "style",
+    "sounds": "sound",
+    "sharing_config": "social-networks.ini",
+    "sharing_icons": "social-networks"
+  },
+  "files": {
+    "database": "feeds.db",
+    "log": "debug.log",
+    "cookies": "cookies.dat",
+    "last_feed": "lastfeed.dat",
+    "portable_marker": "portable.dat",
+    "cache": "cache",
+    "backup": "backup"
+  }
+}

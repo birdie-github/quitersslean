@@ -18,7 +18,6 @@
 * ============================================================ */
 #include "faviconobject.h"
 #include "networkpolicy.h"
-#include "VersionNo.h"
 #include "mainapplication.h"
 #include "globals.h"
 #include "common.h"

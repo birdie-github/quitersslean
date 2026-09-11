@@ -16,6 +16,7 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 * ============================================================ */
+#include "projectmetadata.h"
 #include <QTimeZone>
 #include <QTextCodec>
 #include "mainwindow.h"
@@ -76,7 +77,7 @@ MainWindow::MainWindow(QWidget *parent)
   , optionsDialog_(NULL)
 {
   setObjectName("mainWindow");
-  setWindowTitle("QuiteRSS");
+  setWindowTitle(QGuiApplication::applicationDisplayName());
   setContextMenuPolicy(Qt::CustomContextMenu);
 
   connect(soundPlayer_, &SoundPlayer::playbackFailed, this,
@@ -4256,7 +4257,7 @@ void MainWindow::slotNewsFilter()
 // ----------------------------------------------------------------------------
 void MainWindow::slotShowUpdateAppDlg()
 {
-  UpdateAppDialog *updateAppDialog = new UpdateAppDialog(mainApp->language(), this);
+  UpdateAppDialog *updateAppDialog = new UpdateAppDialog(this);
   updateAppDialog->activateWindow();
   updateAppDialog->exec();
   delete updateAppDialog;
@@ -4274,7 +4275,7 @@ void MainWindow::retranslateStrings()
 
   str = trayIconController_->toolTip();
   QString info =
-      "QuiteRSS\n" +
+      QGuiApplication::applicationDisplayName() + "\n" +
       QString(tr("New News: %1")).arg(str.section(": ", 1).section("\n", 0, 0)) +
       QString("\n") +
       QString(tr("Unread News: %1")).arg(str.section(": ", 2));
@@ -5206,7 +5207,7 @@ void MainWindow::slotRefreshInfoTray(int newCount, int unreadCount)
 
   // Setting tooltip text
   QString info =
-      "QuiteRSS\n" +
+      QGuiApplication::applicationDisplayName() + "\n" +
       QString(tr("New News: %1")).arg(newCount) +
       QString("\n") +
       QString(tr("Unread News: %1")).arg(unreadCount);
@@ -5329,7 +5330,7 @@ void MainWindow::showFilterRulesDlg()
 // ----------------------------------------------------------------------------
 void MainWindow::slotUpdateAppCheck()
 {
-  updateAppDialog_ = new UpdateAppDialog(mainApp->language(), this, false);
+  updateAppDialog_ = new UpdateAppDialog(this, false);
   connect(updateAppDialog_, SIGNAL(signalNewVersion(QString)),
           this, SLOT(slotNewVersion(QString)), Qt::QueuedConnection);
 }
@@ -5342,7 +5343,7 @@ void MainWindow::slotNewVersion(const QString &newVersion)
 
   if (!newVersion.isEmpty()) {
     trayIconController_->showMessage(tr("Check for updates"),
-                                     tr("A new version of QuiteRSS..."));
+                                     tr("A new version of %1 is available").arg(QGuiApplication::applicationDisplayName()));
     connect(trayIcon(), SIGNAL(messageClicked()),
             this, SLOT(slotShowUpdateAppDlg()));
   }
@@ -5406,21 +5407,21 @@ void MainWindow::setStyleApp(QAction *pAct)
 
   QString fileName(mainApp->resourcesDir());
   if (pAct->objectName() == "systemStyle_") {
-    fileName.append("/style/system.qss");
+    fileName.append("/" + ProjectMetadata::styles() + "/system.qss");
   } else if (pAct->objectName() == "system2Style_") {
-    fileName.append("/style/system2.qss");
+    fileName.append("/" + ProjectMetadata::styles() + "/system2.qss");
   } else if (pAct->objectName() == "darkStyle_") {
-    fileName.append("/style/dark.qss");
+    fileName.append("/" + ProjectMetadata::styles() + "/dark.qss");
   } else if (pAct->objectName() == "orangeStyle_") {
-    fileName.append("/style/orange.qss");
+    fileName.append("/" + ProjectMetadata::styles() + "/orange.qss");
   } else if (pAct->objectName() == "purpleStyle_") {
-    fileName.append("/style/purple.qss");
+    fileName.append("/" + ProjectMetadata::styles() + "/purple.qss");
   } else if (pAct->objectName() == "pinkStyle_") {
-    fileName.append("/style/pink.qss");
+    fileName.append("/" + ProjectMetadata::styles() + "/pink.qss");
   } else if (pAct->objectName() == "grayStyle_") {
-    fileName.append("/style/gray.qss");
+    fileName.append("/" + ProjectMetadata::styles() + "/gray.qss");
   } else {
-    fileName.append("/style/green.qss");
+    fileName.append("/" + ProjectMetadata::styles() + "/green.qss");
   }
 
   if (pAct->objectName() == "darkStyle_") {
@@ -6329,7 +6330,7 @@ void MainWindow::browserZoom(QAction *action)
  *---------------------------------------------------------------------------*/
 void MainWindow::slotReportProblem()
 {
-  mainApp->openExternalUrl(QUrl("https://github.com/QuiteRSS/quiterss/issues"));
+  mainApp->openExternalUrl(QUrl(ProjectMetadata::issuesUrl()));
 }
 
 /** @brief Print browser page
@@ -7084,8 +7085,8 @@ void MainWindow::setTextTitle(const QString &text, NewsTabWidget *widget)
 {
   if (currentNewsTab != widget) return;
 
-  if (text.isEmpty()) setWindowTitle("QuiteRSS");
-  else setWindowTitle(QString("%1 - QuiteRSS").arg(text));
+  if (text.isEmpty()) setWindowTitle(QGuiApplication::applicationDisplayName());
+  else setWindowTitle(QString("%1 - %2").arg(text, QGuiApplication::applicationDisplayName()));
 }
 
 /** @brief Enable|Disable indent in feeds tree

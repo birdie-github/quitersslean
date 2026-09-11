@@ -1,3 +1,4 @@
+#include "projectmetadata.h"
 #include "languagecatalog.h"
 
 #include <QDebug>
@@ -54,9 +55,9 @@ LanguageCatalog::LanguageCatalog(const QString &installedDirectory, const QStrin
 
   for (const QString &directory : directories) {
     const QDir dir(directory);
-    const QStringList files = dir.entryList({QStringLiteral("quiterss_*.qm")}, QDir::Files, QDir::Name);
+    const QStringList files = dir.entryList({ProjectMetadata::translationPrefix() + QStringLiteral("*.qm")}, QDir::Files, QDir::Name);
     for (const QString &file : files) {
-      const QString id = normalizedId(file.mid(9, file.size() - 12));
+      const QString id = normalizedId(file.mid(ProjectMetadata::translationPrefix().size(), file.size() - ProjectMetadata::translationPrefix().size() - 3));
       if (!validId(id) || id == QLatin1String("en")) continue;
       const QString path = dir.absoluteFilePath(file);
       QTranslator probe;

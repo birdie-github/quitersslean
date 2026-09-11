@@ -28,7 +28,7 @@ class UpdateAppDialog : public Dialog
 {
   Q_OBJECT
 public:
-  explicit UpdateAppDialog(const QString &lang, QWidget *parent, bool show = true);
+  explicit UpdateAppDialog(QWidget *parent, bool show = true);
   ~UpdateAppDialog();
 
   void disconnectObjects();
@@ -39,22 +39,17 @@ signals:
 private slots:
   void closeDialog();
   void finishUpdatesChecking();
-  void slotFinishHistoryReply();
-  void updaterRun();
   void renderStatistics();
 
 private:
-  QString lang_;
   bool showDialog_;
 
   NetworkManagerProxy *networkManagerProxy_;
   QNetworkReply *reply_;
-  QNetworkReply *historyReply_;
 
   QLabel *infoLabel;
   QTextBrowser *history_;
 
-  QPushButton *installButton_;
   QCheckBox *remindAboutVersion_;
 
 };

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- © 2011-2020 QuiteRSS Project -->
+<component type="desktop-application">
+  <id>@META_bundleId@</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0+</project_license>
+  <name>@META_displayName@</name>
+  <summary>Free news reader</summary>
+  <description>
+    <p>
+      @META_displayName@ is an easy to use application designed to help you keep track of the latest news on your RSS feeds. It is quite fast and comfortable to user.
+    </p>
+    <p>
+      The program allows you to add as many RSS feed links as you want. You can update the feeds manually.
+    </p>
+  </description>
+  <launchable type="desktop-id">@META_name@.desktop</launchable>
+  <url type="homepage">@META_homepageUrl@</url>
+  <url type="bugtracker">@META_issuesUrl@</url>
+  <url type="vcs-browser">@META_sourceUrl@</url>
+  <update_contact>@META_email@</update_contact>
+</component>

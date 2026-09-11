@@ -26,7 +26,7 @@
 #include "settings.h"
 #include "splashscreen.h"
 #include "updatefeeds.h"
-#include "VersionNo.h"
+#include "projectmetadata.h"
 
 #include <QScreen>
 #include <QDesktopServices>
@@ -46,9 +46,11 @@ MainApplication::MainApplication(int &argc, char **argv)
   , diskCache_(0)
   , downloadManager_(0)
 {
-  setApplicationName(STRAPPLICATIONNAME);
-  setOrganizationName(STRAPPLICATIONNAME);
-  setApplicationVersion(STRPRODUCTVER);
+  setApplicationName(ProjectMetadata::name());
+  setApplicationDisplayName(ProjectMetadata::displayName());
+  setDesktopFileName(ProjectMetadata::name());
+  setOrganizationName(ProjectMetadata::organization());
+  setApplicationVersion(ProjectMetadata::version());
   globals.init();
 
   QString message = arguments().value(1);
@@ -69,7 +71,7 @@ MainApplication::MainApplication(int &argc, char **argv)
     }
   }
 
-  setWindowIcon(QIcon(":/images/quiterss128"));
+  setWindowIcon(QIcon(":/images/application128"));
   setQuitOnLastWindowClosed(false);
 
   createSettings();
@@ -274,7 +276,7 @@ QString MainApplication::absolutePath(const QString &path) const
 
 QString MainApplication::dbFileName() const
 {
-  return dataDir() % "/feeds.db";
+  return dataDir() % ("/" + ProjectMetadata::database());
 }
 
 bool MainApplication::isSaveDataLastFeed() const
@@ -291,21 +293,21 @@ void MainApplication::setStyleApplication()
 {
   QString fileName(resourcesDir());
   if (styleApplication_ == "systemStyle_") {
-    fileName.append("/style/system.qss");
+    fileName.append("/" + ProjectMetadata::styles() + "/system.qss");
   } else if (styleApplication_ == "system2Style_") {
-    fileName.append("/style/system2.qss");
+    fileName.append("/" + ProjectMetadata::styles() + "/system2.qss");
   } else if (styleApplication_ == "darkStyle_") {
-    fileName.append("/style/dark.qss");
+    fileName.append("/" + ProjectMetadata::styles() + "/dark.qss");
   } else if (styleApplication_ == "orangeStyle_") {
-    fileName.append("/style/orange.qss");
+    fileName.append("/" + ProjectMetadata::styles() + "/orange.qss");
   } else if (styleApplication_ == "purpleStyle_") {
-    fileName.append("/style/purple.qss");
+    fileName.append("/" + ProjectMetadata::styles() + "/purple.qss");
   } else if (styleApplication_ == "pinkStyle_") {
-    fileName.append("/style/pink.qss");
+    fileName.append("/" + ProjectMetadata::styles() + "/pink.qss");
   } else if (styleApplication_ == "grayStyle_") {
-    fileName.append("/style/gray.qss");
+    fileName.append("/" + ProjectMetadata::styles() + "/gray.qss");
   } else {
-    fileName.append("/style/green.qss");
+    fileName.append("/" + ProjectMetadata::styles() + "/green.qss");
   }
   QFile file(fileName);
   const QByteArray styleData = file.open(QFile::ReadOnly)
@@ -318,7 +320,7 @@ void MainApplication::setStyleApplication()
 
 LanguageCatalog MainApplication::languageCatalog() const
 {
-  return LanguageCatalog(resourcesDir() + "/lang", dataDir() + "/lang");
+  return LanguageCatalog(resourcesDir() + ("/" + ProjectMetadata::translations()), dataDir() + ("/" + ProjectMetadata::translations()));
 }
 
 void MainApplication::setTranslateApplication()
@@ -342,8 +344,8 @@ void MainApplication::setTranslateApplication()
 #else
   const QString qtTranslationsDir = QLibraryInfo::location(QLibraryInfo::TranslationsPath);
 #endif
-  QStringList directories{dataDir() + "/lang", resourcesDir() + "/lang",
-                          resourcesDir() + "/translations", qtTranslationsDir};
+  QStringList directories{dataDir() + ("/" + ProjectMetadata::translations()), resourcesDir() + ("/" + ProjectMetadata::translations()),
+                          resourcesDir() + ("/" + ProjectMetadata::qtTranslations()), qtTranslationsDir};
   directories.removeDuplicates();
   if (langFileName_ != QLatin1String("en")) {
     for (const QString &directory : directories) {
@@ -363,7 +365,7 @@ void MainApplication::showSplashScreen()
     showSplashScreen_ = true;
 
   if (showSplashScreen_) {
-    splashScreen_ = new SplashScreen(QPixmap(":/images/images/splashScreen.png"));
+    splashScreen_ = new SplashScreen();
     splashScreen_->show();
     processEvents();
     if ((versionDB != Database::version()) && QFile::exists(settings.fileName())) {
@@ -454,11 +456,7 @@ QString MainApplication::soundNotifyDefaultFile() const
 
 QString MainApplication::styleSheetNewsDefaultFile() const
 {
-  if (isPortable()) {
-    return "style/news.css";
-  } else {
-    return resourcesDir() % "/style/news.css";
-  }
+  return QDir(resourcesDir()).filePath(ProjectMetadata::styles() + "/news.css");
 }
 
 UpdateFeeds *MainApplication::updateFeeds()

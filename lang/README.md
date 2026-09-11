@@ -5,23 +5,23 @@ English is always available without a translation file.
 
 ## Add a translation
 
-Place `quiterss_<locale>.qm` in either:
+Place `NotQuiteRSS_<locale>.qm` in either:
 
 * The installed resource directory's `lang/` subdirectory: normally
-  `/usr/share/quiterss/lang` (or `/usr/local/share/quiterss/lang`) on Linux,
-  `lang` beside QuiteRSS.exe on Windows, or `Contents/Resources/lang` in the
+  `/usr/share/NotQuiteRSS/lang` (or `/usr/local/share/NotQuiteRSS/lang`) on Linux,
+  `lang` beside notquiterss.exe on Windows, or `Contents/Resources/lang` in the
   macOS application bundle.
 * The application's writable data directory's `lang/` subdirectory. This is
-  `QStandardPaths::AppLocalDataLocation`, using the application's existing
-  organization/name (`QuiteRss/QuiteRss`): normally
-  `~/.local/share/QuiteRss/QuiteRss/lang` on Linux,
-  `%LOCALAPPDATA%/QuiteRss/QuiteRss/lang` on Windows, and
-  `~/Library/Application Support/QuiteRss/QuiteRss/lang` on macOS.
+  `QStandardPaths::GenericDataLocation` plus the application name
+  (`NotQuiteRSS`): normally
+  `~/.local/share/NotQuiteRSS/lang` on Linux,
+  `%LOCALAPPDATA%/NotQuiteRSS/lang` on Windows, and
+  `~/Library/Application Support/NotQuiteRSS/lang` on macOS.
   Portable builds use `lang` beside the executable instead.
 
 The writable directory wins when both contain the same locale. Invalid QM
 files are skipped with a log warning; an invalid override does not hide a
-working installed translation. Only `quiterss_*.qm` files enter the language
+working installed translation. Only `NotQuiteRSS_*.qm` files enter the language
 list, so Qt's `qtbase_*.qm` files are not advertised as application languages.
 
 Reopen Settings to discover newly added files, select the language, and apply
@@ -62,7 +62,7 @@ flags may appear as letters or missing glyphs. Language names remain visible.
 ## Build and install
 
 Restore `.ts` files into this directory, then rerun qmake. `lang.pri` discovers
-`quiterss_*.ts`, uses the selected Qt installation's `lrelease`, and installs
+`NotQuiteRSS_*.ts`, uses the selected Qt installation's `lrelease`, and installs
 its generated QM files with `languages.ini`. No language list needs editing
 in C++ or qmake. Precompiled QM files without corresponding TS files can also
 be shipped. Nothing is embedded in the application resources.
@@ -71,7 +71,7 @@ For a user translation, Qt Linguist's Release action or the matching Qt
 `lrelease` tool converts the editable TS source into a runtime QM file:
 
 ```
-lrelease quiterss_ru.ts -qm quiterss_ru.qm
+lrelease NotQuiteRSS_ru.ts -qm NotQuiteRSS_ru.qm
 ```
 
 Linux/Windows installation uses `make install` (or `mingw32-make install`);

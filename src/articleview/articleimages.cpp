@@ -124,7 +124,7 @@ private:
     request.setAttribute(QNetworkRequest::AuthenticationReuseAttribute, QNetworkRequest::Manual);
     // Some publishers reject Qt's generic default User-Agent. Identify the reader
     // explicitly without impersonating a browser or sharing feed credentials.
-    const QByteArray userAgent = QByteArray("QuiteRSSLean/") + QCoreApplication::applicationVersion().toLatin1();
+    const QByteArray userAgent = QCoreApplication::applicationName().toUtf8() + QByteArray("/") + QCoreApplication::applicationVersion().toLatin1();
     request.setRawHeader("User-Agent", userAgent);
     ArticleImages::trace("User-Agent=" + QString::fromLatin1(userAgent));
     const QByteArray accept = imageAcceptHeader();

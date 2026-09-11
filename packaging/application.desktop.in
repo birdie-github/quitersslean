@@ -1,0 +1,15 @@
+[Desktop Entry]
+Name=@META_displayName@
+Exec=@META_executable@
+Icon=@META_name@
+Type=Application
+GenericName=RSS/Atom feed reader
+GenericName[pt]=Leitor de fontes RSS/Atom
+GenericName[ru]=Клиент RSS/Atom
+Comment=@META_displayName@ is a RSS/Atom feed reader written in C++/Qt
+Comment[pt]=O @META_displayName@ é um leitor de fontes RSS/Atom desenvolvido em C++/Qt
+Comment[ru]=@META_displayName@ — клиент RSS/Atom, написанный на C++/Qt
+Terminal=false
+Categories=Qt;Network;News;
+MimeType=application/rss+xml;application/atom+xml;application/rdf+xml;
+X-DBUS-StartupType=none

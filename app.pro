@@ -17,45 +17,23 @@ clang {
     CONFIG += ltcg
 }
 
-# VCS revision info
-REVFILE = src/VersionRev.h
-QMAKE_DISTCLEAN += $$REVFILE
-exists(.git) {
-  VERSION_REV = $$system(git rev-list master --count)
-  count(VERSION_REV, 1) {
-    win32|mac {
-      # FIXME
-      VERSION_REV = $$VERSION_REV
-    } else {
-      VERSION_REV = git-$$VERSION_REV-$$system(git rev-parse --short HEAD)
-    }
-  } else {
-    VERSION_REV = 0
-  }
-  !build_pass:message(VCS revision: $$VERSION_REV)
-
-  win32 {
-    system(echo $${LITERAL_HASH}define VCS_REVISION $$VERSION_REV > $$REVFILE)
-  } else {
-    system(echo \\$${LITERAL_HASH}define VCS_REVISION \\\"$$VERSION_REV\\\" > $$REVFILE)
-  }
-} else:!exists($$REVFILE) {
-  VERSION_REV = 0
-  !build_pass:message(VCS revision: $$VERSION_REV)
-
-  win32 {
-    system(echo $${LITERAL_HASH}define VCS_REVISION $$VERSION_REV > $$REVFILE)
-  } else {
-    system(echo \\$${LITERAL_HASH}define VCS_REVISION \\\"$$VERSION_REV\\\" > $$REVFILE)
-  }
-}
+# Generate project metadata in the build tree, including for source archives.
+isEmpty(PYTHON): PYTHON = python3
+PROJECT_GENERATED_DIR = $$OUT_PWD/generated
+!system($$shell_quote($$PYTHON) $$shell_quote($$PWD/scripts/generate-project.py) --source $$shell_quote($$PWD) --output $$shell_quote($$PROJECT_GENERATED_DIR)): error("Project metadata generation failed")
+include($$PROJECT_GENERATED_DIR/project.pri)
+INCLUDEPATH += $$PROJECT_GENERATED_DIR
+VERSION = $$PROJECT_VERSION
+# qmake includes these inputs in its Makefile regeneration dependencies.
+QMAKE_INTERNAL_INCLUDED_FILES += $$PWD/project.json $$PWD/scripts/generate-project.py $$files($$PWD/packaging/*.in) $$files($$PWD/images/*/quiterss.png)
+DISTFILES += $$PWD/project.json $$PWD/scripts/generate-project.py $$files($$PWD/packaging/*.in)
 
 # Invoke the matching qmake; this option validates, rather than switches, its Qt.
 isEmpty(QUITERSS_QT_MAJOR): QUITERSS_QT_MAJOR = 5
 !equals(QUITERSS_QT_MAJOR, 5):!equals(QUITERSS_QT_MAJOR, 6): error("QUITERSS_QT_MAJOR must be 5 or 6")
 !equals(QT_MAJOR_VERSION, $$QUITERSS_QT_MAJOR): error("Run qmake from the requested Qt installation. Qt 6 requires QUITERSS_QT_MAJOR=6; Qt 5 is the default.")
-equals(QT_MAJOR_VERSION, 5):lessThan(QT_MINOR_VERSION, 15): error("QuiteRSS requires Qt 5.15 or newer within Qt 5")
-equals(QT_MAJOR_VERSION, 6):lessThan(QT_MINOR_VERSION, 2): error("QuiteRSS requires Qt 6.2 or newer within Qt 6")
+equals(QT_MAJOR_VERSION, 5):lessThan(QT_MINOR_VERSION, 15): error("$$PROJECT_NAME requires Qt 5.15 or newer within Qt 5")
+equals(QT_MAJOR_VERSION, 6):lessThan(QT_MINOR_VERSION, 2): error("$$PROJECT_NAME requires Qt 6.2 or newer within Qt 6")
 QT += widgets network xml printsupport sql
 equals(QT_MAJOR_VERSION, 6): QT += core5compat
 CONFIG += c++17 link_pkgconfig
@@ -63,6 +41,9 @@ CONFIG += c++17 link_pkgconfig
   error("libxml2 development files and pkg-config are required. Set PKG_CONFIG_PATH to the directory containing libxml-2.0.pc. See INSTALL for Linux, MSYS2 and Homebrew setup.")
 }
 PKGCONFIG += libxml-2.0
+HEADERS += src/application/releaseinfo.h
+SOURCES += src/application/releaseinfo.cpp
+
 HEADERS += src/application/languagecatalog.h
 SOURCES += src/application/languagecatalog.cpp
 
@@ -74,7 +55,6 @@ unix:!mac:DEFINES += HAVE_X11
 TEMPLATE = app
 
 HEADERS += \
-    src/VersionNo.h \
     src/parseobject.h \
     src/optionsdialog.h \
     src/newsview/newsview.h \
@@ -89,7 +69,6 @@ HEADERS += \
     src/findfeed.h \
     src/feedsview/feedsview.h \
     src/feedsview/feedsmodel.h \
-    src/VersionRev.h \
     src/addfolderdialog.h \
     src/labeldialog.h \
     src/faviconobject.h \
@@ -221,11 +200,12 @@ include(3rdparty/sqlite.pri)
 include(3rdparty/miniaudio.pri)
 
 win32|mac {
-  TARGET = QuiteRSS
+  TARGET = $$PROJECT_EXECUTABLE
 }
 
 win32 {
-  RC_FILE = QuiteRSSApp.rc
+  RC_FILE = $$PROJECT_GENERATED_DIR/application.rc
+  RC_INCLUDEPATH += $$PROJECT_GENERATED_DIR
 }
 
 win32-g++ {
@@ -250,28 +230,28 @@ DISTFILES += \
     README.md
 
 unix:!mac {
-  TARGET = quiterss
+  TARGET = $$PROJECT_EXECUTABLE
 
   isEmpty(PREFIX) {
     PREFIX =   /usr/local
   }
-  DATA_DIR = $$PREFIX/share/quiterss
+  DATA_DIR = $$PREFIX/share/$$PROJECT_NAME
   DEFINES += RESOURCES_DIR='\\\"$${DATA_DIR}\\\"'
 
   target.path =  $$quote($$PREFIX/bin)
 
-  desktop.files = quiterss.desktop
+  desktop.files = $$PROJECT_GENERATED_DIR/$${PROJECT_NAME}.desktop
   desktop.path =  $$quote($$PREFIX/share/applications)
 
-  target1.files = images/48x48/quiterss.png
+  target1.files = $$PROJECT_GENERATED_DIR/icons/48/$${PROJECT_NAME}.png
   target1.path =  $$quote($$PREFIX/share/pixmaps)
 
-  icon_16.files =  images/16x16/quiterss.png
-  icon_32.files =  images/32x32/quiterss.png
-  icon_48.files =  images/48x48/quiterss.png
-  icon_64.files =  images/64x64/quiterss.png
-  icon_128.files = images/128x128/quiterss.png
-  icon_256.files = images/256x256/quiterss.png
+  icon_16.files =  $$PROJECT_GENERATED_DIR/icons/16/$${PROJECT_NAME}.png
+  icon_32.files =  $$PROJECT_GENERATED_DIR/icons/32/$${PROJECT_NAME}.png
+  icon_48.files =  $$PROJECT_GENERATED_DIR/icons/48/$${PROJECT_NAME}.png
+  icon_64.files =  $$PROJECT_GENERATED_DIR/icons/64/$${PROJECT_NAME}.png
+  icon_128.files = $$PROJECT_GENERATED_DIR/icons/128/$${PROJECT_NAME}.png
+  icon_256.files = $$PROJECT_GENERATED_DIR/icons/256/$${PROJECT_NAME}.png
   icon_16.path =  $$quote($$PREFIX/share/icons/hicolor/16x16/apps)
   icon_32.path =  $$quote($$PREFIX/share/icons/hicolor/32x32/apps)
   icon_48.path =  $$quote($$PREFIX/share/icons/hicolor/48x48/apps)
@@ -280,44 +260,47 @@ unix:!mac {
   icon_256.path = $$quote($$PREFIX/share/icons/hicolor/256x256/apps)
 
 
-  sound.files = sound
+  sound.files = $$PROJECT_SOUND_DIR
   sound.path = $$quote($$DATA_DIR)
 
-  style.files = style
+  style.files = $$PROJECT_STYLE_DIR
   style.path = $$quote($$DATA_DIR)
 
-  social_networks_config.files = social-networks.ini
+  social_networks_config.files = $$PROJECT_SHARING_CONFIG
   social_networks_config.path = $$quote($$DATA_DIR)
-  social_networks_icons.files = social-networks
+  social_networks_icons.files = $$PROJECT_SHARING_ICONS
   social_networks_icons.path = $$quote($$DATA_DIR)
 
-  INSTALLS += target desktop target1
+  metainfo.files = $$PROJECT_GENERATED_DIR/$${PROJECT_BUNDLE_ID}.metainfo.xml
+  metainfo.path = $$PREFIX/share/metainfo
+  INSTALLS += target desktop target1 metainfo
   INSTALLS += icon_16 icon_32 icon_48 icon_64 icon_128 icon_256
   INSTALLS += sound style social_networks_config social_networks_icons
 }
 
 win32 {
-  social_networks_config.files = social-networks.ini
+  social_networks_config.files = $$PROJECT_SHARING_CONFIG
   social_networks_config.path = $$DESTDIR
-  social_networks_icons.files = social-networks
+  social_networks_icons.files = $$PROJECT_SHARING_ICONS
   social_networks_icons.path = $$DESTDIR
   INSTALLS += social_networks_config social_networks_icons
 }
 
 mac {
   CONFIG += app_bundle
+  QMAKE_APPLICATION_BUNDLE_NAME = $$PROJECT_NAME
 
-  QMAKE_INFO_PLIST = Info.plist
-  ICON = quiterss.icns
+  QMAKE_INFO_PLIST = $$PROJECT_GENERATED_DIR/Info.plist
+  ICON = application.icns
 
   bundle_target.files += AUTHORS
   bundle_target.files += COPYING
   bundle_target.files += CHANGELOG
   bundle_target.files += README.md
-  bundle_target.files += sound
-  bundle_target.files += style
-  bundle_target.files += social-networks.ini
-  bundle_target.files += social-networks
+  bundle_target.files += $$PROJECT_SOUND_DIR
+  bundle_target.files += $$PROJECT_STYLE_DIR
+  bundle_target.files += $$PROJECT_SHARING_CONFIG
+  bundle_target.files += $$PROJECT_SHARING_ICONS
   bundle_target.path = Contents/Resources
   QMAKE_BUNDLE_DATA += bundle_target
 
@@ -325,10 +308,10 @@ mac {
   INSTALLS += bundle_target
 }
 
-include(lang/lang.pri)
+include($$PROJECT_LANG_DIR/lang.pri)
 
 RESOURCES += \
-    QuiteRSS.qrc
+    app.qrc
 
 OTHER_FILES += \
     HISTORY_RU \
@@ -337,5 +320,4 @@ OTHER_FILES += \
     AUTHORS \
     CHANGELOG \
     INSTALL \
-    Info.plist \
     social-networks.ini

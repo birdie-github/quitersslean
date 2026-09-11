@@ -16,6 +16,7 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 * ============================================================ */
+#include "projectmetadata.h"
 #include "logfile.h"
 
 #include <QStandardPaths>
@@ -51,7 +52,7 @@ void LogFile::msgHandler(QtMsgType type, const QMessageLogContext &, const QStri
   }
 
   QFile file;
-  file.setFileName(globals.dataDir_ + "/debug.log");
+  file.setFileName(globals.dataDir_ + ("/" + ProjectMetadata::log()));
   QIODevice::OpenMode openMode = QIODevice::WriteOnly | QIODevice::Text;
 
   if (file.exists() && (file.size() < (qint64)maxLogFileSize)) {

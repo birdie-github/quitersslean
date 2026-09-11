@@ -21,17 +21,14 @@
 #include <QDesktopServices>
 
 #include "mainapplication.h"
-#include "VersionNo.h"
+#include "projectmetadata.h"
+#include "releaseinfo.h"
+#include <QTimer>
 #include "settings.h"
 
-#include <QNetworkCookie>
-#if defined(Q_OS_WIN)
-#include <qt_windows.h>
-#endif
 
-UpdateAppDialog::UpdateAppDialog(const QString &lang, QWidget *parent, bool show)
+UpdateAppDialog::UpdateAppDialog(QWidget *parent, bool show)
   : Dialog(parent)
-  , lang_(lang)
   , showDialog_(show)
 {
   Settings settings;
@@ -68,29 +65,14 @@ UpdateAppDialog::UpdateAppDialog(const QString &lang, QWidget *parent, bool show
     pageLayout->addWidget(history_, 1);
     pageLayout->addWidget(remindAboutVersion_, 0);
 
-    installButton_ = new QPushButton(tr("&Install"), this);
-    installButton_->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
-    installButton_->hide();
-    buttonsLayout->insertWidget(0, installButton_, 1);
-    connect(installButton_, SIGNAL(clicked()), SLOT(updaterRun()));
-
     buttonBox->addButton(QDialogButtonBox::Close);
-
-    renderStatistics();
-
-    QString urlHistory;
-    if (lang_.contains("ru", Qt::CaseInsensitive))
-      urlHistory = "https://quiterss.org/files/updates_new/HISTORY_RU";
-    else urlHistory = "https://quiterss.org/files/updates_new/HISTORY_EN";
-    historyReply_ = networkManagerProxy_->get(QNetworkRequest(QUrl(urlHistory)));
-    connect(historyReply_, SIGNAL(finished()), this, SLOT(slotFinishHistoryReply()));
 
     connect(this, SIGNAL(finished(int)), this, SLOT(closeDialog()));
 
     restoreGeometry(settings.value("updateAppDlg/geometry").toByteArray());
-  } else {
-    renderStatistics();
   }
+  // Let the caller connect the background completion signal before any outcome.
+  QTimer::singleShot(0, this, &UpdateAppDialog::renderStatistics);
 }
 
 UpdateAppDialog::~UpdateAppDialog()
@@ -101,9 +83,11 @@ UpdateAppDialog::~UpdateAppDialog()
 void UpdateAppDialog::disconnectObjects()
 {
   disconnect(this);
+  if (!networkManagerProxy_) return;
   networkManagerProxy_->disconnectObjects();
 
   delete networkManagerProxy_;
+  networkManagerProxy_ = nullptr;
 }
 
 void UpdateAppDialog::closeDialog()
@@ -118,45 +102,31 @@ void UpdateAppDialog::finishUpdatesChecking()
   reply_->deleteLater();
 
   QString info;
-  QString newVersion = "";
-
-  if (reply_->error() == QNetworkReply::NoError) {
-    QString version = STRPRODUCTVER;
-    QString date = STRDATE;
-
-    QString str = QLatin1String(reply_->readAll());
-    QString curVersion = str.section('"', 5, 5).section('\\', 0, 0);
-    QString curDate = str.section('"', 3, 3).section('\\', 0, 0);
-
-    if (version.contains(curVersion)) {
-      str =
-          tr("You already have the latest version");
+  QString newVersion;
+  const int status = reply_->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+  const QByteArray response = reply_->readAll();
+  const ReleaseInfo release = response.size() <= 1024 * 1024
+      ? parseReleaseInfo(response, QCoreApplication::applicationVersion()) : ReleaseInfo();
+  if (reply_->error() == QNetworkReply::NoError && status == 200 && release.valid) {
+    if (release.newer) {
+      newVersion = release.version;
+      info = tr("A new version of %1 is available!").arg(QGuiApplication::applicationDisplayName().toHtmlEscaped())
+          + QString("<p><a href=\"%1\">%2</a></p>")
+              .arg(ProjectMetadata::releasesUrl().toHtmlEscaped(), tr("Click here to go to the download page"));
     } else {
-      QString urlDownloads;
-      if (lang_.contains("ru", Qt::CaseInsensitive))
-        urlDownloads = "https://quiterss.org/ru/download";
-      else urlDownloads = "https://quiterss.org/en/download";
-
-      str =
-          tr("A new version of QuiteRSS is available!") +
-          "<p>" + QString("<a href=\"%1\">%2</a>").
-          arg(urlDownloads).
-          arg(tr("Click here to go to the download page"));
-      newVersion = curVersion;
+      info = tr("You already have the latest version");
     }
-    info =
-        "<html><style>a { color: blue; text-decoration: none; }</style><body>"
-        "<table><tr><td>" + tr("Your version is:") + " </td><td>" +
-        "<B> " + version + "</B>" + QString(" (%1)").arg(date) + " </td></tr>" +
-        "<tr><td>" + tr("Current version is:") + " </td><td>" +
-        "<B>" + curVersion + "</B>" + QString(" (%1)").arg(curDate) +
-        "</td></tr></table><p>" + str +
-        "</body></html>";
+    info.prepend(QString("<p>%1 <b>%2</b><br>%3 <b>%4</b></p>")
+                     .arg(tr("Your version is:"), QCoreApplication::applicationVersion().toHtmlEscaped(),
+                          tr("Current version is:"), release.version.toHtmlEscaped()));
+    if (showDialog_) history_->setPlainText(release.notes);
+  } else if (status == 404) {
+    info = tr("No published release is available at the configured update endpoint.");
+    if (showDialog_) history_->clear();
   } else {
-    qWarning() << "Error checking updates" << reply_->error() << reply_->errorString();
+    qWarning() << "Error checking updates" << status << reply_->errorString();
     info = tr("Error checking updates");
-    if (showDialog_)
-      history_->setText("");
+    if (showDialog_) history_->clear();
   }
 
   Settings settings;
@@ -176,11 +146,6 @@ void UpdateAppDialog::finishUpdatesChecking()
   } else {
     infoLabel->setText(info);
 
-#if defined(Q_OS_WIN)
-    if (QFile::exists(QCoreApplication::applicationDirPath() + "/Updater.exe") &&
-        !newVersion.isEmpty() && !mainApp->isPortableAppsCom())
-      installButton_->show();
-#endif
 
     if (!newVersion.isEmpty()) {
       if (currentVersion != newVersion) {
@@ -195,35 +160,20 @@ void UpdateAppDialog::finishUpdatesChecking()
   }
 }
 
-void UpdateAppDialog::slotFinishHistoryReply()
-{
-  historyReply_->deleteLater();
-  if (historyReply_->error() != QNetworkReply::NoError) {
-    qDebug() << "error retrieving " << historyReply_->url();
-    return;
-  }
-
-  QString str = QString::fromUtf8(historyReply_->readAll());
-
-  history_->setHtml(str);
-}
-
-void UpdateAppDialog::updaterRun()
-{
-  close();
-#if defined(Q_OS_WIN)
-  QString updaterFile = QCoreApplication::applicationDirPath() + "/Updater.exe";
-  qInfo() << "Launching" << updaterFile;
-  ShellExecute(0, 0, (wchar_t *)updaterFile.utf16(), 0, 0, SW_SHOWNORMAL);
-#endif
-}
-
 void UpdateAppDialog::renderStatistics()
 {
+  if (!networkManagerProxy_) return; // Shutdown may precede the queued check.
   bool updateCheckEnabled = AppSettings::updateCheckEnabled.get();
   if (updateCheckEnabled || showDialog_) {
-    QNetworkRequest request(QUrl("https://quiterss.org/files/updates_new/VersionNo.h"));
+    QNetworkRequest request{QUrl(ProjectMetadata::updateEndpoint())};
+    request.setRawHeader("Accept", "application/vnd.github+json");
+    request.setRawHeader("User-Agent", (QCoreApplication::applicationName() + "/" +
+                                        QCoreApplication::applicationVersion()).toUtf8());
+    request.setTransferTimeout(15000);
     reply_ = networkManagerProxy_->get(request);
+    connect(reply_, &QIODevice::readyRead, this, [this]() {
+      if (reply_->bytesAvailable() > 1024 * 1024) reply_->abort();
+    });
     connect(reply_, SIGNAL(finished()), this, SLOT(finishUpdatesChecking()));
   } else {
     emit signalNewVersion();

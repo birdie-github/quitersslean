@@ -17,16 +17,27 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 * ============================================================ */
 #include "splashscreen.h"
-#include "VersionNo.h"
 
-SplashScreen::SplashScreen(const QPixmap &pixmap, Qt::WindowFlags flag)
-  : QSplashScreen(pixmap, flag)
+SplashScreen::SplashScreen(Qt::WindowFlags flag)
+  : QSplashScreen(QPixmap(), flag)
 {
-  setFixedSize(pixmap.width(), pixmap.height());
+  QPixmap pixmap(420, 140);
+  pixmap.fill(palette().color(QPalette::Window));
+  QPainter painter(&pixmap);
+  painter.drawPixmap(16, 24, QPixmap(":/images/application128").scaled(80, 80, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+  QFont titleFont = font();
+  titleFont.setPixelSize(28);
+  titleFont.setBold(true);
+  painter.setFont(titleFont);
+  painter.setPen(palette().color(QPalette::WindowText));
+  painter.drawText(QRect(112, 24, 292, 80), Qt::AlignVCenter, QGuiApplication::applicationDisplayName());
+  painter.end();
+  setPixmap(pixmap);
+  setFixedSize(pixmap.size());
   setContentsMargins(5, 0, 5, 0);
   setEnabled(false);
   showMessage("Prepare loading...   " %
-              QString("%1").arg(STRPRODUCTVER),
+              QString("%1").arg(QCoreApplication::applicationVersion()),
               Qt::AlignRight | Qt::AlignTop, Qt::darkGray);
   setAttribute(Qt::WA_DeleteOnClose);
 
@@ -51,6 +62,6 @@ void SplashScreen::setProgress(int value)
   qApp->processEvents();
   splashProgress_.setValue(value);
   showMessage("Loading: " % QString::number(value) % "%   " %
-              QString("%1").arg(STRPRODUCTVER),
+              QString("%1").arg(QCoreApplication::applicationVersion()),
               Qt::AlignRight | Qt::AlignTop, Qt::darkGray);
 }

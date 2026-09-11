@@ -24,11 +24,10 @@
         <file alias="imagesOn">images/imagesOn.png</file>
         <file alias="importFeeds">images/ImportFeeds.png</file>
         <file alias="filterOff">images/filterOff.png</file>
-        <file alias="quiterss16">images/16x16/quiterss.png</file>
+        <file alias="application16">images/16x16/quiterss.png</file>
         <file alias="exportFeeds">images/exportFeeds.png</file>
         <file alias="add">images/add.png</file>
         <file alias="delete">images/delete.png</file>
-        <file>images/splashScreen.png</file>
         <file>images/logo.png</file>
         <file>images/noicon.png</file>
         <file alias="preferencesFeed">images/preferencesFeed.png</file>
@@ -54,7 +53,6 @@
         <file alias="selectFindInBrowser">images/find_in_browser_s.png</file>
         <file alias="findInNews">images/find_in_news.png</file>
         <file alias="selectFindInNews">images/find_in_news_s.png</file>
-        <file>images/logo_text.png</file>
         <file>images/findFeed.png</file>
         <file>images/arrow_turn_left.png</file>
         <file alias="printer">images/printer.png</file>
@@ -90,8 +88,8 @@
         <file alias="layout_classic">images/layout_classic.png</file>
         <file alias="layout_newspaper">images/layout_newspaper.png</file>
         <file alias="cleanup">images/cleanup.png</file>
-        <file alias="quiterss128">images/128x128/quiterss.png</file>
-        <file alias="quiterss128_NewNews">images/quiterss128_NewNews.png</file>
+        <file alias="application128">images/128x128/quiterss.png</file>
+        <file alias="applicationNewNews">images/quiterss128_NewNews.png</file>
         <file>images/bullet_down.png</file>
         <file alias="loading_dark">images/loading_dark.gif</file>
     </qresource>

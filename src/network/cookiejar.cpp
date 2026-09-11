@@ -16,6 +16,7 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 * ============================================================ */
+#include "projectmetadata.h"
 #include "cookiejar.h"
 
 #include "mainapplication.h"
@@ -40,14 +41,14 @@ void CookieJar::loadCookies()
 
   if (useCookies_ != SaveCookies) return;
 
-  if (!QFile::exists(mainApp->dataDir() + "/cookies.dat")) {
+  if (!QFile::exists(mainApp->dataDir() + ("/" + ProjectMetadata::cookies()))) {
     return;
   }
 
   QDateTime now = QDateTime::currentDateTime();
 
   QList<QNetworkCookie> loadedCookies;
-  QFile file(mainApp->dataDir() + "/cookies.dat");
+  QFile file(mainApp->dataDir() + ("/" + ProjectMetadata::cookies()));
   if (!file.open(QIODevice::ReadOnly)) return;
   QDataStream stream(&file);
   int count;
@@ -83,7 +84,7 @@ void CookieJar::saveCookies()
 
   QList<QNetworkCookie> allCookies = getAllCookies();
 
-  QFile file(mainApp->dataDir() + "/cookies.dat");
+  QFile file(mainApp->dataDir() + ("/" + ProjectMetadata::cookies()));
   if (!file.open(QIODevice::WriteOnly)) return;
   QDataStream stream(&file);
   int count = allCookies.count();

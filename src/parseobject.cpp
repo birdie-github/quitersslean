@@ -16,13 +16,13 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 * ============================================================ */
+#include "projectmetadata.h"
 #include <QTimeZone>
 #include <QTextCodec>
 #include "parseobject.h"
 
 #include "mainapplication.h"
 #include "database.h"
-#include "VersionNo.h"
 #include "common.h"
 #include "newsretention.h"
 #include "settings.h"
@@ -106,7 +106,7 @@ void ParseObject::slotParse(const QByteArray &xmlData, const int &feedId,
                             const QDateTime &dtReply, const QString &codecName)
 {
   if (mainApp->isSaveDataLastFeed()) {
-    QFile file(mainApp->dataDir()  + "/lastfeed.dat");
+    QFile file(mainApp->dataDir()  + ("/" + ProjectMetadata::lastFeed()));
     if (file.open(QIODevice::WriteOnly)) {
       file.write(xmlData);
       file.close();

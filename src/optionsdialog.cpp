@@ -16,6 +16,7 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 * ============================================================ */
+#include "projectmetadata.h"
 #include "optionsdialog.h"
 #include <QScreen>
 #include "articlecontent.h"
@@ -188,16 +189,16 @@ void OptionsDialog::acceptDialog()
 #if defined(Q_OS_WIN)
   if (mainApp->isPortableAppsCom()) {
     if (autoRunEnabled_->isChecked()) {
-      QFileInfo file(QCoreApplication::applicationDirPath() % "/../../QuiteRSSPortable.exe");
-      autoRunSettings_->setValue("QuiteRSSPortable", QDir::toNativeSeparators(file.absoluteFilePath()));
+      QFileInfo file(QCoreApplication::applicationDirPath() % "/../../" % QCoreApplication::applicationName() % "Portable.exe");
+      autoRunSettings_->setValue((QCoreApplication::applicationName() + "Portable"), QDir::toNativeSeparators(file.absoluteFilePath()));
     } else {
-      autoRunSettings_->remove("QuiteRSSPortable");
+      autoRunSettings_->remove((QCoreApplication::applicationName() + "Portable"));
     }
   } else {
     if (autoRunEnabled_->isChecked())
-      autoRunSettings_->setValue("QuiteRSS", QDir::toNativeSeparators(QCoreApplication::applicationFilePath()));
+      autoRunSettings_->setValue(QCoreApplication::applicationName(), QDir::toNativeSeparators(QCoreApplication::applicationFilePath()));
     else
-      autoRunSettings_->remove("QuiteRSS");
+      autoRunSettings_->remove(QCoreApplication::applicationName());
   }
 #endif
 
@@ -327,14 +328,14 @@ void OptionsDialog::createGeneralWidget()
   generalLayout->addSpacing(20);
 
 #if defined(Q_OS_WIN)
-  autoRunEnabled_ = new QCheckBox(tr("Run QuiteRSS at Windows startup"));
+  autoRunEnabled_ = new QCheckBox(tr("Run %1 at Windows startup").arg(QGuiApplication::applicationDisplayName()));
   autoRunSettings_ = new QSettings("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
                                    QSettings::NativeFormat);
   bool isAutoRun;
   if (mainApp->isPortableAppsCom())
-    isAutoRun = autoRunSettings_->value("QuiteRSSPortable", false).toBool();
+    isAutoRun = autoRunSettings_->value((QCoreApplication::applicationName() + "Portable"), false).toBool();
   else
-    isAutoRun = autoRunSettings_->value("QuiteRSS", false).toBool();
+    isAutoRun = autoRunSettings_->value(QCoreApplication::applicationName(), false).toBool();
   autoRunEnabled_->setChecked(isAutoRun);
 
   generalLayout->addWidget(autoRunEnabled_);
@@ -357,9 +358,9 @@ void OptionsDialog::createTraySystemWidget()
   showTrayIconBox_ = new QGroupBox(tr("Show system tray icon"));
   showTrayIconBox_->setCheckable(true);
 
-  startingTray_ = new QCheckBox(tr("starting QuiteRSS"));
-  minimizingTray_ = new QCheckBox(tr("minimizing QuiteRSS"));
-  closingTray_ = new QCheckBox(tr("closing QuiteRSS"));
+  startingTray_ = new QCheckBox(tr("starting %1").arg(QGuiApplication::applicationDisplayName()));
+  minimizingTray_ = new QCheckBox(tr("minimizing %1").arg(QGuiApplication::applicationDisplayName()));
+  closingTray_ = new QCheckBox(tr("closing %1").arg(QGuiApplication::applicationDisplayName()));
   QVBoxLayout *moveTrayLayout = new QVBoxLayout();
   moveTrayLayout->setContentsMargins(15, 0, 5, 10);
   moveTrayLayout->addWidget(startingTray_);
@@ -1170,7 +1171,7 @@ void OptionsDialog::createLanguageWidget()
   setLanguage(mainApp->language());
 
   QString linkWikiStr =
-      QString("<a href='https://quiterss.org/en/development'>Link for translators</a>");
+      QString("<a href=\"%1\">%2</a>").arg(ProjectMetadata::translationsUrl().toHtmlEscaped(), tr("Link for translators"));
   QLabel *linkTranslators = new QLabel(linkWikiStr);
   linkTranslators->setOpenExternalLinks(false);
   connect(linkTranslators, &QLabel::linkActivated, this, [](const QString &link) {
@@ -1810,7 +1811,7 @@ int OptionsDialog::getOpeningFeed()
 //----------------------------------------------------------------------------
 void OptionsDialog::selectionUserStyleNews()
 {
-  QString path(mainApp->resourcesDir() % "/style");
+  QString path(mainApp->resourcesDir() % "/" % ProjectMetadata::styles());
   QString fileName = QFileDialog::getOpenFileName(this,
                                                   tr("Select Style Sheet File"),
                                                   path, "*.css");

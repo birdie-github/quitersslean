@@ -9,21 +9,23 @@
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleGetInfoString</key>
-    <string>@EXECUTABLE@ (C) 2011-2020 QuiteRSS Project</string>
+    <string>@META_displayName@ — @META_originalCopyright@</string>
     <key>CFBundleSignature</key>
     <string>@TYPEINFO@</string>
     <key>CFBundleExecutable</key>
-    <string>@EXECUTABLE@</string>
+    <string>@META_executable@</string>
     <key>CFBundleIdentifier</key>
-    <string>org.quiterss.QuiteRSS</string>
+    <string>@META_bundleId@</string>
     <key>CFBundleName</key>
-    <string>@EXECUTABLE@</string>
+    <string>@META_name@</string>
     <key>CFBundleDisplayName</key>
-    <string>@EXECUTABLE@</string>
+    <string>@META_displayName@</string>
+    <key>CFBundleVersion</key>
+    <string>@META_version@</string>
     <key>CFBundleShortVersionString</key>
-    <string>0.90.2</string>
+    <string>@META_version@</string>
     <key>NSHumanReadableCopyright</key>
-    <string>(C) 2011-2020 QuiteRSS Project; (C) 2026 Artem S. Tashkinov and ChatGPT</string>
+    <string>@META_originalCopyright@; @META_copyright@</string>
     <key>NSPrincipalClass</key>
     <string>NSApplication</string>
     <key>NSHighResolutionCapable</key>

@@ -16,6 +16,7 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 * ============================================================ */
+#include <QCoreApplication>
 #include "opmlexporter.h"
 
 #include "feedsmodel.h"
@@ -34,7 +35,7 @@ void OpmlExporter::write(QIODevice &output, QTreeView &appearanceView)
   xml.writeStartElement("opml");
   xml.writeAttribute("version", "2.0");
   xml.writeStartElement("head");
-  xml.writeTextElement("title", "QuiteRSS");
+  xml.writeTextElement("title", QCoreApplication::applicationName());
   xml.writeTextElement("dateModified", QDateTime::currentDateTime().toString());
   xml.writeEndElement(); // </head>
 
