@@ -1,3 +1,13 @@
+# Silence GCC warnings
+gcc {
+    GCC_VERSION = $$system($$QMAKE_CXX -dumpfullversion -dumpversion)
+    GCC_MAJOR = $$section(GCC_VERSION, ., 0, 0)
+
+    greaterThan(GCC_MAJOR, 15) {
+        QMAKE_CXXFLAGS += -Wno-sfinae-incomplete
+    }
+}
+
 # Apply architecture optimization safely
 contains(QT_ARCH, x86_64) {
     QMAKE_CXXFLAGS += -march=x86-64-v2
