@@ -1,6 +1,6 @@
 # Feed-only article viewer
 
-The article pane uses QTextBrowser and QTextDocument. QuiteRSS no longer needs
+The article pane uses QTextBrowser and QTextDocument. NotQuiteRSS no longer needs
 QtWebKit or QtWebEngine. The viewer has no JavaScript engine, website navigation,
 plugins, browser storage or browser tabs. Feed/category tabs remain reader views.
 Existing database content and legacy database columns are retained.
@@ -67,7 +67,7 @@ Feed fetching/authentication and explicit downloads retain their existing behavi
 Web links open through the OS default browser. Mail links use the default mail
 handler. Feed-provided custom protocols and local-file links are not dispatched.
 Internal article anchors scroll within the pane. Only application-generated
-newspaper controls may use the quiterss action scheme.
+newspaper controls may use the app action scheme.
 
 Image diagnostics remain opt-in and work independently of the renderer. Start a
 fresh application process with QUITERS_IMAGE_DEBUG=1 to write [article-images]
@@ -91,5 +91,5 @@ isolated Qt rich-text fixture do not substitute for testing the actual applicati
 - Confirm ordinary, middle-clicked and context-menu links open externally, while
   in-article anchors stay local. Test an enclosure's explicit Save Link action.
 - Try HTML with script, iframe, meta refresh, object, file URLs, CSS URLs and forged
-  quiterss action links: it must neither navigate nor execute application actions.
+  app action links: it must neither navigate nor execute application actions.
 - Confirm the database's original content remains intact after viewing articles.
