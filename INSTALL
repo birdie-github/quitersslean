@@ -21,9 +21,9 @@ Selecting Qt 5 or Qt 6
 The application defaults to Qt 5. Invoke qmake from the matching Qt installation:
 
   qmake-qt5 ../app.pro CONFIG+=release CONFIG-=debug_and_release
-  qmake6 ../app.pro QUITERSS_QT_MAJOR=6 CONFIG+=release CONFIG-=debug_and_release
+  qmake6 ../app.pro USE_QT=6 CONFIG+=release CONFIG-=debug_and_release
 
-QUITERSS_QT_MAJOR accepts only 5 or 6; a mismatch with qmake's Qt is an error.
+USE_QT accepts only 5 or 6; a mismatch with qmake's Qt is an error.
 It cannot switch the libraries used by an already selected qmake executable.
 Use separate application build directories and QtSingleApplication work directories
 for each Qt/toolchain. Prepare the dependency with the SAME qmake as the application.
@@ -38,7 +38,7 @@ the Qt 5 --no-angle option is not applicable.
 On Linux, install the equivalent Qt 6 development packages, including
 Core5Compat, and use the helper if no matching QtSingleApplication feature
 is packaged. On Homebrew, select the Qt 6 formula's bin directory instead of
-qt@5, prepare QtSingleApplication with that qmake, and pass QUITERSS_QT_MAJOR=6.
+qt@5, prepare QtSingleApplication with that qmake, and pass USE_QT=6.
 Executable names vary by distribution; an absolute path to qmake is also valid.
 
 Both builds read/write UTF-8 INI values so non-ASCII settings survive switching
