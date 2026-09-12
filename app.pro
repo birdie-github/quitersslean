@@ -104,6 +104,9 @@ HEADERS += \
     src/notifications/notificationswidget.h \
     src/application/mainapplication.h \
     src/application/settings.h \
+    src/application/databasebackup.h \
+    src/application/backupsettingspage.h \
+    src/application/filemanager.h \
     src/application/logfile.h \
     src/application/mainwindow.h \
     src/application/opmlexporter.h \
@@ -159,6 +162,9 @@ SOURCES += \
     src/notifications/notificationswidget.cpp \
     src/application/mainapplication.cpp \
     src/application/settings.cpp \
+    src/application/databasebackup.cpp \
+    src/application/backupsettingspage.cpp \
+    src/application/filemanager.cpp \
     src/application/logfile.cpp \
     src/application/mainwindow.cpp \
     src/application/opmlexporter.cpp \

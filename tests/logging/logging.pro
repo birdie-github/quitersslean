@@ -8,3 +8,4 @@ isEmpty(PYTHON): PYTHON = python3
 !system($$shell_quote($$PYTHON) $$shell_quote($$PROJECT_ROOT/scripts/generate-project.py) --source $$shell_quote($$PROJECT_ROOT) --output $$shell_quote($$OUT_PWD/generated)): error("Metadata generation failed")
 INCLUDEPATH += $$PROJECT_ROOT/src/application $$OUT_PWD/generated
 SOURCES += test_logging.cpp ../../src/application/commandline.cpp ../../src/application/logfile.cpp
+SOURCES += ../../src/application/filemanager.cpp

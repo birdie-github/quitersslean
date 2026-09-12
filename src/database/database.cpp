@@ -16,6 +16,7 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 * ============================================================ */
+#include "databasebackup.h"
 #include "database.h"
 
 #include "common.h"
@@ -287,11 +288,7 @@ void Database::prepareDatabase()
       } else {
         qWarning() << "Preparation database";
 
-        addColumnsToFeedsTables(db);
-
         // Version DB > 0.12.1
-        Settings settings;
-
         int dbVersion = -1;
         q.exec("SELECT value FROM info WHERE name='version'");
         if (q.first()) {
@@ -306,9 +303,11 @@ void Database::prepareDatabase()
 
         // Create backups for DB and Settings
         if (appVersion != QCoreApplication::applicationVersion()) {
-          Common::createFileBackup(mainApp->dbFileName(), appVersion);
-          Common::createFileBackup(settings.fileName(), appVersion);
+          q.finish();
+          DatabaseBackup::report(DatabaseBackup::create(db, DatabaseBackup::Trigger::Upgrade), false);
         }
+
+        addColumnsToFeedsTables(db);
 
         if (dbVersion < 14) {
           q.exec("ALTER TABLE feeds ADD COLUMN showNotification integer default 0");

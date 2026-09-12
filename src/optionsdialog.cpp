@@ -19,6 +19,7 @@
 #include "projectmetadata.h"
 #include "logfile.h"
 #include "optionsdialog.h"
+#include "backupsettingspage.h"
 #include <QScreen>
 #include "articlecontent.h"
 #include <QDesktopServices>
@@ -96,6 +97,10 @@ OptionsDialog::OptionsDialog(QWidget *parent)
   treeItem << "10" << tr("Keyboard Shortcuts");
   categoriesTree_->addTopLevelItem(new QTreeWidgetItem(treeItem));
 
+  treeItem.clear();
+  treeItem << "11" << tr("Database Backup");
+  categoriesTree_->addTopLevelItem(new QTreeWidgetItem(treeItem));
+
   createGeneralWidget();
 
   createTraySystemWidget();
@@ -131,6 +136,9 @@ OptionsDialog::OptionsDialog(QWidget *parent)
   contentStack_->addWidget(languageWidget_);
   contentStack_->addWidget(fontsColorsWidget_);
   contentStack_->addWidget(shortcutWidget_);
+  auto *backupPage = new BackupSettingsPage(this);
+  contentStack_->addWidget(backupPage);
+  connect(this, &QDialog::accepted, backupPage, &BackupSettingsPage::save);
 
   scrollArea_ = new QScrollArea(this);
   scrollArea_->setWidgetResizable(true);

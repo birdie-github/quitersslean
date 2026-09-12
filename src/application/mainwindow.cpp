@@ -16,6 +16,7 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 * ============================================================ */
+#include "databasebackup.h"
 #include "projectmetadata.h"
 #include <QTimeZone>
 #include <QTextCodec>
@@ -176,6 +177,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 void MainWindow::quitApp()
 {
   mainApp->setClosing();
+  DatabaseBackup::instance()->stop();
   isMinimizeToTray_ = true;
   disconnect(this);
   if (updateAppDialog_) {
@@ -2236,6 +2238,7 @@ void MainWindow::addFeed()
   slotUpdateFeed(addFeedWizard->feedId_, true, addFeedWizard->newCount_, false);
 
   delete addFeedWizard;
+  DatabaseBackup::subscriptionsChanged();
 }
 
 /** @brief Add folder to feed list
@@ -2279,6 +2282,7 @@ void MainWindow::addFolder()
   q.exec();
 
   delete addFolderDialog;
+  DatabaseBackup::subscriptionsChanged();
 
   QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
   feedsModelReload();
@@ -2389,6 +2393,7 @@ void MainWindow::deleteItemFeedsTree()
   slotFeedClicked(currentIndex);
 
   QApplication::restoreOverrideCursor();
+  DatabaseBackup::subscriptionsChanged();
 }
 
 /** @brief Import feeds from OPML-file
@@ -5135,6 +5140,7 @@ void MainWindow::showFeedPropertiesDlg()
 
   if (!mainApp->storeDBMemory())
     db_.commit();
+  DatabaseBackup::subscriptionsChanged();
 }
 
 /** @brief Update tray information: icon and tooltip text
@@ -6480,6 +6486,7 @@ void MainWindow::slotMoveIndex(const QModelIndex &indexWhere, int how)
   feedsView_->setCurrentIndex(feedsProxyModel_->mapFromSource(feedIdOld_));
 
   feedsView_->setCursor(Qt::ArrowCursor);
+  DatabaseBackup::subscriptionsChanged();
 }
 
 /** @brief Process clicks in feeds tree
@@ -7165,6 +7172,7 @@ void MainWindow::sortedByTitleFeedsTree()
 
   feedsModelReload();
   QApplication::restoreOverrideCursor();
+  DatabaseBackup::subscriptionsChanged();
 }
 
 // ----------------------------------------------------------------------------
@@ -7351,32 +7359,5 @@ void MainWindow::addDefaultFeed()
 
 void MainWindow::createBackup()
 {
-  QString backupDir(QDir::currentPath());
-  Settings settings;
-  backupDir = settings.value("Settings/backupDir", backupDir).toString();
-  backupDir = QFileDialog::getExistingDirectory(this, tr("Choose Directory"),
-                                                backupDir,
-                                                QFileDialog::ShowDirsOnly |
-                                                QFileDialog::DontResolveSymlinks);
-  if (!backupDir.isEmpty()) {
-    settings.setValue("Settings/backupDir", backupDir);
-
-    QFileInfo fileInfo;
-    QString backupFileName;
-    QString timeStr(QDateTime::currentDateTime().toString("yyyy-MM-dd_hh-mm-ss"));
-
-    fileInfo.setFile(mainApp->dbFileName());
-    backupFileName = QString("%1/%2_%3.bak").
-        arg(backupDir).
-        arg(fileInfo.fileName()).
-        arg(timeStr);
-    QFile::copy(mainApp->dbFileName(), backupFileName);
-
-    fileInfo.setFile(settings.fileName());
-    backupFileName = QString("%1/%2_%3.bak").
-        arg(backupDir).
-        arg(fileInfo.fileName()).
-        arg(timeStr);
-    QFile::copy(settings.fileName(), backupFileName);
-  }
+  DatabaseBackup::instance()->manual(this);
 }

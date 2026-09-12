@@ -41,7 +41,6 @@ namespace Common
   bool matchDomain(const QString &pattern, const QString &domain);
   QString filterCharsFromFilename(const QString &name);
   QString ensureUniqueFilename(const QString &name, const QString &appendFormat = QString("(%1)"));
-  void createFileBackup(const QString &oldFilename, const QString &oldVersion);
 
   QString readAllFileContents(const QString &filename);
   QByteArray readAllFileByteContents(const QString &filename);

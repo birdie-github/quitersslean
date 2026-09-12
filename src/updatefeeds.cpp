@@ -16,6 +16,7 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 * ============================================================ */
+#include "databasebackup.h"
 #include <QTextCodec>
 #include "updatefeeds.h"
 
@@ -501,7 +502,7 @@ void UpdateObject::slotImportFeeds(QByteArray xmlData)
     emit signalMessageStatusBar(QString("Import: file read done"), 3000);
   }
 
-  db_.commit();
+  if (db_.commit()) DatabaseBackup::subscriptionsChanged();
 
   emit signalUpdateFeedsModel();
 
@@ -1455,6 +1456,9 @@ void UpdateObject::cleanUpShutdown()
 void UpdateObject::quitApp()
 {
   cleanUpShutdown();
-
-  QTimer::singleShot(0, mainApp, SLOT(quitApplication()));
+  const auto backup = DatabaseBackup::create(db_, DatabaseBackup::Trigger::Exit);
+  QMetaObject::invokeMethod(mainApp, [backup] {
+    DatabaseBackup::report(backup, false);
+    mainApp->quitApplication();
+  }, Qt::QueuedConnection);
 }

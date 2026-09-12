@@ -28,7 +28,7 @@ public:
   explicit Settings(const QString &prefix = QString()) : prefix_(prefix) {}
 
   static void createSettings(const QString &fileName = QString());
-  static void syncSettings();
+  static bool syncSettings();
   QString fileName();
 
   void setValue(const QString &key, const QVariant &defaultValue = QVariant());
@@ -53,6 +53,14 @@ struct Setting
   T get() const { return qvariant_cast<T>(Settings().value(key, defaultValue)); }
   void set(const T &value) const { Settings().setValue(key, value); }
 };
+
+constexpr Setting<bool> backupEnabled = {"Backup/enabled", false};
+constexpr Setting<bool> backupExit = {"Backup/onExit", true};
+constexpr Setting<bool> backupSubscriptions = {"Backup/onSubscriptions", true};
+constexpr Setting<bool> backupScheduled = {"Backup/scheduled", false};
+constexpr Setting<bool> backupClean = {"Backup/clean", false};
+constexpr Setting<int> backupFrequency = {"Backup/frequencyDays", 1};
+constexpr Setting<int> backupKeep = {"Backup/keep", 10};
 
 constexpr Setting<bool> showSplashScreen = {"Settings/showSplashScreen", true};
 constexpr Setting<bool> autoUpdatefeedsStartUp = {"Settings/autoUpdatefeedsStartUp", false};

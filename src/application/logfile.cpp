@@ -17,23 +17,14 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 * ============================================================ */
 #include "logfile.h"
+#include "filemanager.h"
 
 #include <QDir>
 #include <cstdio>
 #include <QMutex>
-#include <QDesktopServices>
-#include <QFileInfo>
-#include <QProcess>
-#include <QUrl>
 #ifdef Q_OS_WIN
 #include <windows.h>
 #include <io.h>
-#endif
-#ifdef HAVE_FILEMANAGER_DBUS
-#include <QDBusConnection>
-#include <QDBusMessage>
-#include <QDBusPendingCallWatcher>
-#include <QDBusPendingReply>
 #endif
 
 
@@ -57,11 +48,6 @@ LogState &logState()
   return *state;
 }
 
-void openLogDirectory(const QString &directory)
-{
-  if (!QDesktopServices::openUrl(QUrl::fromLocalFile(directory)))
-    qWarning() << "Could not open log directory:" << directory;
-}
 }
 
 void LogFile::configure(const QString &fileName, bool enabled, bool suppressDebug)
@@ -162,27 +148,5 @@ void LogFile::showLocation()
     QMutexLocker lock(&state.mutex);
     fileName = state.fileName;
   }
-  if (fileName.isEmpty()) return;
-  const QString directory = QFileInfo(fileName).absolutePath();
-  if (QFileInfo::exists(fileName)) {
-#ifdef Q_OS_WIN
-    if (QProcess::startDetached("explorer.exe", {"/select,", QDir::toNativeSeparators(fileName)})) return;
-#elif defined(Q_OS_MAC)
-    if (QProcess::startDetached("/usr/bin/open", {"-R", fileName})) return;
-#elif defined(HAVE_FILEMANAGER_DBUS)
-    QDBusMessage message = QDBusMessage::createMethodCall("org.freedesktop.FileManager1",
-        "/org/freedesktop/FileManager1", "org.freedesktop.FileManager1", "ShowItems");
-    message << QStringList{QUrl::fromLocalFile(fileName).toString(QUrl::FullyEncoded)} << QString();
-    auto *watcher = new QDBusPendingCallWatcher(
-        QDBusConnection::sessionBus().asyncCall(message, 1500), QCoreApplication::instance());
-    QObject::connect(watcher, &QDBusPendingCallWatcher::finished, watcher,
-                     [directory](QDBusPendingCallWatcher *finished) {
-      const QDBusPendingReply<> reply = *finished;
-      if (reply.isError()) openLogDirectory(directory);
-      finished->deleteLater();
-    });
-    return;
-#endif
-  }
-  openLogDirectory(directory);
+  FileManager::showFile(fileName);
 }

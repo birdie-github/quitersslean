@@ -58,9 +58,10 @@ QSettings *Settings::storage()
   return settings.get();
 }
 
-void Settings::syncSettings()
+bool Settings::syncSettings()
 {
   storage()->sync();
+  return storage()->status() == QSettings::NoError;
 }
 
 QString Settings::fileName()

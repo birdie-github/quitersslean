@@ -16,6 +16,7 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 * ============================================================ */
+#include "databasebackup.h"
 #include "mainapplication.h"
 
 #include "common.h"
@@ -124,6 +125,7 @@ MainApplication::MainApplication(int &argc, char **argv)
     QTimer::singleShot(0, mainWindow_, SLOT(slotGetAllFeeds()));
   }
 
+  DatabaseBackup::instance()->start();
   receiveMessage(message);
   connect(this, SIGNAL(messageReceived(QString)), SLOT(receiveMessage(QString)));
 }
