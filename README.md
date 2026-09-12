@@ -1,4 +1,4 @@
-![Build Status](https://github.com/birdie-github/quitersslean/actions/workflows/ci.yml/badge.svg?branch=master)
+![Build Status](https://github.com/birdie-github/notquiterss/actions/workflows/ci.yml/badge.svg?branch=master)
 
 © 2011-2020 QuiteRSS Project  
 © 2026 Artem S. Tashkinov and ChatGPT
@@ -13,8 +13,8 @@ Notification sounds use miniaudio with built-in decoding, without Qt Multimedia
 or GStreamer codec plugins. See INSTALL for the pinned header preparation step.
 
 Links:
-* Git repository: https://github.com/birdie-github/quitersslean
-* Issue tracker: https://github.com/birdie-github/quitersslean/issues
+* Git repository: https://github.com/birdie-github/notquiterss
+* Issue tracker: https://github.com/birdie-github/notquiterss/issues
 
 Deprecated stuff:
 * Website: https://quiterss.org
