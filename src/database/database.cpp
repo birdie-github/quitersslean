@@ -346,7 +346,7 @@ void Database::prepareDatabase()
           q.exec();
         }
 
-        settings.setValue("VersionDB", version());
+        Settings().setValue("VersionDB", version());
       }
 
       q.finish();
