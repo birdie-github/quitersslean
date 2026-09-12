@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "databasebackup.h"
+#include "filemanager.h"
 #include "mainapplication.h"
 #include "settings.h"
 #include "projectmetadata.h"
@@ -11,6 +12,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QMessageBox>
+#include <QPushButton>
 #include <QMutex>
 #include <QMutexLocker>
 #include <QRegularExpression>
@@ -243,7 +245,14 @@ void DatabaseBackup::report(const Result &result, bool manual, QWidget *parent)
     QMessageBox::warning(parent ? parent : QApplication::activeWindow(), tr("Database Backup"),
         created.isEmpty() ? result.error : created + "\n\n" + result.error);
   } else if (manual && !result.directory.isEmpty()) {
-    QMessageBox::information(parent, tr("Database Backup"), created);
+    QMessageBox dialog(QMessageBox::Information, tr("Database Backup"),
+                       tr("Backup successfully created"), QMessageBox::Ok,
+                       parent ? parent : QApplication::activeWindow());
+    QPushButton *show = dialog.addButton(tr("Show"), QMessageBox::ActionRole);
+    dialog.setDefaultButton(QMessageBox::Ok);
+    dialog.exec();
+    if (dialog.clickedButton() == show)
+      FileManager::openDirectory(result.directory);
   }
   if (result.error.isEmpty() && !result.skipped) lastAutomaticError.clear();
 }

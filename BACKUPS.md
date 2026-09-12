@@ -2,7 +2,8 @@
 
 Application Settings → Database Backup configures backups. File → Create Backup
 and Back Up Now always create a new backup, even when automatic backups are off
-or the database has not changed. Successful manual backups show both full paths.
+or the database has not changed. Successful manual backups show a short confirmation
+with OK and Show; Show opens the newly created backup set in the file manager.
 Show Backups opens the backup directory in the system file manager.
 
 Backups live beneath the application's data directory, in `backup/`. On Linux
@@ -82,7 +83,8 @@ removal of excluded payloads from the backup file. This is not a Qt runtime test
 Targeted manual checks on Qt5 and Qt6 builds:
 
 1. With automatic backups off, use both manual entry points twice. Check unique
-   set directories, both `.backup` files, full-path success dialogs above Settings,
+   set directories, both `.backup` files, compact success dialogs above Settings,
+   and their Show button opening the exact newly created set,
    and Show Backups. General → Debug → Show must still reveal the log.
 2. Enable subscription-only backups. Add/edit/delete a feed and import several
    feeds: expect one set per operation/batch. Routine refresh/read/star/label
