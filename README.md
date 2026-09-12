@@ -16,9 +16,10 @@ Links:
 * Git repository: https://github.com/birdie-github/notquiterss
 * Issue tracker: https://github.com/birdie-github/notquiterss/issues
 
-Deprecated stuff:
+Original project, QuiteRSS:
 * Website: https://quiterss.org
-* Translations: https://www.transifex.com/projects/p/quiterss/
+* GitHub: https://github.com/QuiteRSS/quiterss
+* Translations: https://explore.transifex.com/quiterss_team/quiterss/
 
 See [PROJECT_METADATA.md](PROJECT_METADATA.md) for the central project definition,
 new paths, packaging generation and update-check behavior.
