@@ -276,6 +276,7 @@ signals:
   void signalGetFeed(int feedId, QString feedUrl, QDateTime date, int auth);
   void signalGetFeedsFolder(QString query);
   void signalGetAllFeeds();
+  void signalGetAllFeedsStartup();
   void signalStopUpdate();
   void signalImportFeeds(QByteArray xmlData);
   void signalRequestUrl(int feedId, QString urlString,

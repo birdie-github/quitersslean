@@ -122,7 +122,7 @@ MainApplication::MainApplication(int &argc, char **argv)
   }
 
   if (updateFeedsStartUp_) {
-    QTimer::singleShot(0, mainWindow_, SLOT(slotGetAllFeeds()));
+    QTimer::singleShot(0, mainWindow_, [this] { emit mainWindow_->signalGetAllFeedsStartup(); });
   }
 
   DatabaseBackup::instance()->start();

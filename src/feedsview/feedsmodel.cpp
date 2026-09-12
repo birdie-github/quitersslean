@@ -18,6 +18,7 @@
 * ============================================================ */
 #include <QTimeZone>
 #include "feedsmodel.h"
+#include "feedhealth.h"
 #include "feedsproxymodel.h"
 
 #include <QtCore>
@@ -232,9 +233,7 @@ QVariant FeedsModel::data(const QModelIndex &index, int role) const
               QString strStatus = indexSibling(index, "status").data(Qt::EditRole).toString();
               if (strStatus.section(" ", 0, 0).toInt() != 0) {
                 QImage image;
-                if (strStatus.section(" ", 0, 0).toInt() < 0)
-                  image.load(":/images/bulletError");
-                else if (strStatus.section(" ", 0, 0).toInt() == 1)
+                if (strStatus.section(" ", 0, 0).toInt() == 1)
                   image.load(":/images/bulletUpdate");
                 QPainter resultPainter(&resultImage);
                 resultPainter.setCompositionMode(QPainter::CompositionMode_SourceOver);
@@ -249,9 +248,7 @@ QVariant FeedsModel::data(const QModelIndex &index, int role) const
         QString strStatus = indexSibling(index, "status").data(Qt::EditRole).toString();
         if (strStatus.section(" ", 0, 0).toInt() != 0) {
           QImage image;
-          if (strStatus.section(" ", 0, 0).toInt() < 0)
-            image.load(":/images/bulletError");
-          else if (strStatus.section(" ", 0, 0).toInt() == 1)
+          if (strStatus.section(" ", 0, 0).toInt() == 1)
             image.load(":/images/bulletUpdate");
 
           QPainter resultPainter(&resultImage);
@@ -267,9 +264,16 @@ QVariant FeedsModel::data(const QModelIndex &index, int role) const
       int flag = Qt::AlignRight|Qt::AlignVCenter;
       return flag;
     }
+  } else if (role == FeedHealth::WarningRole) {
+    return index.column() == indexColumnOf("text") && !isFolder(index) &&
+        FeedHealth::read(indexSibling(index, "status").data(Qt::EditRole).toString()).warning;
   } else if (role == Qt::ToolTipRole) {
     if (indexColumnOf("text") == index.column()) {
       QString title = index.data(Qt::EditRole).toString();
+      const QString failure = FeedHealth::tooltip(title,
+          indexSibling(index, "status").data(Qt::EditRole).toString(),
+          indexSibling(index, "updated").data(Qt::EditRole).toDateTime());
+      if (!failure.isEmpty() && !isFolder(index)) return failure;
       QRect rectText = view_->visualRect(index);
       int width = rectText.width() - 16 - 12;
       QFont font = font_;

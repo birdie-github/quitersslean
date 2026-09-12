@@ -87,6 +87,8 @@ HEADERS += \
     src/findtext.h \
     src/findfeed.h \
     src/feedsview/feedsview.h \
+    src/feedsview/feedhealth.h \
+    src/feedsview/feedstatusdelegate.h \
     src/feedsview/feedsmodel.h \
     src/addfolderdialog.h \
     src/labeldialog.h \
@@ -145,6 +147,8 @@ SOURCES += \
     src/findtext.cpp \
     src/findfeed.cpp \
     src/feedsview/feedsview.cpp \
+    src/feedsview/feedhealth.cpp \
+    src/feedsview/feedstatusdelegate.cpp \
     src/feedsview/feedsmodel.cpp \
     src/addfolderdialog.cpp \
     src/labeldialog.cpp \

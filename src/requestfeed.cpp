@@ -100,7 +100,7 @@ void RequestFeed::stopRequest()
     dateQueue_.clear();
     userInfo_.clear();
 
-    emit getUrlDone(feedsQueue_.count(), feedId, feedUrl);
+    emit getUrlDone(-7, feedId, feedUrl);
   }
 }
 
@@ -224,15 +224,21 @@ void RequestFeed::finished(QNetworkReply *reply)
     int count = currentCount_.takeAt(currentReplyIndex) + 1;
     bool headOk = currentHead_.takeAt(currentReplyIndex);
 
-    if (reply->error() != QNetworkReply::NoError) {
+    if (reply->error() == QNetworkReply::OperationCanceledError) {
+      emit getUrlDone(-7, feedId, feedUrl);
+    } else if (reply->error() != QNetworkReply::NoError) {
       qDebug() << "  error retrieving RSS feed:" << reply->error() << reply->errorString();
+      const int httpStatus = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+      const QString diagnostic = httpStatus > 0
+          ? tr("HTTP %1: %2").arg(httpStatus).arg(reply->errorString())
+          : tr("Network error: %1").arg(reply->errorString());
       if (reply->error() == QNetworkReply::ProtocolUnknownError) {
-        emit getUrlDone(-1, feedId, feedUrl, reply->errorString());
+        emit getUrlDone(-1, feedId, feedUrl, diagnostic);
       } else if (!headOk) {
         if (reply->error() == QNetworkReply::AuthenticationRequiredError)
-          emit getUrlDone(-2, feedId, feedUrl, tr("Server requires authentication!"));
+          emit getUrlDone(-2, feedId, feedUrl, diagnostic);
         else if (reply->error() == QNetworkReply::ContentNotFoundError)
-          emit getUrlDone(-5, feedId, feedUrl, tr("Server replied: Not Found!"));
+          emit getUrlDone(-5, feedId, feedUrl, diagnostic);
         else {
           if (reply->errorString().contains("Service Temporarily Unavailable")) {
             if (!hostList_.contains(QUrl(feedUrl).host())) {
@@ -244,7 +250,7 @@ void RequestFeed::finished(QNetworkReply *reply)
           if (count < numberRepeats_) {
             emit signalGet(replyUrl, feedId, feedUrl, feedDate, count);
           } else {
-            emit getUrlDone(-1, feedId, feedUrl, QString("%1 (%2)").arg(reply->errorString()).arg(reply->error()));
+            emit getUrlDone(-1, feedId, feedUrl, diagnostic);
           }
         }
       } else {
@@ -313,7 +319,11 @@ void RequestFeed::finished(QNetworkReply *reply)
           if (data.indexOf("</rdf:RDF>") > 0)
             data.resize(data.indexOf("</rdf:RDF>") + 10);
 
-          emit getUrlDone(feedsQueue_.count(), feedId, feedUrl, "", data, replyLocalDate, codecName);
+          if (data.isEmpty() && reply->operation() != QNetworkAccessManager::HeadOperation &&
+              reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() != 304)
+            emit getUrlDone(-6, feedId, feedUrl, tr("The server returned an empty feed response."));
+          else
+            emit getUrlDone(feedsQueue_.count(), feedId, feedUrl, "", data, replyLocalDate, codecName);
         }
       }
     }

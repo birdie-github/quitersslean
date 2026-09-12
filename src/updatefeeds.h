@@ -22,6 +22,7 @@
 #include <QThread>
 #include <QtSql>
 #include <QQueue>
+#include <QSet>
 
 #include "requestfeed.h"
 #include "parseobject.h"
@@ -78,6 +79,7 @@ public slots:
   void slotGetFeed(int feedId, QString feedUrl, QDateTime date, int auth);
   void slotGetFeedsFolder(QString query);
   void slotGetAllFeeds();
+  void slotGetAllFeedsStartup();
   void slotImportFeeds(QByteArray xmlData);
   void getUrlDone(int result, int feedId, QString feedUrlStr,
                   QString error, QByteArray data,
@@ -126,11 +128,13 @@ signals:
 
 private slots:
   bool addFeedInQueue(int feedId, const QString &feedUrl,
-                      const QDateTime &date, int auth);
+                      const QDateTime &date, int auth, bool manual = false);
 
 private:
   QString getIdFeedsString(int idFolder, int idException = -1);
+  void queueAllFeeds(bool manual);
 
+  QSet<int> manualFeeds_;
   MainWindow *mainWindow_;
   QSqlDatabase db_;
   QList<int> feedIdList_;

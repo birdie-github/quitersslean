@@ -280,7 +280,10 @@ void ParseObject::slotParse(const QByteArray &xmlData, const int &feedId,
   if (feedType != "feed" && feedType != "rss" && feedType != "rdf:RDF") {
     q.finish();
     db_.rollback();
-    emit signalFinishUpdate(parseFeedId_, false, 0, tr("Unsupported or invalid feed"));
+    const QString detail = !parsed
+        ? tr("Invalid XML at line %1, column %2: %3").arg(errorLine).arg(errorColumn).arg(errorStr)
+        : tr("The response is not a supported RSS or Atom feed (root element: %1).").arg(feedType);
+    emit signalFinishUpdate(parseFeedId_, false, 0, "-6 " + detail);
     return;
   }
 
@@ -288,7 +291,7 @@ void ParseObject::slotParse(const QByteArray &xmlData, const int &feedId,
   QString updated = QLocale::c().toString(QDateTime::currentDateTimeUtc(),
                                           "yyyy-MM-ddTHH:mm:ss");
   QString lastBuildDate = lastBuildDate_.toString(Qt::ISODate);
-  q.prepare("UPDATE feeds SET updated=?, lastBuildDate=?, status=0 WHERE id=?");
+  q.prepare("UPDATE feeds SET updated=?, lastBuildDate=? WHERE id=?");
   q.addBindValue(updated);
   q.addBindValue(lastBuildDate);
   q.addBindValue(parseFeedId_);

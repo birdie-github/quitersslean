@@ -17,6 +17,7 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 * ============================================================ */
 #include "databasebackup.h"
+#include "feedhealth.h"
 #include <QTextCodec>
 #include "updatefeeds.h"
 
@@ -86,6 +87,8 @@ UpdateFeeds::UpdateFeeds(QObject *parent, bool addFeed)
             updateObject_, SLOT(slotGetFeedTimer(int)));
     connect(parent, SIGNAL(signalGetAllFeedsTimer()),
             updateObject_, SLOT(slotGetAllFeedsTimer()));
+    connect(parent, SIGNAL(signalGetAllFeedsStartup()),
+            updateObject_, SLOT(slotGetAllFeedsStartup()));
     connect(parent, SIGNAL(signalGetAllFeeds()),
             updateObject_, SLOT(slotGetAllFeeds()));
     connect(parent, SIGNAL(signalGetFeed(int,QString,QDateTime,int)),
@@ -322,7 +325,7 @@ void UpdateObject::slotGetAllFeedsTimer()
  *---------------------------------------------------------------------------*/
 void UpdateObject::slotGetFeed(int feedId, QString feedUrl, QDateTime date, int auth)
 {
-  addFeedInQueue(feedId, feedUrl, date, auth);
+  addFeedInQueue(feedId, feedUrl, date, auth, true);
 
   emit showProgressBar(updateFeedsCount_);
 }
@@ -335,7 +338,7 @@ void UpdateObject::slotGetFeedsFolder(QString query)
   q.exec(query);
   while (q.next()) {
     addFeedInQueue(q.value(0).toInt(), q.value(1).toString(),
-                   q.value(2).toDateTime(), q.value(3).toInt());
+                   q.value(2).toDateTime(), q.value(3).toInt(), true);
   }
 
   emit showProgressBar(updateFeedsCount_);
@@ -343,13 +346,23 @@ void UpdateObject::slotGetFeedsFolder(QString query)
 
 /** @brief Process update all feeds action
  *---------------------------------------------------------------------------*/
+void UpdateObject::slotGetAllFeedsStartup()
+{
+  queueAllFeeds(false);
+}
+
 void UpdateObject::slotGetAllFeeds()
+{
+  queueAllFeeds(true);
+}
+
+void UpdateObject::queueAllFeeds(bool manual)
 {
   QSqlQuery q(db_);
   q.exec("SELECT id, xmlUrl, lastBuildDate, authentication FROM feeds WHERE xmlUrl!='' AND disableUpdate=0");
   while (q.next()) {
     addFeedInQueue(q.value(0).toInt(), q.value(1).toString(),
-                   q.value(2).toDateTime(), q.value(3).toInt());
+                   q.value(2).toDateTime(), q.value(3).toInt(), manual);
   }
   emit showProgressBar(updateFeedsCount_);
 }
@@ -515,13 +528,17 @@ void UpdateObject::slotImportFeeds(QByteArray xmlData)
 
 // ----------------------------------------------------------------------------
 bool UpdateObject::addFeedInQueue(int feedId, const QString &feedUrl,
-                                  const QDateTime &date, int auth)
+                                  const QDateTime &date, int auth, bool manual)
 {
   int feedIdIndex = feedIdList_.indexOf(feedId);
   if (feedIdIndex > -1) {
+    // A manual request can take over a pending automatic refresh without
+    // issuing another network request or counting another refresh cycle.
+    if (manual) manualFeeds_.insert(feedId);
     return false;
   } else {
     feedIdList_.append(feedId);
+    if (manual) manualFeeds_.insert(feedId);
     updateFeedsCount_ = updateFeedsCount_ + 2;
     QString userInfo;
     if (auth == 1) {
@@ -557,7 +574,9 @@ void UpdateObject::getUrlDone(int result, int feedId, QString feedUrlStr,
     emit xmlReadyParse(data, feedId, dtReply, codecName);
   } else {
     QString status = "0";
-    if (result < 0) {
+    if (result == -7) {
+      status = "cancelled";
+    } else if (result < 0) {
       status = QString("%1 %2").arg(result).arg(error);
       qWarning() << QString("Request failed: result = %1, error - %2, url - %3").
                     arg(result).arg(error).arg(feedUrlStr);
@@ -583,9 +602,16 @@ void UpdateObject::finishUpdate(int feedId, bool changed, int newCount, QString 
   }
 
   QSqlQuery q(db_);
-  QString qStr = QString("UPDATE feeds SET status='%1' WHERE id=='%2'").
-      arg(status).arg(feedId);
-  q.exec(qStr);
+  q.prepare("SELECT status FROM feeds WHERE id=?");
+  q.addBindValue(feedId);
+  q.exec();
+  const QString previous = q.next() ? q.value(0).toString() : QString();
+  status = FeedHealth::finish(previous, status, manualFeeds_.remove(feedId) != 0);
+  q.finish();
+  q.prepare("UPDATE feeds SET status=? WHERE id=?");
+  q.addBindValue(status);
+  q.addBindValue(feedId);
+  q.exec();
 
   if (changed) {
     if (mainWindow_->currentNewsTab->type_ == NewsTabWidget::TabTypeFeed) {

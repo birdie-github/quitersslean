@@ -20,7 +20,7 @@
 
 #include "mainapplication.h"
 #include "feedsmodel.h"
-#include "delegatewithoutfocus.h"
+#include "feedstatusdelegate.h"
 
 #include <QSqlTableModel>
 #include <QSqlQuery>
@@ -164,7 +164,7 @@ FeedsView::FeedsView(QWidget * parent)
   header()->setStretchLastSection(false);
   header()->setVisible(false);
 
-  DelegateWithoutFocus *itemDelegate = new DelegateWithoutFocus(this);
+  FeedStatusDelegate *itemDelegate = new FeedStatusDelegate(this);
   setItemDelegate(itemDelegate);
 
   setContextMenuPolicy(Qt::CustomContextMenu);

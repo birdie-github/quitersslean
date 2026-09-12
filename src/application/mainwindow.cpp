@@ -17,6 +17,7 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 * ============================================================ */
 #include "databasebackup.h"
+#include "feedhealth.h"
 #include "projectmetadata.h"
 #include <QTimeZone>
 #include <QTextCodec>
@@ -7323,6 +7324,8 @@ void MainWindow::setStatusFeed(int feedId, QString status)
   QModelIndex index = feedsModel_->indexById(feedId);
   if (index.isValid()) {
     QModelIndex indexStatus = feedsModel_->indexSibling(index, "status");
+    if (status.startsWith("1 ") && !FeedHealth::read(indexStatus.data(Qt::EditRole).toString()).error.isEmpty())
+      return;
     feedsModel_->setData(indexStatus, status);
     feedsView_->viewport()->update();
   }
