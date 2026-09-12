@@ -5141,6 +5141,8 @@ void MainWindow::showFeedPropertiesDlg()
 
   if (!mainApp->storeDBMemory())
     db_.commit();
+  // Folder properties also change descendant flags; repaint every visible row.
+  feedsView_->viewport()->update();
   DatabaseBackup::subscriptionsChanged();
 }
 

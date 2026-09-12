@@ -17,10 +17,13 @@ timer refreshes count as automatic. Internal retries still constitute one cycle.
 A manual request for an already queued/in-progress feed marks that cycle as
 manual without queuing another request.
 
-The scalable triangle simulates a vertical-axis rotation every two seconds using
+The scalable triangle simulates a vertical-axis rotation every four seconds using
 QPainter horizontal scaling. There is no SVG animation dependency. A single
 40 ms single-shot timer repaints only warning rows; when there are no visible
 warnings, including when the window is hidden, repaint scheduling stops.
+Disabled feeds hide both the error triangle and error tooltip, retaining their
+history for re-enabling. Folder disabling already propagates the disabled flag
+to all descendants; the same per-feed flag controls refreshes and error visibility.
 The existing update overlay remains for healthy feeds. A retry does not erase an
 existing error or hide its warning. Successful retrieval (including a successful
 unchanged response/HTTP 304) clears the failure streak. Cancellation leaves the
@@ -54,8 +57,11 @@ Manual checks:
    body should fail.
 4. While a failed feed is refreshing, check that its previous tooltip/warning
    stays visible. Cancel a queued update and confirm the failure count is unchanged.
-5. Check the two-second rotation, clipping, selection and readability at high DPI,
+5. Check the four-second rotation, clipping, selection and readability at high DPI,
    with long titles and RTL layout. Collapse the affected folder or hide the app:
    animation repainting should stop. Restore it: animation resumes.
-6. Restart after saving the database: failure count/history should survive.
+6. Disable a failing feed, then a folder containing failing feeds in nested
+   subfolders: their warnings and error tooltips should disappear immediately.
+   Re-enable them and confirm retained errors are visible again.
+7. Restart after saving the database: failure count/history should survive.
    Existing articles, selection and publication-age retention should be unchanged.

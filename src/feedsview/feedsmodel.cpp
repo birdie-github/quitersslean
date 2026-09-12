@@ -266,6 +266,7 @@ QVariant FeedsModel::data(const QModelIndex &index, int role) const
     }
   } else if (role == FeedHealth::WarningRole) {
     return index.column() == indexColumnOf("text") && !isFolder(index) &&
+        !indexSibling(index, "disableUpdate").data(Qt::EditRole).toBool() &&
         FeedHealth::read(indexSibling(index, "status").data(Qt::EditRole).toString()).warning;
   } else if (role == Qt::ToolTipRole) {
     if (indexColumnOf("text") == index.column()) {
@@ -273,7 +274,8 @@ QVariant FeedsModel::data(const QModelIndex &index, int role) const
       const QString failure = FeedHealth::tooltip(title,
           indexSibling(index, "status").data(Qt::EditRole).toString(),
           indexSibling(index, "updated").data(Qt::EditRole).toDateTime());
-      if (!failure.isEmpty() && !isFolder(index)) return failure;
+      if (!failure.isEmpty() && !isFolder(index) &&
+          !indexSibling(index, "disableUpdate").data(Qt::EditRole).toBool()) return failure;
       QRect rectText = view_->visualRect(index);
       int width = rectText.width() - 16 - 12;
       QFont font = font_;
