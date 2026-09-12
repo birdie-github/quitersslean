@@ -1,3 +1,8 @@
+/* ApplicationStyle
+Name=Dark
+Id=darkStyle_
+Colors=dark
+*/
 /* QuiteRSS Dark Style */
 
 QWidget {

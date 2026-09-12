@@ -1,3 +1,8 @@
+/* ApplicationStyle
+Name=Gray
+Id=grayStyle_
+Colors=standard
+*/
 /* QuiteRSS Gray Style */
 
 QMenuBar {

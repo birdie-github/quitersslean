@@ -362,8 +362,7 @@ void NewsTabWidget::setSettings(bool init, bool newTab)
 
   if (type_ == TabTypeDownloads) return;
 
-  QString style = settings.value("Settings/styleApplication", "defaultStyle_").toString();
-  if (style == "darkStyle_")
+  if (mainApp->applicationStyle().darkColors)
     newsIconMovie_->setFileName(":/images/loading_dark");
   else
     newsIconMovie_->setFileName(":/images/loading");

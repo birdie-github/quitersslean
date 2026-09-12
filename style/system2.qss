@@ -1,3 +1,8 @@
+/* ApplicationStyle
+Name=System2
+Id=system2Style_
+Colors=standard
+*/
 /* QuiteRSS System2 Style */
 
 #feedsView_::item, #newsView_::item, #newsCategoriesTree_::item {

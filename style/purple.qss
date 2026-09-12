@@ -1,3 +1,8 @@
+/* ApplicationStyle
+Name=Purple
+Id=purpleStyle_
+Colors=standard
+*/
 /* QuiteRSS Purple Style */
 
 QMenuBar {

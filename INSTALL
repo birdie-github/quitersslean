@@ -265,3 +265,8 @@ After a build, check database creation/reopening, in-memory database save/restor
 Unicode sorting and REGEXP, a second-instance launch, HTTPS feeds and images,
 notifications and printing/export. Windows/macOS builds still
 need these runtime checks; compilation alone cannot establish them.
+
+Application styles
+==================
+The normal install/bundle targets deploy the style directory on every platform.
+For runtime discovery, QSS metadata, paths and testing, see style/README.md.

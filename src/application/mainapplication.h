@@ -22,6 +22,7 @@
 #define mainApp MainApplication::getInstance()
 
 #include "languagecatalog.h"
+#include "applicationstyle.h"
 #include <QtWidgets>
 #include <qtsingleapplication.h>
 #include <QNetworkDiskCache>
@@ -76,6 +77,9 @@ public:
   bool openExternalUrl(const QUrl &url);
 
   LanguageCatalog languageCatalog() const;
+  QList<ApplicationStyle> applicationStyles() const;
+  const ApplicationStyle &applicationStyle() const { return applicationStyle_; }
+  void applyApplicationStyle(const QString &id);
   void setTranslateApplication();
   QString language() const { return langFileName_; }
   void setLanguage(const QString &lang) { langFileName_ = lang; }
@@ -111,7 +115,7 @@ private:
   bool storeDBMemory_;
   bool dbFileExists_;
   bool isSaveDataLastFeed_;
-  QString styleApplication_;
+  ApplicationStyle applicationStyle_;
   bool showSplashScreen_;
   bool updateFeedsStartUp_;
 

@@ -1,3 +1,8 @@
+/* ApplicationStyle
+Name=Pink
+Id=pinkStyle_
+Colors=standard
+*/
 /* QuiteRSS Green Style */
 
 QMenuBar {

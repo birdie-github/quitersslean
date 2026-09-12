@@ -51,6 +51,9 @@ CONFIG += c++17 link_pkgconfig
   error("libxml2 development files and pkg-config are required. Set PKG_CONFIG_PATH to the directory containing libxml-2.0.pc. See INSTALL for Linux, MSYS2 and Homebrew setup.")
 }
 PKGCONFIG += libxml-2.0
+HEADERS += src/application/applicationstyle.h
+SOURCES += src/application/applicationstyle.cpp
+
 HEADERS += src/application/releaseinfo.h
 SOURCES += src/application/releaseinfo.cpp
 
@@ -289,6 +292,10 @@ unix:!mac {
 }
 
 win32 {
+  style.files = $$PROJECT_STYLE_DIR
+  style.path = $$DESTDIR
+  INSTALLS += style
+
   social_networks_config.files = $$PROJECT_SHARING_CONFIG
   social_networks_config.path = $$DESTDIR
   social_networks_icons.files = $$PROJECT_SHARING_ICONS

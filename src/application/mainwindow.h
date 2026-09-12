@@ -336,6 +336,8 @@ private slots:
   void slotFeedPrevious();
   void slotFeedNext();
   void setStyleApp(QAction*);
+  void rebuildStyleMenu();
+  void applyStyleColors(bool dark, const QPalette &palette);
   void slotSwitchFocus();
   void slotSwitchPrevFocus();
   void slotOpenFeedNewTab();
@@ -502,14 +504,6 @@ private:
   QAction *classicLayoutAct_;
   QAction *newspaperLayoutAct_;
   QAction *layoutToggle_;
-  QAction *systemStyle_;
-  QAction *system2Style_;
-  QAction *darkStyle_;
-  QAction *greenStyle_;
-  QAction *orangeStyle_;
-  QAction *purpleStyle_;
-  QAction *pinkStyle_;
-  QAction *grayStyle_;
   QAction *topBrowserPositionAct_;
   QAction *bottomBrowserPositionAct_;
   QAction *rightBrowserPositionAct_;

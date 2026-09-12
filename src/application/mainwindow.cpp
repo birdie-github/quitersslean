@@ -788,32 +788,6 @@ void MainWindow::createActions()
   connect(layoutToggle_, SIGNAL(triggered()),
           this, SLOT(setNewsLayout()));
 
-  systemStyle_ = new QAction(this);
-  systemStyle_->setObjectName("systemStyle_");
-  systemStyle_->setCheckable(true);
-  system2Style_ = new QAction(this);
-  system2Style_->setObjectName("system2Style_");
-  system2Style_->setCheckable(true);
-  darkStyle_ = new QAction(this);
-  darkStyle_->setObjectName("darkStyle_");
-  darkStyle_->setCheckable(true);
-  greenStyle_ = new QAction(this);
-  greenStyle_->setObjectName("greenStyle_");
-  greenStyle_->setCheckable(true);
-  greenStyle_->setChecked(true);
-  orangeStyle_ = new QAction(this);
-  orangeStyle_->setObjectName("orangeStyle_");
-  orangeStyle_->setCheckable(true);
-  purpleStyle_ = new QAction(this);
-  purpleStyle_->setObjectName("purpleStyle_");
-  purpleStyle_->setCheckable(true);
-  pinkStyle_ = new QAction(this);
-  pinkStyle_->setObjectName("pinkStyle_");
-  pinkStyle_->setCheckable(true);
-  grayStyle_ = new QAction(this);
-  grayStyle_->setObjectName("grayStyle_");
-  grayStyle_->setCheckable(true);
-
   topBrowserPositionAct_ = new QAction(this);
   topBrowserPositionAct_->setCheckable(true);
   topBrowserPositionAct_->setData(TOP_POSITION);
@@ -1517,17 +1491,9 @@ void MainWindow::createMenu()
   layoutToggle_->setMenu(layoutMenu_);
 
   styleGroup_ = new QActionGroup(this);
-  styleGroup_->addAction(systemStyle_);
-  styleGroup_->addAction(system2Style_);
-  styleGroup_->addAction(darkStyle_);
-  styleGroup_->addAction(greenStyle_);
-  styleGroup_->addAction(orangeStyle_);
-  styleGroup_->addAction(purpleStyle_);
-  styleGroup_->addAction(pinkStyle_);
-  styleGroup_->addAction(grayStyle_);
-
   styleMenu_ = new QMenu(this);
-  styleMenu_->addActions(styleGroup_->actions());
+  rebuildStyleMenu();
+  connect(styleMenu_, &QMenu::aboutToShow, this, &MainWindow::rebuildStyleMenu);
 
   browserPositionGroup_ = new QActionGroup(this);
   browserPositionGroup_->addAction(topBrowserPositionAct_);
@@ -1911,15 +1877,6 @@ void MainWindow::loadSettings()
   iconStr = AppSettings::feedsToolBarIconSize.get();
   setToolBarIconSize(feedsToolBar_, iconStr);
 
-  str = settings.value("styleApplication", "defaultStyle_").toString();
-  QList<QAction*> listActions = styleGroup_->actions();
-  foreach(QAction *action, listActions) {
-    if (action->objectName() == str) {
-      action->setChecked(true);
-      break;
-    }
-  }
-
   showUnreadCount_->setChecked(settings.value("showUnreadCount", true).toBool());
   showUndeleteCount_->setChecked(settings.value("showUndeleteCount", false).toBool());
   showLastUpdated_->setChecked(settings.value("showLastUpdated", false).toBool());
@@ -2149,8 +2106,7 @@ void MainWindow::saveSettings()
   settings.setValue("categoriesPanelShow", categoriesPanelToggle_->isChecked());
   settings.setValue("statusBarShow", statusBarToggle_->isChecked());
 
-  settings.setValue("styleApplication",
-                    styleGroup_->checkedAction()->objectName());
+  settings.setValue("styleApplication", mainApp->applicationStyle().id);
 
   settings.setValue("showUnreadCount", showUnreadCount_->isChecked());
   settings.setValue("showUndeleteCount", showUndeleteCount_->isChecked());
@@ -4406,14 +4362,7 @@ void MainWindow::retranslateStrings()
   layoutToggle_->setText(tr("Layout"));
 
   styleMenu_->setTitle(tr("Application Style"));
-  systemStyle_->setText(tr("System"));
-  system2Style_->setText(tr("System2"));
-  darkStyle_->setText(tr("Dark"));
-  greenStyle_->setText(tr("Green"));
-  orangeStyle_->setText(tr("Orange"));
-  purpleStyle_->setText(tr("Purple"));
-  pinkStyle_->setText(tr("Pink"));
-  grayStyle_->setText(tr("Gray"));
+  rebuildStyleMenu();
 
   browserPositionMenu_->setTitle(tr("Article Pane Position"));
   topBrowserPositionAct_->setText(tr("Top"));
@@ -5399,32 +5348,49 @@ void MainWindow::slotFeedPageDownPressed()
 }
 /** @brief Set application style
  *---------------------------------------------------------------------------*/
-void MainWindow::setStyleApp(QAction *pAct)
+void MainWindow::rebuildStyleMenu()
+{
+  const auto styles = mainApp->applicationStyles();
+  const QString activeId = mainApp->applicationStyle().id;
+  bool available = activeId.isEmpty();
+  for (const ApplicationStyle &style : styles) available = available || style.id == activeId;
+  if (!available) {
+    qWarning() << "Selected application style no longer available:" << activeId;
+    mainApp->applyApplicationStyle(QString());
+  }
+  // Actions belong only to this menu/group, never to toolbar customization.
+  const auto oldActions = styleGroup_->actions();
+  for (QAction *action : oldActions) delete action;
+  auto addStyle = [this](const QString &id, const QString &name) {
+    QAction *action = new QAction(name, styleGroup_);
+    action->setObjectName(id);
+    action->setData(id);
+    action->setCheckable(true);
+    action->setChecked(id == mainApp->applicationStyle().id);
+    styleGroup_->addAction(action);
+    styleMenu_->addAction(action);
+  };
+  addStyle(QString(), tr("System default"));
+  for (const ApplicationStyle &style : styles) {
+    addStyle(style.id, QCoreApplication::translate("MainWindow", style.name.toUtf8().constData()));
+  }
+}
+
+void MainWindow::setStyleApp(QAction *action)
+{
+  const QPalette previousPalette = qApp->palette();
+  mainApp->applyApplicationStyle(action->data().toString());
+  applyStyleColors(mainApp->applicationStyle().darkColors, previousPalette);
+  for (QAction *candidate : styleGroup_->actions())
+    candidate->setChecked(candidate->data().toString() == mainApp->applicationStyle().id);
+}
+
+// Application-specific colors remain separate from QSS and the native QStyle.
+// As before, explicit style selection resets these preferences; startup does not.
+void MainWindow::applyStyleColors(bool dark, const QPalette &palette)
 {
   Settings settings;
-
-  settings.setValue("Settings/styleApplication", pAct->objectName());
-
-  QString fileName(mainApp->resourcesDir());
-  if (pAct->objectName() == "systemStyle_") {
-    fileName.append("/" + ProjectMetadata::styles() + "/system.qss");
-  } else if (pAct->objectName() == "system2Style_") {
-    fileName.append("/" + ProjectMetadata::styles() + "/system2.qss");
-  } else if (pAct->objectName() == "darkStyle_") {
-    fileName.append("/" + ProjectMetadata::styles() + "/dark.qss");
-  } else if (pAct->objectName() == "orangeStyle_") {
-    fileName.append("/" + ProjectMetadata::styles() + "/orange.qss");
-  } else if (pAct->objectName() == "purpleStyle_") {
-    fileName.append("/" + ProjectMetadata::styles() + "/purple.qss");
-  } else if (pAct->objectName() == "pinkStyle_") {
-    fileName.append("/" + ProjectMetadata::styles() + "/pink.qss");
-  } else if (pAct->objectName() == "grayStyle_") {
-    fileName.append("/" + ProjectMetadata::styles() + "/gray.qss");
-  } else {
-    fileName.append("/" + ProjectMetadata::styles() + "/green.qss");
-  }
-
-  if (pAct->objectName() == "darkStyle_") {
+  if (dark) {
     feedsModel_->textColor_ = "#e1e0e1";
     newsListTextColor_ = "#e1e0e1";
     newsListBackgroundColor_ = "#464546";
@@ -5441,7 +5407,7 @@ void MainWindow::setStyleApp(QAction *pAct)
     transparencyNotify_ = 40;
     alternatingRowColors_ = "#3a393a";
   } else {
-    QString windowTextColor = qApp->palette().brush(QPalette::WindowText).color().name();
+    QString windowTextColor = palette.brush(QPalette::WindowText).color().name();
     feedsModel_->textColor_ = windowTextColor;
     newsListTextColor_ = windowTextColor;
     newsListBackgroundColor_ = "";
@@ -5456,7 +5422,7 @@ void MainWindow::setStyleApp(QAction *pAct)
     notifierTextColor_ = windowTextColor;
     notifierBackgroundColor_ = "#FFFFFF";
     transparencyNotify_ = 60;
-    alternatingRowColors_ = qApp->palette().color(QPalette::AlternateBase).name();
+    alternatingRowColors_ = palette.color(QPalette::AlternateBase).name();
   }
 
   settings.setValue("Settings/transparencyNotify", transparencyNotify_);
@@ -5475,12 +5441,6 @@ void MainWindow::setStyleApp(QAction *pAct)
   colorSettings.setValue("notifierTextColor", notifierTextColor_);
   colorSettings.setValue("notifierBackgroundColor", notifierBackgroundColor_);
   colorSettings.setValue("alternatingRowColors", alternatingRowColors_);
-
-  QFile file(fileName);
-  const QByteArray styleData = file.open(QFile::ReadOnly)
-      ? file.readAll() : Common::readAllFileByteContents(":/style/systemStyle");
-  qApp->setStyleSheet(QLatin1String(styleData));
-  file.close();
 
   mainSplitter_->setStyleSheet(
         QString("QSplitter::handle {background: qlineargradient("

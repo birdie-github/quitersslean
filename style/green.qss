@@ -1,3 +1,9 @@
+/* ApplicationStyle
+Name=Green
+Id=greenStyle_
+Colors=standard
+Default=true
+*/
 /* QuiteRSS Green Style */
 
 QMenuBar {

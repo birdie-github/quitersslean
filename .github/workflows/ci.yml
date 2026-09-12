@@ -69,6 +69,18 @@ jobs:
           qmake6 ../app.pro USE_QT=6 CONFIG+=release CONFIG-=debug_and_release
           mingw32-make -j2
           mingw32-make install
+          python3 - <<'PYTHON'
+          import json
+          from pathlib import Path
+          directory = json.loads(Path("generated/project-build.json").read_text())["styles"]
+          source = Path("..") / directory
+          deployed = Path("release/target") / directory
+          files = list(source.glob("*.qss"))
+          assert files, "No source application styles found"
+          for file in files:
+              assert (deployed / file.name).read_bytes() == file.read_bytes(), file.name
+          print(f"Verified {len(files)} deployed application styles")
+          PYTHON
           python3 -c 'import json; d=json.load(open("generated/project-build.json")); print("PROJECT_NAME="+d["name"]); print("PROJECT_EXECUTABLE="+d["executable"])' >> "$GITHUB_ENV"
 
       - name: Deploy with windeployqt

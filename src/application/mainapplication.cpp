@@ -158,7 +158,6 @@ void MainApplication::createSettings()
   Settings settings("Settings");
   storeDBMemory_ = AppSettings::storeDBMemory.get();
   isSaveDataLastFeed_ = settings.value("createLastFeed", false).toBool();
-  styleApplication_ = settings.value("styleApplication", "greenStyle_").toString();
   showSplashScreen_ = AppSettings::showSplashScreen.get();
   updateFeedsStartUp_ = AppSettings::autoUpdatefeedsStartUp.get();
 
@@ -289,32 +288,38 @@ bool MainApplication::storeDBMemory() const
   return storeDBMemory_;
 }
 
+QList<ApplicationStyle> MainApplication::applicationStyles() const
+{
+  return ApplicationStyles::discover(QDir(resourcesDir()).filePath(ProjectMetadata::styles()));
+}
+
+void MainApplication::applyApplicationStyle(const QString &id)
+{
+  ApplicationStyle selected = ApplicationStyles::systemDefault();
+  if (!id.isEmpty()) {
+    bool found = false;
+    for (const ApplicationStyle &style : applicationStyles()) {
+      if (style.id == id) { selected = style; found = true; break; }
+    }
+    if (!found) qWarning() << "Application style unavailable; using system default:" << id;
+  }
+  qInfo() << "Applying application QSS:" << selected.fileName;
+  setStyleSheet(selected.sheet);
+  applicationStyle_ = selected;
+  Settings().setValue("Settings/styleApplication", selected.id);
+}
+
 void MainApplication::setStyleApplication()
 {
-  QString fileName(resourcesDir());
-  if (styleApplication_ == "systemStyle_") {
-    fileName.append("/" + ProjectMetadata::styles() + "/system.qss");
-  } else if (styleApplication_ == "system2Style_") {
-    fileName.append("/" + ProjectMetadata::styles() + "/system2.qss");
-  } else if (styleApplication_ == "darkStyle_") {
-    fileName.append("/" + ProjectMetadata::styles() + "/dark.qss");
-  } else if (styleApplication_ == "orangeStyle_") {
-    fileName.append("/" + ProjectMetadata::styles() + "/orange.qss");
-  } else if (styleApplication_ == "purpleStyle_") {
-    fileName.append("/" + ProjectMetadata::styles() + "/purple.qss");
-  } else if (styleApplication_ == "pinkStyle_") {
-    fileName.append("/" + ProjectMetadata::styles() + "/pink.qss");
-  } else if (styleApplication_ == "grayStyle_") {
-    fileName.append("/" + ProjectMetadata::styles() + "/gray.qss");
-  } else {
-    fileName.append("/" + ProjectMetadata::styles() + "/green.qss");
+  Settings settings("Settings");
+  QString id = settings.value("styleApplication").toString();
+  if (!settings.contains("styleApplication")) {
+    for (const ApplicationStyle &style : applicationStyles()) {
+      if (style.isDefault) { id = style.id; break; }
+    }
   }
-  QFile file(fileName);
-  const QByteArray styleData = file.open(QFile::ReadOnly)
-      ? file.readAll() : Common::readAllFileByteContents(":/style/systemStyle");
-  setStyleSheet(QLatin1String(styleData));
-  file.close();
-
+  applyApplicationStyle(id);
+  // Native widget style/proxy lifetime is independent of stylesheet selection.
   setStyle(new QProxyStyle);
 }
 
