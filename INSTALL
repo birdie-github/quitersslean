@@ -111,7 +111,8 @@ these are /usr/share/NotQuiteRSS/social-networks.ini and
 Only when the installed INI file does not exist, the application looks beside
 the user's application INI file for social-networks.ini and social-networks/. The
 user definition is then used in full; installed and user definitions are never
-merged. Startup diagnostics use the [article-sharing] prefix on stderr.
+merged. Startup diagnostics use the [article-sharing] prefix in debug.log when
+file logging is enabled. Launch with --debug to also print diagnostics to stderr.
 
 The INI [services] order value lists service section names. Each section accepts
 name, icon, url, enabled and an optional action name used to retain shortcut and

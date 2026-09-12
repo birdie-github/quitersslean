@@ -17,6 +17,7 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 * ============================================================ */
 #include "projectmetadata.h"
+#include "logfile.h"
 #include "optionsdialog.h"
 #include <QScreen>
 #include "articlecontent.h"
@@ -344,6 +345,21 @@ void OptionsDialog::createGeneralWidget()
   generalLayout->addWidget(updateCheckEnabled_);
   generalLayout->addWidget(storeDBMemory_);
   generalLayout->addWidget(saveDBMemFileWidget);
+  QGroupBox *debugGroup = new QGroupBox(tr("Debug"));
+  QHBoxLayout *debugLayout = new QHBoxLayout(debugGroup);
+  QCheckBox *fileLogging = new QCheckBox(tr("Enable file logging"));
+  fileLogging->setChecked(LogFile::fileLoggingEnabled());
+  fileLogging->setToolTip(tr("Takes effect immediately. Existing logs are kept when disabled."));
+  QPushButton *showLog = new QPushButton(tr("Show log location"));
+  debugLayout->addWidget(fileLogging);
+  debugLayout->addWidget(showLog);
+  debugLayout->addStretch();
+  connect(fileLogging, &QCheckBox::toggled, this, [](bool enabled) {
+    Settings().setValue("Settings/logFileOutput", enabled);
+    LogFile::setFileLoggingEnabled(enabled);
+  });
+  connect(showLog, &QPushButton::clicked, this, []() { LogFile::showLocation(); });
+  generalLayout->addWidget(debugGroup);
   generalLayout->addStretch(1);
 
   generalWidget_ = new QFrame();

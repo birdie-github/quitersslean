@@ -28,7 +28,8 @@
 #include <QTimer>
 #include <QPointer>
 #include <cstring>
-#include <cstdio>
+#include "logfile.h"
+#include <QDebug>
 #include <QSslSocket>
 #include <QSslError>
 #include <QSslConfiguration>
@@ -227,15 +228,12 @@ QNetworkReply *ArticleImages::createRequest(Operation operation, const QNetworkR
 }
 
 bool ArticleImages::tracingEnabled() {
-  static const bool enabled = qEnvironmentVariableIsSet("QUITERS_IMAGE_DEBUG");
-  return enabled;
+  static const bool enabled = qEnvironmentVariableIsSet("IMAGE_DEBUG");
+  return enabled || LogFile::consoleLoggingEnabled();
 }
 void ArticleImages::trace(const QString &message) {
   if (!tracingEnabled()) return;
-  // The application redirects Qt messages to its own log. Keep this opt-in trace
-  // on stderr so it can be captured independently, including release builds.
-  const QByteArray line = message.simplified().toUtf8();
-  std::fprintf(stderr, "[article-images] %s\n", line.constData());
+  qInfo().noquote() << QStringLiteral("[article-images] %1").arg(message.simplified());
 }
 QString ArticleImages::describeUrl(const QUrl &url) {
   if (url.scheme() == "data") return QStringLiteral("data:[inline image]");

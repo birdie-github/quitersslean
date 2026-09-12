@@ -45,6 +45,12 @@ isEmpty(USE_QT): USE_QT = 5
 equals(QT_MAJOR_VERSION, 5):lessThan(QT_MINOR_VERSION, 15): error("$$PROJECT_NAME requires Qt 5.15 or newer within Qt 5")
 equals(QT_MAJOR_VERSION, 6):lessThan(QT_MINOR_VERSION, 2): error("$$PROJECT_NAME requires Qt 6.2 or newer within Qt 6")
 QT += widgets network xml printsupport sql
+unix:!mac:qtHaveModule(dbus) {
+  QT += dbus
+  DEFINES += HAVE_FILEMANAGER_DBUS
+}
+HEADERS += src/application/commandline.h
+SOURCES += src/application/commandline.cpp
 equals(QT_MAJOR_VERSION, 6): QT += core5compat
 CONFIG += c++17 link_pkgconfig
 !packagesExist(libxml-2.0) {

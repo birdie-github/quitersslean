@@ -16,83 +16,173 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 * ============================================================ */
-#include "projectmetadata.h"
 #include "logfile.h"
 
-#include <QStandardPaths>
 #include <QDir>
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-#include <QStringConverter>
-#endif
 #include <cstdio>
+#include <QMutex>
+#include <QDesktopServices>
+#include <QFileInfo>
+#include <QProcess>
+#include <QUrl>
+#ifdef Q_OS_WIN
+#include <windows.h>
+#include <io.h>
+#endif
+#ifdef HAVE_FILEMANAGER_DBUS
+#include <QDBusConnection>
+#include <QDBusMessage>
+#include <QDBusPendingCallWatcher>
+#include <QDBusPendingReply>
+#endif
 
-#include "globals.h"
-#include "settings.h"
 
 LogFile::LogFile()
 {
 }
 
+namespace {
+struct LogState {
+  QMutex mutex;
+  QString fileName;
+  bool fileEnabled = true;
+  bool consoleEnabled = false;
+  bool suppressDebug = true;
+};
+
+LogState &logState()
+{
+  // Qt can log during static destruction, after QApplication has gone away.
+  static LogState *state = new LogState;
+  return *state;
+}
+
+void openLogDirectory(const QString &directory)
+{
+  if (!QDesktopServices::openUrl(QUrl::fromLocalFile(directory)))
+    qWarning() << "Could not open log directory:" << directory;
+}
+}
+
+void LogFile::configure(const QString &fileName, bool enabled, bool suppressDebug)
+{
+  auto &state = logState();
+  QMutexLocker lock(&state.mutex);
+  state.fileName = fileName;
+  state.fileEnabled = enabled;
+  state.suppressDebug = suppressDebug;
+}
+
+void LogFile::prepareConsole()
+{
+#ifdef Q_OS_WIN
+  // Preserve shell redirection. GUI-subsystem executables may have no CRT streams.
+  const bool needsOut = _fileno(stdout) < 0 || _get_osfhandle(_fileno(stdout)) == -1;
+  const bool needsErr = _fileno(stderr) < 0 || _get_osfhandle(_fileno(stderr)) == -1;
+  if (!needsOut && !needsErr) return;
+  if (!AttachConsole(ATTACH_PARENT_PROCESS) && !GetConsoleWindow()) AllocConsole();
+  auto reopen = [](FILE *stream) {
+#ifdef _MSC_VER
+    FILE *result = nullptr;
+    freopen_s(&result, "CONOUT$", "w", stream);
+#else
+    (void)std::freopen("CONOUT$", "w", stream);
+#endif
+  };
+  if (needsOut) reopen(stdout);
+  if (needsErr) reopen(stderr);
+#endif
+}
+
+void LogFile::enableConsole()
+{
+  prepareConsole();
+  auto &state = logState();
+  QMutexLocker lock(&state.mutex);
+  state.consoleEnabled = true;
+}
+
+bool LogFile::fileLoggingEnabled()
+{
+  auto &state = logState();
+  QMutexLocker lock(&state.mutex);
+  return state.fileEnabled;
+}
+
+bool LogFile::consoleLoggingEnabled()
+{
+  auto &state = logState();
+  QMutexLocker lock(&state.mutex);
+  return state.consoleEnabled;
+}
+
+void LogFile::setFileLoggingEnabled(bool enabled)
+{
+  auto &state = logState();
+  QMutexLocker lock(&state.mutex);
+  state.fileEnabled = enabled;
+}
+
 void LogFile::msgHandler(QtMsgType type, const QMessageLogContext &, const QString &msg)
 {
-  // Launch diagnostics must reach the console even when file logging is enabled.
-  if (type == QtInfoMsg) {
-    const QByteArray text = msg.toLocal8Bit();
-    std::fprintf(stderr, "%s\n", text.constData());
+  auto &state = logState();
+  QMutexLocker lock(&state.mutex);
+  if (!state.consoleEnabled && (msg.startsWith("libpng warning: iCCP") ||
+      (type == QtDebugMsg && state.suppressDebug))) return;
+  const char *level = "INFO";
+  switch (type) {
+  case QtDebugMsg: level = "DEBUG"; break;
+  case QtWarningMsg: level = "WARNING"; break;
+  case QtCriticalMsg: level = "CRITICAL"; break;
+  case QtFatalMsg: level = "FATAL"; break;
+  default: break;
+  }
+  const QByteArray line = (QDateTime::currentDateTime().toString("dd.MM.yyyy hh:mm:ss.zzz") +
+      " " + QLatin1String(level) + ": " + msg + '\n').toUtf8();
+  if (state.consoleEnabled) {
+    std::fwrite(line.constData(), 1, size_t(line.size()), stderr);
     std::fflush(stderr);
   }
-  if (!globals.isInit_)
-    return;
-  if (msg.startsWith("libpng warning: iCCP"))
-    return;
-
-  if (type == QtDebugMsg) {
-    if (globals.noDebugOutput_)
-      return;
-  }
-
-  QFile file;
-  file.setFileName(globals.dataDir_ + ("/" + ProjectMetadata::log()));
-  QIODevice::OpenMode openMode = QIODevice::WriteOnly | QIODevice::Text;
-
-  if (file.exists() && (file.size() < (qint64)maxLogFileSize)) {
-    openMode |= QIODevice::Append;
-  }
-
-  if (!file.open(openMode)) return;
-
-  QTextStream stream;
-  stream.setDevice(&file);
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-  stream.setEncoding(QStringConverter::Utf8);
-#else
-  stream.setCodec("UTF-8");
-#endif
-
-  if (file.isOpen()) {
-    QString currentDateTime = QDateTime::currentDateTime().toString("dd.MM.yyyy hh:mm:ss.zzz");
-    switch (type) {
-    case QtInfoMsg:
-      stream << currentDateTime << " INFO: " << msg << "\n";
-      break;
-    case QtDebugMsg:
-      stream << currentDateTime << " DEBUG: " << msg << "\n";
-      break;
-    case QtWarningMsg:
-      stream << currentDateTime << " WARNING: " << msg << "\n";
-      break;
-    case QtCriticalMsg:
-      stream << currentDateTime << " CRITICAL: " << msg << "\n";
-      break;
-    case QtFatalMsg:
-      stream << currentDateTime << " FATAL: " << msg << "\n";
-      qApp->exit(EXIT_FAILURE);
-    default:
-      break;
-    }
-
-    stream.flush();
+  if (!state.fileEnabled || state.fileName.isEmpty()) return;
+  QFile file(state.fileName);
+  QIODevice::OpenMode mode = QIODevice::WriteOnly;
+  if (file.exists() && file.size() < qint64(maxLogFileSize)) mode |= QIODevice::Append;
+  if (file.open(mode)) {
+    file.write(line);
     file.flush();
-    file.close();
   }
+  // Returning from a QtFatalMsg handler lets Qt perform its normal fatal abort.
+}
+
+void LogFile::showLocation()
+{
+  QString fileName;
+  {
+    auto &state = logState();
+    QMutexLocker lock(&state.mutex);
+    fileName = state.fileName;
+  }
+  if (fileName.isEmpty()) return;
+  const QString directory = QFileInfo(fileName).absolutePath();
+  if (QFileInfo::exists(fileName)) {
+#ifdef Q_OS_WIN
+    if (QProcess::startDetached("explorer.exe", {"/select,", QDir::toNativeSeparators(fileName)})) return;
+#elif defined(Q_OS_MAC)
+    if (QProcess::startDetached("/usr/bin/open", {"-R", fileName})) return;
+#elif defined(HAVE_FILEMANAGER_DBUS)
+    QDBusMessage message = QDBusMessage::createMethodCall("org.freedesktop.FileManager1",
+        "/org/freedesktop/FileManager1", "org.freedesktop.FileManager1", "ShowItems");
+    message << QStringList{QUrl::fromLocalFile(fileName).toString(QUrl::FullyEncoded)} << QString();
+    auto *watcher = new QDBusPendingCallWatcher(
+        QDBusConnection::sessionBus().asyncCall(message, 1500), QCoreApplication::instance());
+    QObject::connect(watcher, &QDBusPendingCallWatcher::finished, watcher,
+                     [directory](QDBusPendingCallWatcher *finished) {
+      const QDBusPendingReply<> reply = *finished;
+      if (reply.isError()) openLogDirectory(directory);
+      finished->deleteLater();
+    });
+    return;
+#endif
+  }
+  openLogDirectory(directory);
 }

@@ -19,12 +19,24 @@
 #include "globals.h"
 #include "mainapplication.h"
 #include "logfile.h"
+#include "commandline.h"
+#include "projectmetadata.h"
+#include <cstdio>
 
 int main(int argc, char **argv)
 {
-  if (globals.logFileOutput_) {
-    qInstallMessageHandler(LogFile::msgHandler);
+  QStringList arguments;
+  for (int i = 0; i < argc; ++i) arguments.append(QString::fromLocal8Bit(argv[i]));
+  const auto options = CommandLine::parse(arguments);
+  if (options.help || options.version) {
+    LogFile::prepareConsole();
+    const QByteArray text = (options.help ? CommandLine::helpText() :
+        ProjectMetadata::name() + " " + ProjectMetadata::version() + "\n").toUtf8();
+    std::fwrite(text.constData(), 1, size_t(text.size()), stdout);
+    return 0;
   }
+  if (options.debug) LogFile::enableConsole();
+  qInstallMessageHandler(LogFile::msgHandler);
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
   QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -33,7 +45,7 @@ int main(int argc, char **argv)
   MainApplication app(argc, argv);
 
   if (app.isClosing())
-    return 0;
+    return app.startupExitCode();
 
   return app.exec();
 }

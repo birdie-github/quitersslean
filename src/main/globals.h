@@ -31,7 +31,6 @@ public:
   QString userAgent() const { return userAgent_; }
 
   // public on purpose
-  const bool logFileOutput_;
   bool noDebugOutput_;
   bool isInit_;
   bool isPortable_;

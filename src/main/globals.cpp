@@ -18,6 +18,7 @@
 * ============================================================ */
 #include "projectmetadata.h"
 #include "globals.h"
+#include "logfile.h"
 
 #include <QStandardPaths>
 #include <QCoreApplication>
@@ -30,8 +31,7 @@
 Globals globals;
 
 Globals::Globals()
-  : logFileOutput_(true)
-  , noDebugOutput_(true)
+  : noDebugOutput_(true)
   , isInit_(false)
   , isPortable_(false)
   , resourcesDir_()
@@ -88,7 +88,9 @@ void Globals::init()
   Settings::createSettings(settingsFileName);
 
   Settings settings("Settings");
-  noDebugOutput_ = settings.value("noDebugOutput", true).toBool();
+  noDebugOutput_ = settings.value("noDebugOutput", true).toBool() && !LogFile::consoleLoggingEnabled();
+  LogFile::configure(QDir(dataDir_).filePath(ProjectMetadata::log()),
+                     settings.value("logFileOutput", true).toBool(), noDebugOutput_);
   userAgent_ = settings.value("userAgent", "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36").toString();
 
   isInit_ = true;

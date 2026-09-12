@@ -70,8 +70,9 @@ Internal article anchors scroll within the pane. Only application-generated
 newspaper controls may use the app action scheme.
 
 Image diagnostics remain opt-in and work independently of the renderer. Start a
-fresh application process with QUITERS_IMAGE_DEBUG=1 to write [article-images]
-lines to stderr. With the variable absent, these diagnostics are silent. They
+fresh application process with --debug for console output, or set
+IMAGE_DEBUG=1 for image diagnostics through the configured file logger.
+With neither enabled, these diagnostics are silent. They
 report TLS configuration, resource permission, HTTP results and decoding failures.
 
 ## Manual checks after building

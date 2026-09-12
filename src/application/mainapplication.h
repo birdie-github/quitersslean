@@ -44,6 +44,7 @@ class MainApplication : public QtSingleApplication
 public:
   explicit MainApplication(int &argc, char** argv);
   ~MainApplication();
+  int startupExitCode() const { return startupExitCode_; }
 
   static MainApplication *getInstance();
 
@@ -111,6 +112,7 @@ private:
 
   bool isPortableAppsCom_;
   bool isClosing_;
+  int startupExitCode_ = 0;
 
   bool storeDBMemory_;
   bool dbFileExists_;

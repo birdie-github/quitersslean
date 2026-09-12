@@ -27,6 +27,9 @@
 #include "splashscreen.h"
 #include "updatefeeds.h"
 #include "projectmetadata.h"
+#include "commandline.h"
+#include "logfile.h"
+#include <cstdio>
 
 #include <QScreen>
 #include <QDesktopServices>
@@ -51,21 +54,31 @@ MainApplication::MainApplication(int &argc, char **argv)
   setDesktopFileName(ProjectMetadata::name());
   setOrganizationName(ProjectMetadata::organization());
   setApplicationVersion(ProjectMetadata::version());
+  // QApplication has consumed Qt's platform arguments by this point.
+  const auto options = CommandLine::parse(arguments());
+  if (!options.error.isEmpty()) {
+    LogFile::prepareConsole();
+    const QByteArray error = (options.error + "\nUse --help for usage.\n").toLocal8Bit();
+    std::fwrite(error.constData(), 1, size_t(error.size()), stderr);
+    startupExitCode_ = 1;
+    isClosing_ = true;
+    return;
+  }
   globals.init();
 
-  QString message = arguments().value(1);
+  QString message = options.messages.join('\n');
   if (isRunning()) {
-    if (argc == 1) {
+    if (options.debug)
+      qInfo() << "An instance is already running. Restart it with --debug to enable its console logging.";
+    if (message.isEmpty()) {
       sendMessage("--show");
     } else {
-      for (int i = 2; i < argc; ++i)
-        message += '\n' + arguments().value(i);
       sendMessage(message);
     }
     isClosing_ = true;
     return;
   } else {
-    if (message.contains("--exit", Qt::CaseInsensitive)) {
+    if (options.messages.contains("--exit")) {
       isClosing_ = true;
       return;
     }
@@ -137,8 +150,8 @@ void MainApplication::receiveMessage(const QString &message)
           return;
         mainWindow_->showWindows();
       }
-      if (param == "--exit") mainWindow_->quitApp();
-      if (param.contains("feed:", Qt::CaseInsensitive)) {
+      if (param == "--exit") { mainWindow_->quitApp(); return; }
+      if (param.startsWith("feed:", Qt::CaseInsensitive)) {
         QClipboard *clipboard = QApplication::clipboard();
         if (param.contains("https://", Qt::CaseInsensitive)) {
           param.remove(0, 5);

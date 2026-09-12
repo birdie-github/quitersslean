@@ -31,6 +31,13 @@ class LogFile
 {
 public:
   static void msgHandler(QtMsgType type, const QMessageLogContext &, const QString &msg);
+  static void configure(const QString &fileName, bool enabled, bool suppressDebug);
+  static void enableConsole();
+  static bool consoleLoggingEnabled();
+  static void prepareConsole();
+  static bool fileLoggingEnabled();
+  static void setFileLoggingEnabled(bool enabled);
+  static void showLocation();
 
 private:
   explicit LogFile();

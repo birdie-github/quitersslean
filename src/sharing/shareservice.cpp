@@ -10,7 +10,7 @@
 #include "projectmetadata.h"
 #include "shareservice.h"
 
-#include <cstdio>
+#include <QDebug>
 
 #include <QDir>
 #include <QFileInfo>
@@ -202,7 +202,5 @@ void ShareServiceLoader::writeDiagnostic(const QString &message)
 
 void ShareServiceLoader::log(const QString &message)
 {
-  const QByteArray line = QStringLiteral("[article-sharing] %1\n").arg(message).toLocal8Bit();
-  std::fwrite(line.constData(), 1, static_cast<size_t>(line.size()), stderr);
-  std::fflush(stderr);
+  qInfo().noquote() << QStringLiteral("[article-sharing] %1").arg(message);
 }

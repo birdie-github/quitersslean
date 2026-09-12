@@ -22,3 +22,6 @@ Deprecated stuff:
 
 See [PROJECT_METADATA.md](PROJECT_METADATA.md) for the central project definition,
 new paths, packaging generation and update-check behavior.
+
+See [LOGGING.md](LOGGING.md) for file logging, `--debug`, command-line help,
+and the log-location control in General settings.
