@@ -7,16 +7,16 @@ English is always available without a translation file.
 
 Place `NotQuiteRSS_<locale>.qm` in either:
 
-* The installed resource directory's `lang/` subdirectory: normally
-  `/usr/share/NotQuiteRSS/lang` (or `/usr/local/share/NotQuiteRSS/lang`) on Linux,
-  `lang` beside notquiterss.exe on Windows, or `Contents/Resources/lang` in the
+* The installed resource directory's `translations/` subdirectory: normally
+  `/usr/share/NotQuiteRSS/translations` (or `/usr/local/share/NotQuiteRSS/translations`) on Linux,
+  `resources/translations` beside notquiterss.exe on Windows, or `Contents/Resources/translations` in the
   macOS application bundle.
-* The application's writable data directory's `lang/` subdirectory. This is
+* The application's writable data directory's `translations/` subdirectory. This is
   `QStandardPaths::GenericDataLocation` plus the application name
   (`NotQuiteRSS`): normally
-  `~/.local/share/NotQuiteRSS/lang` on Linux,
-  `%LOCALAPPDATA%/NotQuiteRSS/lang` on Windows, and
-  `~/Library/Application Support/NotQuiteRSS/lang` on macOS.
+  `~/.local/share/NotQuiteRSS/translations` on Linux,
+  `%LOCALAPPDATA%/NotQuiteRSS/translations` on Windows, and
+  `~/Library/Application Support/NotQuiteRSS/translations` on macOS.
   Portable builds use `lang` beside the executable instead.
 
 The writable directory wins when both contain the same locale. Invalid QM

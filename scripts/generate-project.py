@@ -41,7 +41,7 @@ def load(source):
         'release': {'version', 'date'},
         'project': {'repository', 'homepage', 'issues', 'releases', 'translations',
                     'update_endpoint', 'email', 'copyright', 'original_copyright'},
-        'resources': {'translations', 'qt_translations', 'styles',
+        'resources': {'root', 'translations', 'qt_translations', 'styles',
                       'sounds', 'sharing_config', 'sharing_icons'},
         'files': {'database', 'log', 'cookies', 'last_feed', 'portable_marker', 'cache', 'backup'}
     }
@@ -72,7 +72,7 @@ def load(source):
         ('homepage', 'homepageUrl', repository),
         ('issues', 'issuesUrl', repository + '/issues'),
         ('releases', 'releasesUrl', repository + '/releases'),
-        ('translations', 'translationsUrl', repository + '/tree/HEAD/lang'),
+        ('translations', 'translationsUrl', repository + '/tree/HEAD/' + data['resources']['root'] + '/' + data['resources']['translations']),
         ('update_endpoint', 'updateEndpoint', 'https://api.github.com/repos' + parsed.path + '/releases/latest')):
         result[output] = url(project.get(key, default), 'project.' + key)
     for section in ('resources', 'files'):
@@ -142,7 +142,7 @@ def generate(source, output):
     # A small, machine-readable build result lets CI avoid guessing executable names.
     write(output / 'project-build.json', json.dumps(values, ensure_ascii=False, indent=2) + '\n')
     variables = {'NAME': 'name', 'EXECUTABLE': 'executable', 'VERSION': 'version', 'BUNDLE_ID': 'bundleId',
-                 'LANG_DIR': 'translations', 'TRANSLATION_PREFIX': 'translationPrefix',
+                 'RESOURCE_ROOT': 'root', 'LANG_DIR': 'translations', 'TRANSLATION_PREFIX': 'translationPrefix',
                  'STYLE_DIR': 'styles', 'SOUND_DIR': 'sounds',
                  'SHARING_CONFIG': 'sharingConfig', 'SHARING_ICONS': 'sharingIcons'}
     pri = ''.join(f'PROJECT_{key} = {qmake(values[value])}\n' for key, value in variables.items())
@@ -152,10 +152,10 @@ def generate(source, output):
         template = (source / 'packaging' / (filename + '.in')).read_text(encoding='utf-8')
         write(output / filename, render(template, values, transform))
     template = (source / 'packaging/application.rc.in').read_text(encoding='utf-8')
-    write(output / 'application.rc', template.replace('@ICON_FILE@', str(source / 'application.ico').replace('\\', '/').replace('"', '\\"')))
+    write(output / 'application.rc', template.replace('@ICON_FILE@', str(source / values['root'] / 'images' / 'application.ico').replace('\\', '/').replace('"', '\\"')))
     for size in (16, 32, 48, 64, 128, 256):
         write(output / 'icons' / str(size) / (values['name'] + '.png'),
-              (source / 'images' / f'{size}x{size}' / 'quiterss.png').read_bytes())
+              (source / values['root'] / 'images' / f'{size}x{size}' / 'quiterss.png').read_bytes())
     # Give install sets the desired public filenames without renaming source templates.
     write(output / (values['name'] + '.desktop'), (output / 'application.desktop').read_bytes())
     write(output / (values['bundleId'] + '.metainfo.xml'), (output / 'appdata.xml').read_bytes())

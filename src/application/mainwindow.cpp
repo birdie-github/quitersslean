@@ -1280,10 +1280,10 @@ void MainWindow::createActions()
 
     shareConfigurationMessage_ =
         tr("Article sharing configuration could not be loaded.\n\n"
-           "Install social-networks.ini and its social-networks image directory in:\n%1\n\n"
+           "Install %3 and its sharing icons in:\n%1\n\n"
            "If no installed definition is present, the complete user configuration may be placed in:\n%2")
         .arg(QFileInfo(shareConfiguration.installedFile).absolutePath(),
-             QFileInfo(shareConfiguration.userFile).absolutePath());
+             QFileInfo(shareConfiguration.userFile).absolutePath(), ProjectMetadata::sharingConfig());
     if (!shareConfiguration.errors.isEmpty()) {
       shareConfigurationMessage_.append(
           tr("\n\nDetails:\n%1").arg(shareConfiguration.errors.join(QStringLiteral("\n"))));

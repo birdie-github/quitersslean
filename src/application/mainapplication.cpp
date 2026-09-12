@@ -369,7 +369,9 @@ void MainApplication::setTranslateApplication()
   directories.removeDuplicates();
   if (langFileName_ != QLatin1String("en")) {
     for (const QString &directory : directories) {
-      if (qt_translator_->load("qtbase_" + langFileName_, directory)) {
+      // windeployqt may merge Qt module catalogs into qt_<locale>.qm.
+      if (qt_translator_->load("qtbase_" + langFileName_, directory) ||
+          qt_translator_->load("qt_" + langFileName_, directory)) {
         installTranslator(qt_translator_);
         break;
       }

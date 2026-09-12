@@ -10,16 +10,17 @@
   "project": {
     "repository": "https://github.com/birdie-github/notquiterss",
     "email": "aros@gmx.com",
-    "copyright": "Copyright © 2026 Artem S. Tashkinov and ChatGPT",
-    "original_copyright": "Copyright © 2011-2020 QuiteRSS Project"
+    "copyright": "Copyright \u00a9 2026 Artem S. Tashkinov and ChatGPT",
+    "original_copyright": "Copyright \u00a9 2011-2020 QuiteRSS Project"
   },
   "resources": {
-    "translations": "lang",
-    "qt_translations": "translations",
-    "styles": "style",
-    "sounds": "sound",
-    "sharing_config": "social-networks.ini",
-    "sharing_icons": "social-networks"
+    "translations": "translations",
+    "qt_translations": "qt-translations",
+    "styles": "styles",
+    "sounds": "sounds",
+    "sharing_config": "configuration.ini",
+    "sharing_icons": "social-networks",
+    "root": "resources"
   },
   "files": {
     "database": "feeds.db",

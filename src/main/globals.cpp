@@ -55,7 +55,7 @@ void Globals::init()
 
   // Check Dir ...
 #if defined(Q_OS_WIN)
-  resourcesDir_ = QCoreApplication::applicationDirPath();
+  resourcesDir_ = QDir(QCoreApplication::applicationDirPath()).filePath(ProjectMetadata::root());
 #else
 #if defined(Q_OS_MAC)
   resourcesDir_ = QCoreApplication::applicationDirPath() + "/../Resources";
@@ -67,7 +67,7 @@ void Globals::init()
   if (isPortable_) {
     dataDir_ = QCoreApplication::applicationDirPath();
     cacheDir_ = QDir(dataDir_).filePath(ProjectMetadata::cache());
-    soundNotifyDir_ = QDir(dataDir_).filePath(ProjectMetadata::sounds());
+    soundNotifyDir_ = QDir(resourcesDir_).filePath(ProjectMetadata::sounds());
   } else {
     dataDir_ = QDir(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)).filePath(QCoreApplication::applicationName());
     cacheDir_ = QDir(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)).filePath(QCoreApplication::applicationName());

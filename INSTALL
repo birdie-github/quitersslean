@@ -1,9 +1,9 @@
 Build dependencies
 ==================
 Translation catalogs are external runtime files. Restore NotQuiteRSS_*.ts into
-lang/ before running qmake to build them with the matching Qt lrelease tool.
+resources/translations/ before running qmake to build them with the matching Qt lrelease tool.
 Precompiled .qm files can also be installed or added by users without rebuilding.
-See lang/README.md for discovery paths, optional metadata and installation.
+See resources/translations/README.md for discovery paths, optional metadata and installation.
 
   C++17-capable GCC or Clang and make (Windows recipe: MSYS2 UCRT64 GCC)
   SQLite 3.30.1 or newer, including development headers and sqlite3.pc
@@ -103,13 +103,14 @@ subsequent feed update can import entries allowed by the new window.
 
 Article sharing data
 ====================
-The installed application reads social-networks.ini from its resource directory
-and icons from the adjacent social-networks directory. On Linux with PREFIX=/usr,
-these are /usr/share/NotQuiteRSS/social-networks.ini and
-/usr/share/NotQuiteRSS/social-networks/. The qmake install target installs both.
+The installed application reads social-networks/configuration.ini and icons
+from the same social-networks directory under its resource root. On Linux with
+PREFIX=/usr this is /usr/share/NotQuiteRSS/social-networks/. The shared qmake
+resource stage installs both the configuration and all service icons.
 
-Only when the installed INI file does not exist, the application looks beside
-the user's application INI file for social-networks.ini and social-networks/. The
+Only when the installed INI file does not exist, the application reads
+~/.config/NotQuiteRSS/social-networks/configuration.ini on Linux (the equivalent
+social-networks subdirectory beside the application INI on other platforms). The
 user definition is then used in full; installed and user definitions are never
 merged. Startup diagnostics use the [article-sharing] prefix in debug.log when
 file logging is enabled. Launch with --debug to also print diagnostics to stderr.
@@ -200,8 +201,8 @@ From the application source directory:
   mingw32-make install
   ./release/target/notquiterss.exe
 
-The install target copies social-networks.ini and social-networks/ beside the
-executable. The UCRT64 shell supplies the dependency DLL paths for local
+The install target copies the shared external resource stage into resources/
+beside the executable, including styles, sounds, translations and sharing data. The UCRT64 shell supplies the dependency DLL paths for local
 testing. MSVC is not covered by this recipe or CI: it needs compatible external
 libraries and its own installed qtsingleapplication.prf; do not link the UCRT64
 C++ archive into an MSVC application.
@@ -270,4 +271,4 @@ need these runtime checks; compilation alone cannot establish them.
 Application styles
 ==================
 The normal install/bundle targets deploy the style directory on every platform.
-For runtime discovery, QSS metadata, paths and testing, see style/README.md.
+For runtime discovery, QSS metadata, paths and testing, see resources/styles/README.md.

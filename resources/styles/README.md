@@ -3,12 +3,12 @@
 The Application Style menu enumerates `.qss` files in the installed resource
 root's style directory. With the supplied project metadata:
 
-- Linux: `<PREFIX>/share/NotQuiteRSS/style` (normally `/usr/local/share/NotQuiteRSS/style`).
-- Windows, including portable mode: `style` beside `notquiterss.exe`.
-- macOS: `NotQuiteRSS.app/Contents/Resources/style`.
+- Linux: `<PREFIX>/share/NotQuiteRSS/styles` (normally `/usr/local/share/NotQuiteRSS/styles`).
+- Windows, including portable mode: `resources/styles` beside `notquiterss.exe`.
+- macOS: `NotQuiteRSS.app/Contents/Resources/styles`.
 
 All three platforms deploy this directory through qmake's normal install/bundle
-rules. Windows CI runs `mingw32-make install` and verifies each source QSS file
+rules. Windows CI runs `mingw32-make install` and verifies every external staged resource
 against its deployed copy before creating the release artifact. Article `.css`
 files also remain deployed, but do not appear in Application Style.
 

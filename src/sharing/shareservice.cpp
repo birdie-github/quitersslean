@@ -67,8 +67,8 @@ ShareServiceConfiguration ShareServiceLoader::load(const QString &installedDirec
                                                     const QString &userDirectory)
 {
   ShareServiceConfiguration result;
-  result.installedFile = QDir(installedDirectory).filePath(configurationFileName);
-  result.userFile = QDir(userDirectory).filePath(configurationFileName);
+  result.installedFile = QDir(QDir(installedDirectory).filePath(imageDirectoryName)).filePath(configurationFileName);
+  result.userFile = QDir(QDir(userDirectory).filePath(imageDirectoryName)).filePath(configurationFileName);
 
   if (QFileInfo(result.installedFile).isFile()) {
     result.selectedFile = result.installedFile;

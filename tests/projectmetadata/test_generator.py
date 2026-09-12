@@ -21,9 +21,8 @@ class GeneratorTests(unittest.TestCase):
         self.source = Path(self.temp.name) / 'source'
         self.output = Path(self.temp.name) / 'build'
         self.source.mkdir()
-        for directory in ('packaging', 'images'):
+        for directory in ('packaging', 'resources'):
             shutil.copytree(ROOT / directory, self.source / directory)
-        shutil.copy(ROOT / 'application.ico', self.source)
         self.data = json.loads((ROOT / 'project.json').read_text())
 
     def generate(self):

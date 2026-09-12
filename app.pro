@@ -35,7 +35,7 @@ include($$PROJECT_GENERATED_DIR/project.pri)
 INCLUDEPATH += $$PROJECT_GENERATED_DIR
 VERSION = $$PROJECT_VERSION
 # qmake includes these inputs in its Makefile regeneration dependencies.
-QMAKE_INTERNAL_INCLUDED_FILES += $$PWD/project.json $$PWD/scripts/generate-project.py $$files($$PWD/packaging/*.in) $$files($$PWD/images/*/$${PROJECT_NAME}.png)
+QMAKE_INTERNAL_INCLUDED_FILES += $$PWD/project.json $$PWD/scripts/generate-project.py $$files($$PWD/packaging/*.in) $$files($$PWD/$${PROJECT_RESOURCE_ROOT}/images/*/quiterss.png) $$PWD/$${PROJECT_RESOURCE_ROOT}/images/application.ico
 DISTFILES += $$PWD/project.json $$PWD/scripts/generate-project.py $$files($$PWD/packaging/*.in)
 
 # Invoke the matching qmake; this option validates, rather than switches, its Qt.
@@ -289,51 +289,24 @@ unix:!mac {
   icon_256.path = $$quote($$PREFIX/share/icons/hicolor/256x256/apps)
 
 
-  sound.files = $$PROJECT_SOUND_DIR
-  sound.path = $$quote($$DATA_DIR)
-
-  style.files = $$PROJECT_STYLE_DIR
-  style.path = $$quote($$DATA_DIR)
-
-  social_networks_config.files = $$PROJECT_SHARING_CONFIG
-  social_networks_config.path = $$quote($$DATA_DIR)
-  social_networks_icons.files = $$PROJECT_SHARING_ICONS
-  social_networks_icons.path = $$quote($$DATA_DIR)
-
   metainfo.files = $$PROJECT_GENERATED_DIR/$${PROJECT_BUNDLE_ID}.metainfo.xml
   metainfo.path = $$PREFIX/share/metainfo
   INSTALLS += target desktop target1 metainfo
   INSTALLS += icon_16 icon_32 icon_48 icon_64 icon_128 icon_256
-  INSTALLS += sound style social_networks_config social_networks_icons
 }
 
-win32 {
-  style.files = $$PROJECT_STYLE_DIR
-  style.path = $$DESTDIR
-  INSTALLS += style
-
-  social_networks_config.files = $$PROJECT_SHARING_CONFIG
-  social_networks_config.path = $$DESTDIR
-  social_networks_icons.files = $$PROJECT_SHARING_ICONS
-  social_networks_icons.path = $$DESTDIR
-  INSTALLS += social_networks_config social_networks_icons
-}
 
 mac {
   CONFIG += app_bundle
   QMAKE_APPLICATION_BUNDLE_NAME = $$PROJECT_NAME
 
   QMAKE_INFO_PLIST = $$PROJECT_GENERATED_DIR/Info.plist
-  ICON = application.icns
+  ICON = $$PWD/$${PROJECT_RESOURCE_ROOT}/images/application.icns
 
   bundle_target.files += AUTHORS
   bundle_target.files += COPYING
   bundle_target.files += CHANGELOG
   bundle_target.files += README.md
-  bundle_target.files += $$PROJECT_SOUND_DIR
-  bundle_target.files += $$PROJECT_STYLE_DIR
-  bundle_target.files += $$PROJECT_SHARING_CONFIG
-  bundle_target.files += $$PROJECT_SHARING_ICONS
   bundle_target.path = Contents/Resources
   QMAKE_BUNDLE_DATA += bundle_target
 
@@ -341,7 +314,7 @@ mac {
   INSTALLS += bundle_target
 }
 
-include($$PROJECT_LANG_DIR/lang.pri)
+include($$PWD/$${PROJECT_RESOURCE_ROOT}/resources.pri)
 
 RESOURCES += \
     app.qrc
@@ -353,4 +326,4 @@ OTHER_FILES += \
     AUTHORS \
     CHANGELOG \
     INSTALL \
-    social-networks.ini
+    $$PWD/$${PROJECT_RESOURCE_ROOT}/$${PROJECT_SHARING_ICONS}/$${PROJECT_SHARING_CONFIG}

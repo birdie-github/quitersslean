@@ -25,3 +25,5 @@ new paths, packaging generation and update-check behavior.
 
 See [LOGGING.md](LOGGING.md) for file logging, `--debug`, command-line help,
 and the log-location control in General settings.
+
+Resource organization and platform deployment are documented in [resources/README.md](resources/README.md).
