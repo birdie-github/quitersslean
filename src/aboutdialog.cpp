@@ -26,7 +26,7 @@
 
 #include <sqlite3.h>
 
-AboutDialog::AboutDialog(const QString &lang, QWidget *parent) :
+AboutDialog::AboutDialog(QWidget *parent) :
   Dialog(parent, Qt::MSWindowsFixedSizeDialogHint)
 {
   setWindowTitle(tr("About"));
@@ -60,6 +60,9 @@ AboutDialog::AboutDialog(const QString &lang, QWidget *parent) :
       + QString("<P><a href=\"%1\">%2</a> · <a href=\"%3\">%4</a></P>")
           .arg(ProjectMetadata::homepageUrl().toHtmlEscaped(), tr("Homepage"),
                QString("mailto:") + ProjectMetadata::email().toHtmlEscaped(), tr("E-mail"))
+      + QString("<P><a href=\"%1\">%2</a> · <a href=\"%3\">%4</a></P>")
+          .arg(ProjectMetadata::releasesUrl().toHtmlEscaped(), tr("Releases"),
+               ProjectMetadata::originalProjectUrl().toHtmlEscaped(), tr("Original project"))
       + "</CENTER></body></html>";
   QLabel *infoLabel = new QLabel(appInfo);
   infoLabel->setOpenExternalLinks(false);
@@ -82,21 +85,6 @@ AboutDialog::AboutDialog(const QString &lang, QWidget *parent) :
   authorsLayout->addWidget(authorsTextEdit);
   QWidget *authorsWidget = new QWidget();
   authorsWidget->setLayout(authorsLayout);
-
-  QTextBrowser *historyTextBrowser = new QTextBrowser();
-  historyTextBrowser->setOpenExternalLinks(false);
-  historyTextBrowser->setOpenLinks(false);
-  connect(historyTextBrowser, &QTextBrowser::anchorClicked, this, [](const QUrl &url) {
-    if (ArticleContent::isExternalLink(url)) mainApp->openExternalUrl(url);
-  });
-  const QString historyFile = lang.contains("ru", Qt::CaseInsensitive)
-      ? ":/file/HISTORY_RU" : ":/file/HISTORY_EN";
-  historyTextBrowser->setHtml(Common::readAllFileContents(historyFile));
-
-  QHBoxLayout *historyLayout = new QHBoxLayout();
-  historyLayout->addWidget(historyTextBrowser);
-  QWidget *historyWidget = new QWidget();
-  historyWidget->setLayout(historyLayout);
 
   QTextEdit *licenseTextEdit = new QTextEdit();
   licenseTextEdit->setReadOnly(true);
@@ -154,7 +142,6 @@ AboutDialog::AboutDialog(const QString &lang, QWidget *parent) :
 
   tabWidget->addTab(mainWidget, tr("Version"));
   tabWidget->addTab(authorsWidget, tr("Authors"));
-  tabWidget->addTab(historyWidget, tr("History"));
   tabWidget->addTab(licenseWidget, tr("License"));
   tabWidget->addTab(informationWidget, tr("Information"));
 

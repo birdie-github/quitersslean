@@ -251,8 +251,6 @@ win32-msvc* {
 }
 
 DISTFILES += \
-    HISTORY_RU \
-    HISTORY_EN \
     COPYING \
     AUTHORS \
     CHANGELOG \
@@ -320,8 +318,6 @@ RESOURCES += \
     app.qrc
 
 OTHER_FILES += \
-    HISTORY_RU \
-    HISTORY_EN \
     COPYING \
     AUTHORS \
     CHANGELOG \

@@ -1,3 +1,19 @@
+Version 0.91.0 (2026-09-12)
+
+* NEW FEATURE: Check GitHub Releases for updates and display release notes.
+* NEW FEATURE: Add configurable scheduled, exit, subscription and pre-upgrade backups, including database snapshots and settings copies, retention and optional starred-or-labelled-only snapshots.
+* NEW FEATURE: Show persistent feed-error details and animated warning indicators; clear warnings after successful retrieval and hide them for disabled feeds.
+* NEW FEATURE: Discover application styles and translations at runtime, with external style and language metadata.
+* NEW FEATURE: Add independent console/file logging controls, command-line help and log-location opening.
+* CHANGED: Rebrand as NotQuiteRSS and centralize application identity, version, URLs and paths in project.json.
+* CHANGED: Use new configuration, data and resource paths without automatic migration; existing users must copy their data and settings manually.
+* CHANGED: Centralize assets under resources/ and unify Linux, Windows and macOS resource deployment, including Windows package verification.
+* CHANGED: Add FLAC, MP3 and All Files options to notification sound pickers.
+* CHANGED: Remove the legacy About History tab and bundled QuiteRSS histories; link to Releases and the original project from About.
+* CHANGED: Keep only NotQuiteRSS release notes in CHANGELOG.
+* BUG FIX: Correct settings access during database preparation and simplify backup completion feedback with a Show button.
+* BUG FIX: Correct Windows application-style deployment.
+
 Version 0.90.2 (2026-09-10)
 
 * CHANGED: Multiple behind-the-scenes improvements (part 1) - may result in new bugs :-(

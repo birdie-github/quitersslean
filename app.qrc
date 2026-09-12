@@ -100,8 +100,6 @@
     <qresource prefix="/file">
         <file>AUTHORS</file>
         <file>COPYING</file>
-        <file>HISTORY_EN</file>
-        <file>HISTORY_RU</file>
     </qresource>
     <qresource prefix="/html">
         <file alias="description">resources/html/news.html</file>

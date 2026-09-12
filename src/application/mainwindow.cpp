@@ -4043,7 +4043,7 @@ void MainWindow::slotRefreshNewsView(int nextUnread)
 // ----------------------------------------------------------------------------
 void MainWindow::slotShowAboutDlg()
 {
-  AboutDialog *aboutDialog = new AboutDialog(mainApp->language(), this);
+  AboutDialog *aboutDialog = new AboutDialog(this);
   aboutDialog->exec();
   delete aboutDialog;
 }

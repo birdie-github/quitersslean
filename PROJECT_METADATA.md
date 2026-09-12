@@ -49,6 +49,9 @@ to this repository. Optional `homepage`, `issues`, `releases`, `translations`,
 and `update_endpoint` fields override individual URLs. Overrides of the update
 endpoint must serve GitHub-compatible release JSON. Attribution and contact
 strings live here too; original source license notices remain intact.
+`project.original_project` supplies the original project's HTTPS URL. About links
+to this project and the configured releases page; legacy history files are no
+longer embedded or packaged. `CHANGELOG` records NotQuiteRSS releases only.
 
 The checker reads stable, published release JSON, compares numeric version
 segments, and displays release notes as plain text. A leading `v` is accepted.

@@ -40,7 +40,7 @@ def load(source):
         'identity': {'name', 'bundle_namespace'},
         'release': {'version', 'date'},
         'project': {'repository', 'homepage', 'issues', 'releases', 'translations',
-                    'update_endpoint', 'email', 'copyright', 'original_copyright'},
+                    'update_endpoint', 'email', 'copyright', 'original_copyright', 'original_project'},
         'resources': {'root', 'translations', 'qt_translations', 'styles',
                       'sounds', 'sharing_config', 'sharing_icons'},
         'files': {'database', 'log', 'cookies', 'last_feed', 'portable_marker', 'cache', 'backup'}
@@ -72,6 +72,7 @@ def load(source):
         ('homepage', 'homepageUrl', repository),
         ('issues', 'issuesUrl', repository + '/issues'),
         ('releases', 'releasesUrl', repository + '/releases'),
+        ('original_project', 'originalProjectUrl', project['original_project']),
         ('translations', 'translationsUrl', repository + '/tree/HEAD/' + data['resources']['root'] + '/' + data['resources']['translations']),
         ('update_endpoint', 'updateEndpoint', 'https://api.github.com/repos' + parsed.path + '/releases/latest')):
         result[output] = url(project.get(key, default), 'project.' + key)
